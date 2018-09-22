@@ -1,0 +1,731 @@
+<! DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="static/css/bootstrap-theme.min.css" rel="stylesheet">
+    <script src="static/js/jquery-3.3.1.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+
+    <script src="static/js/vue.min.js"></script>
+    <script type="text/javascript" src="static/js/csrf.js"></script>
+</head>
+
+<body>
+<!--注册或登录界面-->
+<nav class="navbar navbar-default" role="navigation">
+    <div>
+        <ul class="nav navbar-nav">
+            {% if index == 'index_register' %}
+            <li class="active"><a href="#register" data-toggle="tab">注册</a></li>
+            <li><a href="#login" data-toggle="tab">登录</a></li>
+            {% else %}
+            <li><a href="#register" data-toggle="tab">注册</a></li>
+            <li class="active"><a href="#login" data-toggle="tab">登录</a></li>
+            {% endif %}
+        </ul>
+    </div>
+
+</nav>
+
+<div  id="myTabContent" class="tab-content">
+    {% if index == 'index_register' %}
+    <div class="tab-pane fade in active" id="register">
+    {% else %}
+    <div class="tab-pane fade in" id="register">
+    {% endif %}
+        <div style="text-align:center"><img src="/static/img/flower.jpg" height="171" width="188" /><h1>注册</h1></div>
+
+        <form action="/register" class="form-horizontal" role="form" id="register_form" name="register_form" method='post'>
+            {% csrf_token %}
+            <div  class="form-group">
+                <label for="user_name" class="col-sm-3 control-label">用户名</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="user_name" id="user_name"
+                         :placeholder="hint_user_name_default" @blur="check_input($event)">
+                </div>
+            </div>
+            <div  class="form-group" id="hint_user_name" style="display:none">
+                <label class="col-sm-3 control-label"></label>
+                <div class="col-sm-8" style="color:red">
+                    [[hint_user_name]]
+                </div>
+            </div>
+            <div  class="form-group" id="hint_user_name_precheck" style="display:none">
+                <label class="col-sm-3 control-label"></label>
+                <div class="col-sm-8" :style="hint_user_name_precheck_style">
+                    <!--在form内button的type如果不设置 默认为submit-->
+                    <button class="btn btn-primary" type='button' @click="check_user_name($event)">查看是否已被注册</button>&nbsp;&nbsp; [[hint_user_name_precheck]]
+                </div>
+            </div>
+            <div  class="form-group">
+                <label for="user_nickname" class="col-sm-3 control-label">昵称</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="user_nickname" id="user_nickname"
+                        :placeholder="hint_user_nickname_default" @blur="check_input($event)">
+                </div>
+            </div>
+            <div  class="form-group" id="hint_user_nickname" style="display:none">
+                <label class="col-sm-3 control-label"></label>
+                <div class="col-sm-8" style="color:red">
+                    [[hint_user_nickname]]
+                </div>
+            </div>
+            <div  class="form-group">
+                <label for="user_password" class="col-sm-3 control-label">密码</label>
+                <div class="col-sm-8">
+                    <input type="password" class="form-control" name="user_password" id="user_password"
+                        :placeholder="hint_user_password_default" @blur="check_input($event)">
+                </div>
+            </div>
+            <div  class="form-group" id="hint_user_password" style="display:none">
+                <label class="col-sm-3 control-label"></label>
+                <div class="col-sm-8" style="color:red">
+                    [[hint_user_password]]
+                </div>
+            </div>
+            <div  class="form-group">
+                <label for="user_password2" class="col-sm-3 control-label">密码确认</label>
+                <div class="col-sm-8">
+                    <input type="password" class="form-control" name="user_password2" id="user_password2"
+                        :placeholder="hint_user_password2_default" @blur="check_input($event)">
+                </div>
+            </div>
+            <div  class="form-group" id="hint_user_password2" style="display:none">
+                <label class="col-sm-3 control-label"></label>
+                <div class="col-sm-8" style="color:red">
+                    [[hint_user_password2]]
+                </div>
+            </div>
+            <div  class="form-group">
+                <label for="user_email" class="col-sm-3 control-label">Email</label>
+                <div class="col-sm-8">
+                    <input type="email" class="form-control" name="user_email" id="user_email"
+                        :placeholder="hint_user_email_default" @blur="check_input($event)" >
+                </div>
+            </div>
+            <div  class="form-group" id="hint_user_email" style="display:none">
+                <label class="col-sm-3 control-label"></label>
+                <div class="col-sm-8" style="color:red">
+                    [[hint_user_email]]
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="user_sign" class="col-sm-3 control-label">星座</label>
+                <div class="col-sm-8">
+                    <select class="form-control" name="user_sign" id="user_sign">
+                        <option value="0">保密喔</option>
+                        <option value="1">水瓶</option>
+                        <option value="2">双鱼</option>
+                        <option value="3">白羊</option>
+                        <option value="4">金牛</option>
+                        <option value="5">双子</option>
+                        <option value="6">巨蟹</option>
+                        <option value="7">狮子</option>
+                        <option value="8">处女</option>
+                        <option value="9">天秤</option>
+                        <option value="10">天蝎</option>
+                        <option value="11">射手</option>
+                        <option value="12">摩羯</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label">性别</label>
+                <div class="col-sm-8">
+                    <div class="radio">
+                        <label>
+                            <input type="radio"  name="user_gender" id="user_gender_1"
+                                value="1" checked>男
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio"  name="user_gender" id="user_gender_2"
+                                value="2">女
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio"  name="user_gender" id="user_gender_3"
+                                value="3">保密
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label" data-toggle="modal" data-target="#myProtocol"><u style="cursor:hand">注册协议</u></label>
+                <div class="col-sm-8">
+                    <div class="radio">
+                        <label>
+                            <input type="radio"  name="user_agree" id="user_agree_yes"
+                                @click="user_agree_check($event)" value="yes" checked>同意
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio"  name="user_agree" id="user_agree_no"
+                                @click="user_agree_check($event)" value="no">不同意
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div  class="form-group" id="hint_user_agree" style="display:none">
+                <label class="col-sm-3 control-label"></label>
+                <div class="col-sm-8" style="color:red">
+                    [[hint_user_agree]]
+                </div>
+            </div>
+
+            <div  class="form-group">
+                <label class="col-sm-3 control-label" data-toggle="modal" data-target="#myVerify"><u style="cursor:hand">获取校验</u></label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="user_verify" id="user_verify"
+                        :placeholder="hint_user_verify_default" @blur="check_input($event)">
+                </div>
+            </div>
+            <div  class="form-group" id="hint_user_verify" style="display:none">
+                <label class="col-sm-3 control-label"></label>
+                <div class="col-sm-8" style="color:red">
+                    [[hint_user_verify]]
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label"></label>
+                <div class="col-sm-8">
+                    <button @click="check_items(register_form)" type="submit" class="btn btn-primary btn-block">注 册</button>
+                </div>
+            </div>
+
+            {% if index == 'index_register' %}
+                
+            {% endif %}
+
+        </form>
+    </div>
+
+    <!-- 楚河 汉界 -->
+    {% if index == 'index_login' %}
+    <div class="tab-pane fade in active" id="login">
+    {% else %}
+    <div class="tab-pane fade in" id="login">
+    {% endif %}
+        <div style="text-align:center"><img src="/static/img/flower.jpg" height="171" width="188" /><h1>登录</h1></div>
+        <form action="/login" class="form-horizontal" role="form" id="login_form" name="login_form" method='post'>
+            {% csrf_token %}
+            <div  class="form-group">
+                <label for="user_name" class="col-sm-3 control-label">用户名</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="user_name" id="user_name"
+                        :placeholder="hint_user_name_default" @blur="check_input($event)">
+                </div>
+            </div>
+            <div  class="form-group" id="hintLogin_user_name" style="display:none">
+                <label class="col-sm-3 control-label"></label>
+                <div class="col-sm-8" style="color:red">
+                    [[hint_user_name]]
+                </div>
+            </div>
+            <div  class="form-group">
+                <label for="user_password" class="col-sm-3 control-label">密码</label>
+                <div class="col-sm-8">
+                    <input type="password" class="form-control" name="user_password" id="user_password"
+                        :placeholder="hint_user_password_default" @blur="check_input($event)">
+                </div>
+            </div>
+            <div  class="form-group" id="hintLogin_user_password" style="display:none">
+                <label class="col-sm-3 control-label"></label>
+                <div class="col-sm-8" style="color:red">
+                    [[hint_user_password]]
+                </div>
+            </div>
+
+            <div  class="form-group">
+                <label class="col-sm-3 control-label" data-toggle="modal" data-target="#myVerify"><u style="cursor:hand">获取校验</u></label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="user_verify" id="user_verify"
+                        :placeholder="hint_user_verify_default" @blur="check_input($event)">
+                </div>
+            </div>
+            <div  class="form-group" id="hintLogin_user_verify" style="display:none">
+                <label class="col-sm-3 control-label"></label>
+                <div class="col-sm-8" style="color:red">
+                    [[hint_user_verify]]
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label"></label>
+                <div class="col-sm-8">
+                    <button @click="check_items(login_form)" type="submit" class="btn btn-primary btn-block">登 录</button>
+                </div>
+            </div>
+            
+
+            {% if index == 'index_login' %}
+                
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- 模态框（Modal） -->
+    <div class="modal fade" id="myAlert" tabindex="-1" role="dialog" aria-labelledby="myAlertLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myAlertLabel">信息</h4>
+                </div>
+                <div class="modal-body" id="myAlertContent">{% if alert != 'None_None' %} {{alert}} {% endif %}</div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <!-- 模态框（Modal） -->
+    <div class="modal fade" id="myProtocol" tabindex="-1" role="dialog" aria-labelledby="myProtocolLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myProtocolLabel">注册协议</h4>
+                </div>
+                <div class="modal-body">请注意文明上网，不得违反法律法规!</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">好的</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <!-- 模态框（Modal） -->
+    <div class="modal fade" id="myVerify" tabindex="-1" role="dialog" aria-labelledby="myVerifyLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myVerifyLabel">校验</h4>
+                </div>
+                <div class="modal-body" id="myVerifyContent"></div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+</div>
+
+</body>
+</html>
+
+<script type="text/javascript">
+
+var myVerifyValue = 999;
+
+$(function () { 
+    $('#myVerify').on('show.bs.modal', function () {
+        var x = 10;     
+        var y = 1;     
+        var rand_1 = parseInt(Math.random() * (x - y + 1) + y);
+        x = 80;
+        y = 11;
+        rand_2 = parseInt(Math.random() * (x - y + 1) + y);
+
+        $('#myVerifyContent').text(rand_1 + "+" + rand_2 + "= ?");
+        myVerifyValue = rand_1+rand_2;
+    })
+
+    // asdf
+    if($('#myAlertContent').html() != "")
+        $('#myAlert').modal('show');
+
+});
+
+var vm_login = new Vue({
+  delimiters:['[[', ']]'],
+  el: '#login',
+  data: {
+    // message: 'Hello World!(data)',
+    hint_user_name: "",
+    hint_user_name_default: "请输入用户名！",
+
+    hint_user_password: "",
+    hint_user_password_default: "请输入密码！",
+
+    hint_user_verify:"",
+    hint_user_verify_default: "点击左侧'获取校验'，在此输入校验码",
+  },
+  methods:{
+      check_input:function(event){
+          obj = event.currentTarget;
+
+          if(obj.id == "user_name"){
+              var pattern = /^([a-zA-z_]{1})([\w]*)$/g;
+              if(obj.value == '' || obj.value.length < 6 || obj.value.length > 16 || pattern.test(obj.value) != true){
+                    if(obj.value == '')
+                        this.hint_user_name = this.hint_user_name_default;
+                    else
+                        this.hint_user_name = "无效的用户名";
+                    $('#hintLogin_user_name').show(); 
+              }
+              else{
+                  $('#hintLogin_user_name').hide();
+              }
+          }
+          else if(obj.id == "user_password"){
+              var pattern = /^([a-zA-z_0-9]{1})([\w]*)$/g;
+              if(obj.value == '' || obj.value.length < 6 || obj.value.length > 16 || pattern.test(obj.value) != true){
+                    if(obj.value == '')
+                        this.hint_user_password = this.hint_user_password_default;
+                    else
+                        this.hint_user_password = "无效的密码";
+                    $('#hintLogin_user_password').show(); 
+              }
+              else{
+                  $('#hintLogin_user_password').hide();
+              }
+          }
+          else if(obj.id == "user_verify"){
+              if(obj.value == ''){
+                    this.hint_user_verify = "请输入校验码！";
+                    $('#hintLogin_user_verify').show(); 
+              }
+              else{
+                  $('#hintLogin_user_verify').hide();
+              }
+          }
+          else{
+
+          }
+      },
+
+      check_items: function(form){
+            var obj = form.user_name;
+            var pattern = /^([a-zA-z_]{1})([\w]*)$/g;
+            if(obj.value == '' || obj.value.length < 6 || obj.value.length > 16 || pattern.test(obj.value) != true){
+                if(obj.value == '')
+                    this.hint_user_name = this.hint_user_name_default;
+                else
+                    this.hint_user_name = "无效的用户名";
+                $('#hintLogin_user_name').show(); 
+                obj.focus();event.preventDefault();return;
+            }
+
+            var obj = form.user_password;
+            var pattern = /^([a-zA-z_0-9]{1})([\w]*)$/g;
+            if(obj.value == '' || obj.value.length < 6 || obj.value.length > 16 || pattern.test(obj.value) != true){
+                if(obj.value == '')
+                    this.hint_user_password = this.hint_user_password_default;
+                else
+                    this.hint_user_password = "无效的密码";
+                $('#hintLogin_user_password').show(); 
+                obj.focus();event.preventDefault();return;
+            }
+
+            var obj = form.user_verify;
+            if(myVerifyValue == 999){
+                this.hint_user_verify = "请点击左侧'获取校验'！";
+                $('#hintLogin_user_verify').show(); 
+                obj.focus();event.preventDefault();return;
+            }
+            else if(obj.value == ''){
+                this.hint_user_verify = "请输入校验码！";
+                $('#hintLogin_user_verify').show(); 
+                obj.focus();event.preventDefault();return;
+            }
+            else if(obj.value != myVerifyValue){
+                this.hint_user_verify = "校验码错误！你的数学是体育老师教的吧？";
+                $('#hintLogin_user_verify').show(); 
+                obj.focus();event.preventDefault();return;
+            }
+
+      }
+
+  }
+});
+// -------------------------------------------------------------------------//
+var vm_register = new Vue({
+  delimiters:['[[', ']]'],
+  el: '#register',
+  data: {
+    // message: 'Hello World!(data)',
+    hint_user_name: "",
+    hint_user_name_default: "包含英文字符、数字、下划线，非数字开头，6~16个字符",
+    hint_user_nickname: "",
+    hint_user_nickname_default: "包含英文字符、符号、数字、中文，3~8个字或字符",
+
+    hint_user_password: "",
+    hint_user_password_default: "包含英文字符、数字、下划线，6~16个字符",
+    hint_user_password2: "",
+    hint_user_password2_default: "包含英文字符、数字、下划线，6~16个字符",
+    
+    hint_user_email: "",
+    hint_user_email_default: "用于找回密码等业务",
+
+    hint_user_agree: "",
+
+    hint_user_verify:"",
+    hint_user_verify_default: "点击左侧'获取校验'，在此输入校验码",
+
+    hint_user_name_precheck: "",
+    hint_user_name_precheck_style: "color:green",      //color:red, color:green
+    val_user_name_precheck: "UNKNOWN",     //OK,FAIL,UNKNOWN
+    
+    used_user_names:{   //保存最近10个已注册的用户信息
+        pos: 0,
+        tab:[],
+    },
+  },
+  methods:{
+      user_agree_check:function(event){
+          obj = event.currentTarget;
+          if(obj.value == 'yes'){
+              $('#hint_user_agree').hide(); 
+          }
+          else if(obj.value == 'no'){
+              this.hint_user_agree = "只有同意注册协议才能继续！";
+              $('#hint_user_agree').show(); 
+          }
+      },
+      check_user_name:function(event){
+            var user_name = $('#user_name').val();
+            //1. 先遍历本地存储的已被注册的用户名,若发现本地登记了，就不需要向后台查询了
+            var exist = 0;
+            var cnt = this.used_user_names.tab.length;
+            for(var i=0;i<cnt;i++){
+                if(user_name == this.used_user_names.tab[i]){
+                    // alert("Find it");
+                    exist = 1;
+                    this.hint_user_name_precheck_style = "color:red";
+                    this.hint_user_name_precheck = "* 用户名已被注册！";
+                    this.val_user_name_precheck = "FAIL";
+                    break;
+                }
+            }
+            //2. 本地不存在的情况下才去向后台查询
+            if(exist == 0){
+                $.post("/register/check_user_name", { user_name: user_name},
+                function(data){     //后续data需要改成json格式
+                    // alert(data);
+                    arry = data.split(":");
+                    userName = arry[0];
+                    stat = arry[1];
+
+                    if(stat == "Exist."){
+                        vm_register.hint_user_name_precheck_style = "color:red";
+                        vm_register.hint_user_name_precheck = "* 用户名已被注册！";
+                        vm_register.val_user_name_precheck = "FAIL";
+
+                        vm_register.used_user_names.tab[vm_register.used_user_names.pos] = userName;
+                        vm_register.used_user_names.pos++;
+                        if(vm_register.used_user_names.pos >= 10)
+                            vm_register.used_user_names.pos = 0;      
+                    }
+                    else if(stat == "NotExist."){
+                        vm_register.hint_user_name_precheck_style = "color:green";
+                        vm_register.hint_user_name_precheck = "* 用户名未被注册！";
+                        vm_register.val_user_name_precheck = "OK";
+                    }
+                    else
+                        alert("Error occur!");
+                });
+            }
+      },
+
+      check_input:function(event){
+          obj = event.currentTarget;
+
+          if(obj.id == "user_name"){
+              var pattern = /^([a-zA-z_]{1})([\w]*)$/g;
+              if(obj.value == '' || obj.value.length < 6 || obj.value.length > 16 || pattern.test(obj.value) != true){
+                    if(obj.value == '')
+                        this.hint_user_name = "请输入用户名！";
+                    else
+                        this.hint_user_name = this.hint_user_name_default;
+                    $('#hint_user_name').show(); 
+                    $('#hint_user_name_precheck').hide(); 
+              }
+              else{
+                    $('#hint_user_name').hide();
+
+                    user_name = obj.value;
+                    var exist = 0;
+                    var cnt = this.used_user_names.tab.length;
+                    for(var i=0;i<cnt;i++){
+                        if(user_name == this.used_user_names.tab[i]){
+                            exist = 1;
+                            this.hint_user_name = "* 用户名已被注册！";
+                            $('#hint_user_name').show();
+                            $('#hint_user_name_precheck').hide();
+                            this.val_user_name_precheck = "FAIL";
+                            break;
+                        }
+                    }
+
+                    if(exist == 0){
+                        this.hint_user_name_precheck = "";              //等于空时，不用管颜色
+                        this.val_user_name_precheck = "UNKNOWN";        //未知，需要查询
+                        $('#hint_user_name_precheck').show();
+                    }
+                  
+              }
+          }
+          else if(obj.id == "user_nickname"){
+              var pattern = /[\u4e00-\u9fa5_a-zA-Z0-9_]/g;
+              if(obj.value == '' || obj.value.length < 3 || obj.value.length > 8 || pattern.test(obj.value) != true){
+                    if(obj.value == '')
+                        this.hint_user_nickname = "请输入昵称！";
+                    else
+                        this.hint_user_nickname = this.hint_user_nickname_default;
+                    $('#hint_user_nickname').show(); 
+                    // obj.focus();
+              }
+              else{
+                  $('#hint_user_nickname').hide();
+              }
+          }
+          else if(obj.id == "user_password"){
+              var pattern = /^([a-zA-z_0-9]{1})([\w]*)$/g;
+              if(obj.value == '' || obj.value.length < 6 || obj.value.length > 16 || pattern.test(obj.value) != true){
+                    if(obj.value == '')
+                        this.hint_user_password = "请输入密码！";
+                    else
+                        this.hint_user_password = this.hint_user_password_default;
+                    $('#hint_user_password').show(); 
+                    // obj.focus();
+              }
+              else{
+                  $('#hint_user_password').hide();
+              }
+          }
+          else if(obj.id == "user_password2"){
+              var pattern = /^([a-zA-z_0-9]{1})([\w]*)$/g;
+              if(obj.value == '' || obj.value.length < 6 || obj.value.length > 16 || pattern.test(obj.value) != true){
+                    if(obj.value == '')
+                        this.hint_user_password2 = "请确认密码！";
+                    else
+                        this.hint_user_password2 = this.hint_user_password2_default;
+                    $('#hint_user_password2').show(); 
+                    // obj.focus();
+              }
+              else{
+                  $('#hint_user_password2').hide();
+              }
+          }
+          else if(obj.id == "user_email"){
+              if(obj.value == ''){
+                  this.hint_user_email = "请输入Email！";
+                  $('#hint_user_email').show(); 
+              }
+              else{
+                  $('#hint_user_email').hide();
+              } 
+          }
+          else if(obj.id == "user_verify"){
+              if(obj.value == ''){
+                    this.hint_user_verify = "请输入校验码！";
+                    $('#hint_user_verify').show(); 
+              }
+              else{
+                  $('#hint_user_verify').hide();
+              }
+          }
+          else{
+
+          }
+
+      },
+
+      check_items: function(form){
+            var obj = form.user_name;
+            var pattern = /^([a-zA-z_]{1})([\w]*)$/g;
+            if(obj.value == '' || obj.value.length < 6 || obj.value.length > 16 || pattern.test(obj.value) != true){
+                if(obj.value == '')
+                    this.hint_user_name = "请输入用户名！";
+                else
+                    this.hint_user_name = this.hint_user_name_default;
+                $('#hint_user_name').show(); 
+                obj.focus();event.preventDefault();return;
+            }
+
+            if(this.val_user_name_precheck == "FAIL"){
+                obj.focus();event.preventDefault();return;
+            }
+            
+            var obj = form.user_nickname;
+            var pattern = /[\u4e00-\u9fa5_a-zA-Z0-9_]/g;
+            if(obj.value == '' || obj.value.length < 3 || obj.value.length > 8 || pattern.test(obj.value) != true){
+                if(obj.value == '')
+                    this.hint_user_nickname = "请输入昵称！";
+                else
+                    this.hint_user_nickname = this.hint_user_nickname_default;
+                $('#hint_user_nickname').show(); 
+                obj.focus();event.preventDefault();return;
+            }
+
+            var obj = form.user_password;
+            var pattern = /^([a-zA-z_0-9]{1})([\w]*)$/g;
+            if(obj.value == '' || obj.value.length < 6 || obj.value.length > 16 || pattern.test(obj.value) != true){
+                if(obj.value == '')
+                    this.hint_user_password = "请输入密码！";
+                else
+                    this.hint_user_password = this.hint_user_password_default;
+                $('#hint_user_password').show(); 
+                obj.focus();event.preventDefault();return;
+            }
+
+            var obj = form.user_password2;
+            var pattern = /^([a-zA-z_0-9]{1})([\w]*)$/g;
+            if(obj.value == '' || obj.value.length < 6 || obj.value.length > 16 || pattern.test(obj.value) != true){
+                if(obj.value == '')
+                    this.hint_user_password2 = "请确认密码！";
+                else
+                    this.hint_user_password2 = this.hint_user_password2_default;
+                $('#hint_user_password2').show(); 
+                obj.focus();event.preventDefault();return;
+            }
+
+            if(form.user_password.value != form.user_password2.value){
+                this.hint_user_password2 = "'密码确认'与'密码'不一致！";
+                $('#hint_user_password2').show(); 
+                form.user_password2.focus();event.preventDefault();return;
+            }
+
+            var obj = form.user_email;
+            if(obj.value == '' ){
+                this.hint_user_email = "请输入Email！";
+                $('#hint_user_email').show(); 
+                obj.focus();event.preventDefault();return;
+            }
+
+            var obj = form.user_agree;
+            if(obj.value == 'no'){
+                this.hint_user_agree = "只有同意注册协议才能继续！";
+                $('#hint_user_agree').show(); 
+                event.preventDefault();return;
+            }
+
+            var obj = form.user_verify;
+            if(myVerifyValue == 999){
+                this.hint_user_verify = "请点击左侧'获取校验'！";
+                $('#hint_user_verify').show(); 
+                obj.focus();event.preventDefault();return;
+            }
+            else if(obj.value == ''){
+                this.hint_user_verify = "请输入校验码！";
+                $('#hint_user_verify').show(); 
+                obj.focus();event.preventDefault();return;
+            }
+            else if(obj.value != myVerifyValue){
+                this.hint_user_verify = "校验码错误！你的数学是体育老师教的吧？";
+                $('#hint_user_verify').show(); 
+                obj.focus();event.preventDefault();return;
+            }
+      }
+
+  }
+})
+
+</script>

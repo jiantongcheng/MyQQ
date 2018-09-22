@@ -20,12 +20,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '(&^b+%w^()_9q-m-866uso$$go(fv(y7=pdf(xlulenj8kam%+'
+SECRET_KEY = 'w4+7tc!rb!sde=md8ho3&q$tevw(au8)=8um5y2z3e#$)j593)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'useradmin',
 ]
 
 MIDDLEWARE = [
@@ -74,11 +76,25 @@ WSGI_APPLICATION = 'MyQQ.wsgi.application'
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    # },
+    'default':{
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'django_MyQQ',
+        'USER': 'root',
+        'PASSWORD': '123456',
+        'HOST': "localhost",
+    },
 }
+
+# DATABASE_ROUTERS = ['MyQQ.database_router.DatabaseAppsRouter']
+# DATABASE_APPS_MAPPING = {
+#     # example:
+#     #'app_name':'database_name',
+#     'useradmin': 'db_MyQQ',
+# }
 
 
 # Password validation
@@ -118,3 +134,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+SESSION_COOKIE_AGE = 15
