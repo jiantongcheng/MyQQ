@@ -24,11 +24,13 @@
             <li class="active"><a href="#login" data-toggle="tab">登录</a></li>
             {% endif %}
         </ul>
+        <h1 style="margin-top:0px;margin-left:130px;color:deeppink"><i>MyQ</i></h1>
     </div>
 
 </nav>
 
 <div  id="myTabContent" class="tab-content">
+    <!-- 注册页面 -->
     {% if index == 'index_register' %}
     <div class="tab-pane fade in active" id="register">
     {% else %}
@@ -202,14 +204,10 @@
                 </div>
             </div>
 
-            {% if index == 'index_register' %}
-                
-            {% endif %}
-
         </form>
     </div>
 
-    <!-- 楚河 汉界 -->
+    <!-- 登录页面 -->
     {% if index == 'index_login' %}
     <div class="tab-pane fade in active" id="login">
     {% else %}
@@ -265,15 +263,18 @@
                     <button @click="check_items(login_form)" type="submit" class="btn btn-primary btn-block">登 录</button>
                 </div>
             </div>
-            
 
-            {% if index == 'index_login' %}
-                
-            {% endif %}
+            <div class="form-group">
+                <label class="col-sm-3 control-label"></label>
+                <div class="col-sm-8">
+                    <a href='forget'>忘记密码？</a>
+                </div>
+            </div>
+            
         </form>
     </div>
 
-    <!-- 模态框（Modal） -->
+    <!-- 模态框（Modal） 信息提示警告框-->
     <div class="modal fade" id="myAlert" tabindex="-1" role="dialog" aria-labelledby="myAlertLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -286,7 +287,7 @@
         </div><!-- /.modal -->
     </div>
 
-    <!-- 模态框（Modal） -->
+    <!-- 模态框（Modal） 注册协议框-->
     <div class="modal fade" id="myProtocol" tabindex="-1" role="dialog" aria-labelledby="myProtocolLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -302,7 +303,7 @@
         </div><!-- /.modal -->
     </div>
 
-    <!-- 模态框（Modal） -->
+    <!-- 模态框（Modal） 校验码框-->
     <div class="modal fade" id="myVerify" tabindex="-1" role="dialog" aria-labelledby="myVerifyLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">

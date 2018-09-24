@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Django settings for MyQQ project.
 
@@ -136,3 +137,12 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 SESSION_COOKIE_AGE = 15
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_USE_SSL = True
+EMAIL_HOST = 'smtp.qq.com'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = "330755777@qq.com"
+EMAIL_HOST_PASSWORD = 'jjjfbpeeqklmcbbb'    #不要把密码上传到git哦
+DEFAULT_FROM_EMAIL = "MyQ Robot <330755770@qq.com>"

@@ -1,0 +1,191 @@
+<! DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="static/css/bootstrap-theme.min.css" rel="stylesheet">
+    <script src="static/js/jquery-3.3.1.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+
+    <script src="static/js/vue.min.js"></script>
+    <script type="text/javascript" src="static/js/csrf.js"></script>
+</head>
+
+<body>
+<!--忘记密码界面-->
+<nav class="navbar navbar-default" role="navigation">
+    <div>
+        <h1 style="margin-top:0px;color:deeppink"><i>MyQ</i></h1>
+    </div>
+</nav>
+
+<div class="tab-pane" id="login">
+    <div style="text-align:center"><h1>忘记密码</h1></div>
+    <form action="/forget" class="form-horizontal" role="form" id="login_form" name="login_form" method='post'>
+        {% csrf_token %}
+        <div  class="form-group">
+            <label for="user_name" class="col-sm-3 control-label">用户名</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="user_name" id="user_name"
+                    :placeholder="hint_user_name_default" @blur="check_input($event)">
+            </div>
+        </div>
+        <div  class="form-group" id="hintLogin_user_name" style="display:none">
+            <label class="col-sm-3 control-label"></label>
+            <div class="col-sm-8" style="color:red">
+                [[hint_user_name]]
+            </div>
+        </div>
+
+        <div  class="form-group">
+            <label class="col-sm-3 control-label" data-toggle="modal" data-target="#myVerify"><u style="cursor:hand">获取校验</u></label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="user_verify" id="user_verify"
+                    :placeholder="hint_user_verify_default" @blur="check_input($event)">
+            </div>
+        </div>
+        <div  class="form-group" id="hintLogin_user_verify" style="display:none">
+            <label class="col-sm-3 control-label"></label>
+            <div class="col-sm-8" style="color:red">
+                [[hint_user_verify]]
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label"></label>
+            <div class="col-sm-8">
+                <button @click="check_items(login_form)" type="submit" class="btn btn-primary btn-block">发送修改密码页面链接到用户邮箱</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- 模态框（Modal） 信息提示警告框-->
+    <div class="modal fade" id="myAlert" tabindex="-1" role="dialog" aria-labelledby="myAlertLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myAlertLabel">信息</h4>
+                </div>
+                <div class="modal-body" id="myAlertContent">{% if alert != 'None_None' %} {{alert}} {% endif %}</div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <!-- 模态框（Modal） 校验码框-->
+    <div class="modal fade" id="myVerify" tabindex="-1" role="dialog" aria-labelledby="myVerifyLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myVerifyLabel">校验</h4>
+                </div>
+                <div class="modal-body" id="myVerifyContent"></div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+</div>
+
+</body>
+</html>
+
+<script type="text/javascript">
+
+var myVerifyValue = 999;
+
+$(function () { 
+    $('#myVerify').on('show.bs.modal', function () {
+        var x = 10;     
+        var y = 1;     
+        var rand_1 = parseInt(Math.random() * (x - y + 1) + y);
+        x = 80;
+        y = 11;
+        rand_2 = parseInt(Math.random() * (x - y + 1) + y);
+
+        $('#myVerifyContent').text(rand_1 + "+" + rand_2 + "= ?");
+        myVerifyValue = rand_1+rand_2;
+    })
+
+    if($('#myAlertContent').html() != "")
+        $('#myAlert').modal('show');
+
+});
+
+var vm_login = new Vue({
+  delimiters:['[[', ']]'],
+  el: '#login',
+  data: {
+    // message: 'Hello World!(data)',
+    hint_user_name: "",
+    hint_user_name_default: "请输入用户名！",
+
+    hint_user_verify:"",
+    hint_user_verify_default: "点击左侧'获取校验'，在此输入校验码",
+  },
+  methods:{
+      check_input:function(event){
+          obj = event.currentTarget;
+
+          if(obj.id == "user_name"){
+              var pattern = /^([a-zA-z_]{1})([\w]*)$/g;
+              if(obj.value == '' || obj.value.length < 6 || obj.value.length > 16 || pattern.test(obj.value) != true){
+                    if(obj.value == '')
+                        this.hint_user_name = this.hint_user_name_default;
+                    else
+                        this.hint_user_name = "无效的用户名";
+                    $('#hintLogin_user_name').show(); 
+              }
+              else{
+                  $('#hintLogin_user_name').hide();
+              }
+          }
+          else if(obj.id == "user_verify"){
+              if(obj.value == ''){
+                    this.hint_user_verify = "请输入校验码！";
+                    $('#hintLogin_user_verify').show(); 
+              }
+              else{
+                  $('#hintLogin_user_verify').hide();
+              }
+          }
+          else{
+
+          }
+      },
+
+      check_items: function(form){
+            var obj = form.user_name;
+            var pattern = /^([a-zA-z_]{1})([\w]*)$/g;
+            if(obj.value == '' || obj.value.length < 6 || obj.value.length > 16 || pattern.test(obj.value) != true){
+                if(obj.value == '')
+                    this.hint_user_name = this.hint_user_name_default;
+                else
+                    this.hint_user_name = "无效的用户名";
+                $('#hintLogin_user_name').show(); 
+                obj.focus();event.preventDefault();return;
+            }
+
+            // var obj = form.user_verify;
+            // if(myVerifyValue == 999){
+            //     this.hint_user_verify = "请点击左侧'获取校验'！";
+            //     $('#hintLogin_user_verify').show(); 
+            //     obj.focus();event.preventDefault();return;
+            // }
+            // else if(obj.value == ''){
+            //     this.hint_user_verify = "请输入校验码！";
+            //     $('#hintLogin_user_verify').show(); 
+            //     obj.focus();event.preventDefault();return;
+            // }
+            // else if(obj.value != myVerifyValue){
+            //     this.hint_user_verify = "校验码错误！你的数学是体育老师教的吧？";
+            //     $('#hintLogin_user_verify').show(); 
+            //     obj.focus();event.preventDefault();return;
+            // }
+
+      }
+
+  }
+});
+
+</script>

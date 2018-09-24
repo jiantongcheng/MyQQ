@@ -1,0 +1,189 @@
+<! DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="static/css/bootstrap-theme.min.css" rel="stylesheet">
+    <script src="static/js/jquery-3.3.1.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+
+    <script src="static/js/vue.min.js"></script>
+    <script type="text/javascript" src="static/js/csrf.js"></script>
+</head>
+
+<body>
+<!--忘记密码界面-->
+<nav class="navbar navbar-default" role="navigation">
+    <div>
+        <h1 style="margin-top:0px;color:deeppink"><i>MyQ</i></h1>
+    </div>
+</nav>
+
+<div class="tab-pane" id="login">
+    <div style="text-align:center"><h1>修改密码</h1></div>
+    <form action="/modify" class="form-horizontal" role="form" id="login_form" name="login_form" method='post'>
+        {% csrf_token %}
+        <div  class="form-group" style="display: none">
+            <label for="user_name" class="col-sm-3 control-label">你看不到我</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="rand_int" id="rand_int"
+                         value={{rand_int}} readonly="readonly">
+            </div>
+        </div>
+        <div  class="form-group">
+            <label for="user_name" class="col-sm-3 control-label">用户名</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="user_name" id="user_name"
+                         value={{user_name}} readonly="readonly">
+            </div>
+        </div>
+        <div  class="form-group">
+            <label for="user_password" class="col-sm-3 control-label">密码</label>
+            <div class="col-sm-8">
+                <input type="password" class="form-control" name="user_password" id="user_password"
+                    :placeholder="hint_user_password_default" @blur="check_input($event)">
+            </div>
+        </div>
+        <div  class="form-group" id="hint_user_password" style="display:none">
+            <label class="col-sm-3 control-label"></label>
+            <div class="col-sm-8" style="color:red">
+                [[hint_user_password]]
+            </div>
+        </div>
+        <div  class="form-group">
+            <label for="user_password2" class="col-sm-3 control-label">密码确认</label>
+            <div class="col-sm-8">
+                <input type="password" class="form-control" name="user_password2" id="user_password2"
+                    :placeholder="hint_user_password2_default" @blur="check_input($event)">
+            </div>
+        </div>
+        <div  class="form-group" id="hint_user_password2" style="display:none">
+            <label class="col-sm-3 control-label"></label>
+            <div class="col-sm-8" style="color:red">
+                [[hint_user_password2]]
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label"></label>
+            <div class="col-sm-8">
+                <button @click="check_items(login_form)" type="submit" class="btn btn-primary btn-block">确 定</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- 模态框（Modal） 信息提示警告框-->
+    <div class="modal fade" id="myAlert" tabindex="-1" role="dialog" aria-labelledby="myAlertLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myAlertLabel">信息</h4>
+                </div>
+                <div class="modal-body" id="myAlertContent">{% if alert != 'None_None' %} {{alert}} {% endif %}</div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+
+</div>
+
+</body>
+</html>
+
+<script type="text/javascript">
+
+
+$(function () { 
+
+    var modifyRet = {{ success }};
+
+    if($('#myAlertContent').html() != "")
+        $('#myAlert').modal('show');
+
+    $('#myAlert').on('hidden.bs.modal', function () {
+        if(modifyRet == 1){     //密码修改成功，跳转到登陆页面
+            window.location.href = "login";
+        }
+    })
+
+});
+
+var vm_login = new Vue({
+  delimiters:['[[', ']]'],
+  el: '#login',
+  data: {
+    hint_user_password: "",
+    hint_user_password_default: "包含英文字符、数字、下划线，6~16个字符",
+    hint_user_password2: "",
+    hint_user_password2_default: "包含英文字符、数字、下划线，6~16个字符",
+  },
+  methods:{
+      check_input:function(event){
+          obj = event.currentTarget;
+          if(obj.id == "user_password"){
+              var pattern = /^([a-zA-z_0-9]{1})([\w]*)$/g;
+              if(obj.value == '' || obj.value.length < 6 || obj.value.length > 16 || pattern.test(obj.value) != true){
+                    if(obj.value == '')
+                        this.hint_user_password = "请输入密码！";
+                    else
+                        this.hint_user_password = this.hint_user_password_default;
+                    $('#hint_user_password').show(); 
+                    // obj.focus();
+              }
+              else{
+                  $('#hint_user_password').hide();
+              }
+          }
+          else if(obj.id == "user_password2"){
+              var pattern = /^([a-zA-z_0-9]{1})([\w]*)$/g;
+              if(obj.value == '' || obj.value.length < 6 || obj.value.length > 16 || pattern.test(obj.value) != true){
+                    if(obj.value == '')
+                        this.hint_user_password2 = "请确认密码！";
+                    else
+                        this.hint_user_password2 = this.hint_user_password2_default;
+                    $('#hint_user_password2').show(); 
+                    // obj.focus();
+              }
+              else{
+                  $('#hint_user_password2').hide();
+              }
+          }
+
+      },
+
+      check_items: function(form){
+        var obj = form.user_password;
+        var pattern = /^([a-zA-z_0-9]{1})([\w]*)$/g;
+        if(obj.value == '' || obj.value.length < 6 || obj.value.length > 16 || pattern.test(obj.value) != true){
+            if(obj.value == '')
+                this.hint_user_password = "请输入密码！";
+            else
+                this.hint_user_password = this.hint_user_password_default;
+            $('#hint_user_password').show(); 
+            obj.focus();event.preventDefault();return;
+        }
+
+        var obj = form.user_password2;
+        var pattern = /^([a-zA-z_0-9]{1})([\w]*)$/g;
+        if(obj.value == '' || obj.value.length < 6 || obj.value.length > 16 || pattern.test(obj.value) != true){
+            if(obj.value == '')
+                this.hint_user_password2 = "请确认密码！";
+            else
+                this.hint_user_password2 = this.hint_user_password2_default;
+            $('#hint_user_password2').show(); 
+            obj.focus();event.preventDefault();return;
+        }
+
+        if(form.user_password.value != form.user_password2.value){
+            this.hint_user_password2 = "'密码确认'与'密码'不一致！";
+            $('#hint_user_password2').show(); 
+            form.user_password2.focus();event.preventDefault();return;
+        }
+
+      }
+
+  }
+});
+
+</script>

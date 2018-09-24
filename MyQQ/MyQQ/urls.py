@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """MyQQ URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -18,11 +19,13 @@ from django.contrib import admin
 from useradmin import views as useradmin_views
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
+    url(r'^admin/', admin.site.urls),                                       #管理员页面
 
-    url(r'^$', useradmin_views.login),
-    url(r'^register$', useradmin_views.register),
-    url(r'register/check_user_name$', useradmin_views.register_check),
-    url(r'^logout$', useradmin_views.logout),
-    url(r'^login$', useradmin_views.login),
+    url(r'^$', useradmin_views.login),                                      #默认为登录页面
+    url(r'^register$', useradmin_views.register),                           #注册页面
+    url(r'register/check_user_name$', useradmin_views.register_check),      #检测用户是否注册
+    url(r'^logout$', useradmin_views.logout),                               #注销后页面，即登录页面
+    url(r'^login$', useradmin_views.login),                                 #登录页面
+    url(r'^forget$', useradmin_views.forget),                               #忘记密码页面
+    url(r'^modify', useradmin_views.modify),                                #修改密码页面
 ]
