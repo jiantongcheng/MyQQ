@@ -8,7 +8,7 @@ from django.core.mail import send_mail
 
 import random
 import datetime
-# import json
+import json
 
 # Create your views here.
 
@@ -37,14 +37,14 @@ def login(request):
             'user': {
                 'name': user_name,
                 'bottle': {
-                    'new': 5,
+                    'new': 6,
                     'total': 10,
                 },
                 'hall':{
-                    'new': 1,
+                    'new': 6,
                 },
                 'email':{
-                    'new': 2,
+                    'new': 6,
                     'total': 3,
                 },
             },
@@ -68,7 +68,7 @@ def create_userAdmin(my_form):
     usr.user_nickname = my_form['user_nickname']
     usr.user_password = my_form['user_password']
     usr.user_email = my_form['user_email']
-    usr.user_emailValid = 1         #暂时默认认为有效
+    usr.user_emailValid = 0
     usr.user_sign = my_form['user_sign']
     usr.user_gender = my_form['user_gender']
 
@@ -97,6 +97,202 @@ def register_check(request):
 
     return HttpResponse(ret)
 
+def modifyPassword(request):
+    if request.method == 'POST':
+        user_name = request.POST.get('user_name', '')
+        user_old_password = request.POST.get('user_old_password', '')
+        user_new_password = request.POST.get('user_new_password', '')
+        try:
+            obj = userAdmin.objects.get(user_name=user_name)
+        except userAdmin.DoesNotExist:
+            ret = {
+                'stat': 'fail',
+                'hint': '修改失败，原因：用户名不存在！',
+            }
+        else:
+            if obj.user_password != user_old_password:
+                ret = {
+                    'stat': 'fail',
+                    'hint': '修改失败，原密码不正确!',
+                }
+            else:
+                obj.user_password = user_new_password
+                obj.save()
+                ret = {
+                    'stat': 'success',
+                    'hint': '修改成功，请重新登录！',
+                }
+
+        return HttpResponse(json.dumps(ret))
+    else:
+        None
+
+def modifyBase(request):
+    if request.method == 'POST':
+        user_name = request.POST.get('user_name', '')
+        user_nickname = request.POST.get('user_nickname', '')
+        user_email = request.POST.get('user_email', '')
+        user_sign = request.POST.get('user_sign', '')
+        user_gender = request.POST.get('user_gender', '')
+        try:
+            obj = userAdmin.objects.get(user_name=user_name)
+        except userAdmin.DoesNotExist:
+            ret = {
+                'stat': 'fail',
+                'reason': '修改失败，原因：用户名不存在！',
+            }
+        else:
+            obj.user_nickname = user_nickname
+            obj.user_email = user_email
+            obj.user_sign = user_sign
+            obj.user_gender = user_gender
+            obj.save()
+            ret = {
+                'stat': 'success',
+            }
+
+        return HttpResponse(json.dumps(ret))
+    else:
+        None
+    
+def readBase(request):
+    if request.method == 'POST':
+        user_name = request.POST.get('user_name', '')
+        try:
+            obj = userAdmin.objects.get(user_name=user_name)
+        except userAdmin.DoesNotExist:
+            ret = {
+                'stat': 'fail',
+                'reason': '用户名不存在',
+            }
+            
+            return HttpResponse(json.dumps(ret))
+        else:
+            ret = {
+                'stat': 'success',
+                'user_nickname': obj.user_nickname,
+                'user_email': obj.user_email,
+                'user_emailValid': obj.user_emailValid,
+                'user_sign': obj.user_sign,
+                'user_gender': obj.user_gender,
+            }
+
+            return HttpResponse(json.dumps(ret))
+    else:
+        None
+
+def emailVerify_send(request):
+    if request.method == 'POST':
+        user_name = request.POST.get('user_name', '')
+        try:
+            obj = userAdmin.objects.get(user_name=user_name)
+        except userAdmin.DoesNotExist:
+            ret = {
+                'stat': 'fail',
+                'hint': '用户名不存在',
+            }
+            
+            return HttpResponse(json.dumps(ret))
+        else:
+            if obj.user_emailValid == 1:
+                ret = {
+                    'stat': 'fail',
+                    'hint': '邮箱已通过验证！',
+                }
+                return HttpResponse(json.dumps(ret))
+            else:           #产生随机数，发送给email账号，并记录时间
+                valid = False
+                if obj.forget_randomint == 0:
+                    valid = True
+                else:   #此时需要判断时间的有效性
+                    fit_forget_time =  obj.forget_time.replace(tzinfo=None)
+                    nowTime = datetime.datetime.now()
+                    diff = (nowTime - fit_forget_time).seconds
+                    if diff < 60:       #说明用户操作太频繁
+                        valid = False   
+                    else:
+                        valid = True
+
+                if valid == True:
+                    user_email = obj.user_email                 #获取用户邮箱
+                    random_num = random.randint(100000,999999)     #生成随机数
+                    obj.forget_randomint = random_num            #保存随机数
+                    obj.forget_time = datetime.datetime.now()    #保存当前时间
+                    obj.forget_trycnt = 0                        #清空尝试计数
+                    obj.save()
+
+                    mail_subject = 'MyQ, 邮箱绑定验证'
+                    mail_content = '您的验证码是' +str(random_num) + ',请尽快确认！'
+                    mail_from = "MyQ Robot <330755770@qq.com>"
+                    mail_to = user_email
+                    send_mail(mail_subject, mail_content, mail_from, [mail_to], fail_silently=False)
+
+                    ret = {
+                        'stat': 'success',
+                        'hint': '',
+                    }
+                else:
+                    ret = {
+                        'stat': 'fail',
+                        'hint': '操作太频繁，请稍后再试！',
+                    }
+                return HttpResponse(json.dumps(ret))
+    else:
+        None
+    
+def emailVerify_recv(request):
+    if request.method == 'POST':
+        user_name = request.POST.get('user_name', '')
+        try:
+            obj = userAdmin.objects.get(user_name=user_name)
+        except userAdmin.DoesNotExist:
+            ret = {
+                'stat': 'fail',
+                'hint': '用户名不存在',
+            }
+            
+            return HttpResponse(json.dumps(ret))
+        else:
+            if obj.user_emailValid == 1:
+                ret = {
+                    'stat': 'fail',
+                    'hint': '邮箱已通过验证！',
+                }
+            else:           
+                verify_code = request.POST.get('verify_code', '')
+                if obj.forget_randomint == 0:
+                    ret = {
+                        'stat': 'fail',
+                        'hint': '验证失败，原因：超时！',
+                    }
+                elif str(obj.forget_randomint) == verify_code: #初步满足要求
+                    fit_forget_time =  obj.forget_time.replace(tzinfo=None)
+                    nowTime = datetime.datetime.now()
+                    diff = (nowTime - fit_forget_time).seconds
+                    if diff < 60*5:     #N分钟内有效
+                        ret = {
+                            'stat': 'success',
+                            'hint': '',
+                        }
+                        obj.user_emailValid = 1
+                    else:
+                        ret = {
+                            'stat': 'fail',
+                            'hint': '验证失败，原因：超时！',
+                        }
+                    obj.forget_randomint = 0    #将随机数置为无效
+
+                else:
+                    ret = {
+                        'stat': 'fail',
+                        'hint': '验证失败，原因：校验码不正确！',
+                    }
+                    obj.forget_randomint = 0    #将随机数置为无效
+                obj.save()
+
+            return HttpResponse(json.dumps(ret))
+    else:
+        None
 
 def register(request):
     if request.method == 'POST':

@@ -102,6 +102,7 @@ $(function () {
         $('#myAlert').modal('show');
 
     $('#myAlert').on('hidden.bs.modal', function () {
+        
         if(modifyRet == 1){     //密码修改成功，跳转到登陆页面
             window.location.href = "login";
         }

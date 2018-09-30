@@ -509,7 +509,7 @@ var vm_register = new Vue({
             if(exist == 0){
                 $.post("/register/check_user_name", { user_name: user_name},
                 function(data){     //后续data需要改成json格式
-                    // alert(data);
+                    // alert(data);         //约定格式，userName:Exist./NotExist.
                     arry = data.split(":");
                     userName = arry[0];
                     stat = arry[1];

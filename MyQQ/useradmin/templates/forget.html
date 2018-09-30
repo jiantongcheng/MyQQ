@@ -166,22 +166,22 @@ var vm_login = new Vue({
                 obj.focus();event.preventDefault();return;
             }
 
-            // var obj = form.user_verify;
-            // if(myVerifyValue == 999){
-            //     this.hint_user_verify = "请点击左侧'获取校验'！";
-            //     $('#hintLogin_user_verify').show(); 
-            //     obj.focus();event.preventDefault();return;
-            // }
-            // else if(obj.value == ''){
-            //     this.hint_user_verify = "请输入校验码！";
-            //     $('#hintLogin_user_verify').show(); 
-            //     obj.focus();event.preventDefault();return;
-            // }
-            // else if(obj.value != myVerifyValue){
-            //     this.hint_user_verify = "校验码错误！你的数学是体育老师教的吧？";
-            //     $('#hintLogin_user_verify').show(); 
-            //     obj.focus();event.preventDefault();return;
-            // }
+            var obj = form.user_verify;
+            if(myVerifyValue == 999){
+                this.hint_user_verify = "请点击左侧'获取校验'！";
+                $('#hintLogin_user_verify').show(); 
+                obj.focus();event.preventDefault();return;
+            }
+            else if(obj.value == ''){
+                this.hint_user_verify = "请输入校验码！";
+                $('#hintLogin_user_verify').show(); 
+                obj.focus();event.preventDefault();return;
+            }
+            else if(obj.value != myVerifyValue){
+                this.hint_user_verify = "校验码错误！你的数学是体育老师教的吧？";
+                $('#hintLogin_user_verify').show(); 
+                obj.focus();event.preventDefault();return;
+            }
 
       }
 

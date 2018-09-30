@@ -1,0 +1,107 @@
+<div style="text-align:center"><h1>修改资料</h1></div>
+
+<form  class="form-horizontal" role="form" id="modifyBase_form" name="modifyBase_form">
+
+    <div  class="form-group">
+        <label for="user_nickname" class="col-sm-3 control-label">昵称</label>
+        <div class="col-sm-8">
+            <input type="text" class="form-control" name="user_nickname" id="user_nickname"
+                :placeholder="hint_user_nickname_default" @blur="check_input($event)">
+        </div>
+    </div>
+    <div  class="form-group" id="hint_user_nickname" style="display:none">
+        <label class="col-sm-3 control-label"></label>
+        <div class="col-sm-8" style="color:red">
+            [[hint_user_nickname]]
+        </div>
+    </div>
+
+    <div  class="form-group">
+        <label for="user_email" class="col-sm-3 control-label">Email</label>
+        <div class="col-sm-8">
+            <input type="email" class="form-control" name="user_email" id="user_email"
+                :placeholder="hint_user_email_default" @blur="check_input($event)" >
+        </div>
+    </div>
+    <div  class="form-group" id="hint_user_email" style="display:none">
+        <label class="col-sm-3 control-label"></label>
+        <div class="col-sm-8" style="color:red">
+            [[hint_user_email]]
+        </div>
+    </div>
+
+    <div  class="form-group" id="hint_user_emailValid" style="display:none">
+        <label class="col-sm-3 control-label"></label>
+        <div class="col-sm-8" style="color:red">
+            * 您的原始邮箱未通过验证，请点击 <u style='cursor:hand' data-toggle="modal" data-target="#myEmailVerify">这里</u> 进行验证，一经认证，无法修改！
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="user_sign" class="col-sm-3 control-label">星座</label>
+        <div class="col-sm-8">
+            <select class="form-control" name="user_sign" id="user_sign">
+                <option value="0">保密喔</option>
+                <option value="1">水瓶</option>
+                <option value="2">双鱼</option>
+                <option value="3">白羊</option>
+                <option value="4">金牛</option>
+                <option value="5">双子</option>
+                <option value="6">巨蟹</option>
+                <option value="7">狮子</option>
+                <option value="8">处女</option>
+                <option value="9">天秤</option>
+                <option value="10">天蝎</option>
+                <option value="11">射手</option>
+                <option value="12">摩羯</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-3 control-label">性别</label>
+        <div class="col-sm-8">
+            <div class="radio">
+                <label>
+                    <input type="radio"  name="user_gender" id="user_gender_1"
+                        value="1" checked>男
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio"  name="user_gender" id="user_gender_2"
+                        value="2">女
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio"  name="user_gender" id="user_gender_3"
+                        value="3">保密
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-3 control-label"></label>
+        <div class="col-sm-8">
+            <button @click="check_items(modifyBase_form)" type="button" class="btn btn-primary btn-block">修 改</button>
+        </div>
+    </div>
+
+</form>
+
+<!-- 模态框（Modal） 信息提示警告框-->
+<div class="modal fade" id="myEmailVerify" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myEmailVerifyLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myEmailVerifyLabel">邮箱验证</h4>
+            </div>
+            <div class="modal-body" id="myEmailVerifyContent">
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>

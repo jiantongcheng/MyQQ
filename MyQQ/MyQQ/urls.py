@@ -24,8 +24,13 @@ urlpatterns = [
     url(r'^$', useradmin_views.login),                                      #默认为登录页面
     url(r'^register$', useradmin_views.register),                           #注册页面
     url(r'register/check_user_name$', useradmin_views.register_check),      #检测用户是否注册
+    url(r'home/modifyPassword$', useradmin_views.modifyPassword),      #修改密码
     url(r'^logout$', useradmin_views.logout),                               #注销后页面，即登录页面
     url(r'^login$', useradmin_views.login),                                 #登录页面
     url(r'^forget$', useradmin_views.forget),                               #忘记密码页面
     url(r'^modify', useradmin_views.modify),                                #修改密码页面
+    url(r'home/readBase$', useradmin_views.readBase),                       #读取基本资料
+    url(r'home/modifyBase$', useradmin_views.modifyBase),
+    url(r'home/emailVerify_send$', useradmin_views.emailVerify_send),
+    url(r'home/emailVerify_recv$', useradmin_views.emailVerify_recv),
 ]
