@@ -4,7 +4,11 @@ from __future__ import unicode_literals
 from django.shortcuts import render
 from django.http import HttpResponse
 from useradmin.models import userAdmin
+from useradmin.dynamic_model import create_user_contacts, get_user_contacts, create_user_news, get_user_news, create_user_chats, get_user_chats
+from django.db import models
 from django.core.mail import send_mail
+from news import news_contacts_new_count
+from write import insert_user_news_classtype2
 
 import random
 import datetime
@@ -18,7 +22,7 @@ def login(request):
     if login == 'no':
         alert_info = "None_None"
         if request.method == 'POST':
-            print 'tttttt_login'
+            print 'login.......'
             try:
                 user_name = request.POST.get('user_name', '')
                 obj = userAdmin.objects.get(user_name=user_name)
@@ -27,8 +31,26 @@ def login(request):
             else:
                 user_password = request.POST.get('user_password', '')
                 if obj.user_password == user_password:
-                    request.session['Login'] = 'yes'
+                    # request.session['Login'] = 'yes'
                     login = 'yes'
+                    obj.user_status = 1     #online
+                    obj.status_heart = 2    #打算数据库周期事件定为30秒，所以心跳没了之后1分钟左右视为超时
+                    permitAdd = obj.setting_permitAdd
+                    permitSearch = obj.setting_permitSearch
+                    login_time = obj.login_time         # 返回上次的登录时间
+                    obj.login_time = datetime.datetime.now()    #记住这次的登录时间
+                    news_contacts, news_contacts_base, news_contacts_status, news_contacts_chat = news_contacts_new_count(user_name, 0)
+                    #暂不将news_contacts_status和news_contacts_chat作为回复，让浏览器定期获取
+
+                    obj.save()              #记得save
+                    
+                    #通知小伙伴们，我上线了
+                    hostClass = get_user_contacts(user_name)
+                    guestObjs = hostClass.objects.exclude(status=0)  #排除离线的家伙们
+                    for guest in guestObjs:
+                        guest_name = guest.name
+                        insert_user_news_classtype2(guest_name, 1, user_name)
+
                 else:
                     alert_info = "登录失败！用户名或者密码错误!"
     # -------------------------------------------------#
@@ -36,17 +58,13 @@ def login(request):
         my_dict = {
             'user': {
                 'name': user_name,
-                'bottle': {
-                    'new': 6,
-                    'total': 10,
-                },
-                'hall':{
-                    'new': 6,
-                },
-                'email':{
-                    'new': 6,
-                    'total': 3,
-                },
+                'permitAdd': permitAdd,
+                'permitSearch': permitSearch,
+                'login_time': login_time,
+                'news_hall': 0,
+                'news_bottle': 0,
+                'news_contacts': news_contacts,
+                'news_contacts_base': news_contacts_base,
             },
         }
         return render(request, 'home.html', my_dict)        #进入主页
@@ -59,9 +77,34 @@ def login(request):
     return render(request, 'index.html', my_dict)
 
 def logout(request):
-    request.session['Login'] = 'no'
+    if request.method == 'POST':
+        request.session['Login'] = 'no'
 
-    return login(request)
+        print "---------->logout"
+        hint = "None_None"
+        try:
+            user_name = request.POST.get('user_name', '')
+            obj = userAdmin.objects.get(user_name=user_name)
+        except userAdmin.DoesNotExist:
+            hint = "退出登录失败!"
+        else:
+            obj.user_status = 0     #offline
+            obj.save()              #记得save
+
+            #通知小伙伴们，我下线了
+            hostClass = get_user_contacts(user_name)
+            guestObjs = hostClass.objects.exclude(status=0)  #排除离线的家伙们
+            for guest in guestObjs:
+                guest_name = guest.name
+                insert_user_news_classtype2(guest_name, 0, user_name)
+
+        ret = {
+            'stat': 'success',
+            'hint': hint,
+        }
+
+        return HttpResponse(json.dumps(ret))
+
 
 def create_userAdmin(my_form):
     usr = userAdmin(user_name=my_form['user_name'])
@@ -71,8 +114,14 @@ def create_userAdmin(my_form):
     usr.user_emailValid = 0
     usr.user_sign = my_form['user_sign']
     usr.user_gender = my_form['user_gender']
-
+    usr.user_blacklist = ''
+    usr.user_status = 0
     usr.save()
+
+    create_user_contacts(my_form['user_name'])          #创建联系人表格
+    create_user_news(my_form['user_name'])          #创建news
+    create_user_chats(my_form['user_name'])         #创建聊天表格
+
     return 0
 
 def register_check(request):
@@ -127,6 +176,7 @@ def modifyPassword(request):
     else:
         None
 
+# 修改基本资料
 def modifyBase(request):
     if request.method == 'POST':
         user_name = request.POST.get('user_name', '')
@@ -168,6 +218,7 @@ def readBase(request):
             
             return HttpResponse(json.dumps(ret))
         else:
+            register_time = obj.register_time.strftime("%Y-%m-%d %H:%M:%S")
             ret = {
                 'stat': 'success',
                 'user_nickname': obj.user_nickname,
@@ -175,6 +226,11 @@ def readBase(request):
                 'user_emailValid': obj.user_emailValid,
                 'user_sign': obj.user_sign,
                 'user_gender': obj.user_gender,
+                'register_time': register_time
+
+                # 'user_status': obj.user_status,
+                # 'setting_permitSearch': obj.setting_permitSearch,
+                # 'setting_permitAdd': obj.setting_permitAdd,
             }
 
             return HttpResponse(json.dumps(ret))
@@ -314,9 +370,13 @@ def register(request):
         try:
             userAdmin.objects.get(user_name=my_form['user_name'])
         except userAdmin.DoesNotExist:
-            ret = "index_login"
-            create_userAdmin(my_form)
-            alert_info = "注册成功，请登录！"
+            if userAdmin.objects.email_used(my_form['user_email']) == True:
+                ret = "index_register"
+                alert_info = '注册失败！Email: \'' + my_form['user_email'] + '\'已存在！'
+            else:
+                ret = "index_login"
+                create_userAdmin(my_form)
+                alert_info = "注册成功，请登录！"
         else:
             ret = "index_register"
             alert_info = '注册失败！用户名\'' + my_form['user_name'] + '\'已存在！'

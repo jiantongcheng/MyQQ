@@ -1,0 +1,229 @@
+<div class="dropdown">
+    <button type="button" class="btn btn-info" @click="show_news(event)">
+        <!--貌似id的长度不能太长??-->
+        <span id="news_base" style="background-color:orange" class="badge pull-right"></span>消 息&nbsp;
+    </button>
+    <button type="button" class="btn btn-info dropdown-toggle" id="dropdownMenuSetting" data-toggle="dropdown">
+      设 置<span class="caret"></span>
+   </button>
+   <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenuSetting">
+      <li role="presentation">
+         <a role="menuitem" style="cursor:pointer;" tabindex="-1" @click="show_statusSet()">我的状态</a>
+      </li>
+      <li role="presentation">
+         <a role="menuitem" style="cursor:pointer;" tabindex="-1" @click="show_permitSet()">添加权限</a>
+      </li>
+   </ul>
+   <button type="button" class="btn btn-info" @click="show_addFriends()">添加好友</button>
+</div>
+
+<div class="modal fade" id="add_friends" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="addFriendsLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="addFriendsLabel">添加好友</h4>
+            </div>
+            <div class="modal-body" id="addFriendsContent">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="search_type" class="col-sm-2 control-label">限 定</label>
+                        <div class="col-sm-3">
+                            <select class="form-control" id='search_type'>
+                                <option value='username'>用户名</option>
+                                <option value='nickname'>昵称</option>
+                            </select>
+                        </div>
+
+                        <label for="search_gender" class="col-sm-2 control-label">性 别</label>
+                        <div class="col-sm-3">
+                            <select class="form-control" id='search_gender'>
+                                <option value='U'>不限</option>
+                                <option value='M'>男</option>
+                                <option value='F'>女</option>
+                                <option value='S'>保密</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="col-lg-6">
+                    <div class="input-group">
+                        <input maxlength='16' id='search_content' type="text" class="form-control">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" @click="search_user()" type="button">搜索</button>
+                        </span>
+                    </div><!-- /input-group -->
+                </div><!-- /.col-lg-6 -->
+                <br />
+                <div style="text-align:center" id="id_contacts_search_null" style="display:none"><h4>没有找到符合条件的用户..</h4></div>
+                <table class="table table-condensed table-striped table-bordered table-hover" id="id_contacts_search" style="display:none">
+                <thead>
+                    <tr>
+                        <th>用户名</th><th>昵称</th><th>性别</th><th>添加</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+                </table>
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<div class="modal fade" id="contacts_news" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myNewsLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myNewsLabel">消 息</h4>
+            </div>
+            <div class="modal-body" id="myNewsContent">
+                <div style="text-align:center" id="contacts_news_hint" style="display:none"><h4>当前没有消息</h4></div>
+                <table class="table table-condensed table-striped table-bordered table-hover" id="contacts_news_table" style="display:none">
+                <thead>
+                    <tr>
+                        <th>用户名</th><th>内容</th><th>时间</th><th>状态</th><th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+                </table>
+                
+                
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<div class="modal fade" id="chat_window" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="chatLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="chatLabel">与'[[chat_object]]'聊天中...</h4>
+            </div>
+            <div class="modal-body" id="chatContent">
+                <div class="col-lg-8" id='chatDisplay' contenteditable="false" style='height:350px;width:550px;border:1px solid lightcyan;overflow:auto'></div>
+                <br />
+                <div class="col-lg-8">
+                    <button type='button' @click='chatClear()' class='btn btn-primary'>清空聊天记录</button>
+                </div>
+                <br />
+                <div class="col-lg-8">
+                    <div class="input-group">
+                        <input maxlength='128' id='chatSend' type="text" class="form-control">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" @click="chatSend()" type="button">发送</button>
+                        </span>
+                    </div><!-- /input-group -->
+                </div><!-- /.col-lg-6 -->
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<div class="modal fade" id="contacts_setting_status" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="mySettingStatusLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="mySettingStatusLabel">状态修改</h4>
+            </div>
+            <div class="modal-body" id="mySettingStatusContent">
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="statusRadios" id='status_online' value="online" checked> 在线
+                    </label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="statusRadios" id='status_leave' value="leave"> 离开
+                    </label>
+                </div>
+                <button type='button' @click='setting_status()' class='btn btn-primary btn-block'>确 定</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<div class="modal fade" id="contacts_setting_permit" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="mySettingPermitLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="mySettingPermitLabel">权限设置</h4>
+            </div>
+            <div class="modal-body" id="mySettingPermitContent">
+                <div class="checkbox">
+                    <label><input type="checkbox" id='permitSearch' name="permitCheckbox" value="" checked>允许别人搜索到我</label>
+                </div>
+
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="permitRadios" id='permitAdd_cond' value="cond" checked> 添加好友需要验证
+                    </label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="permitRadios" id='permitAdd_uncond' value="uncond"> 添加好友无需验证
+                    </label>
+                </div>
+                <button type='button' @click='setting_permit()' class='btn btn-primary btn-block'>确 定</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<br />
+<div style="display:none" class="alert alert-warning alert-dismissable" id="inform_div">
+    <!--<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>-->
+    <span id='inform_text'></span>
+</div>
+
+<div style="text-align:center"><h1>联系人</h1></div>
+
+<button id="id_button_friend" class="btn btn-primary" @click="contacts_switch('friend')"><span id="friend_chats" style="display:none;background-color:orange" class="badge pull-left"></span>我的好友([[count_friend_alive]]/[[count_friend]])</button>
+<button id="id_button_stranger" class="btn btn-default" @click="contacts_switch('stranger')">陌生人([[count_stranger_alive]]/[[count_stranger]])</button>
+<button id="id_button_blacklist" class="btn btn-default" @click="contacts_switch('blacklist')">黑名单([[count_blacklist]])</button>
+<!--<button class="btn btn-warning" onclick="test_post()">测试</button>-->
+
+<br /><br />
+<div style="text-align:center" id="id_contacts_waiting"><h4>正在刷新，请稍后...</h4></div>
+
+<div style="text-align:center" id="id_contacts_friend_null" style="display:none"><h4>我的好友为空...</h4></div>
+<table class="table table-condensed table-striped table-bordered table-hover" id="id_contacts_friend" style="display:none">
+<thead>
+    <tr>
+        <th>用户名</th><th>昵称</th><th>状态</th><th>性别</th><th>星座</th><th>邮箱</th><th>操作</th>
+    </tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+<div style="text-align:center" id="id_contacts_stranger_null" style="display:none"><h4>陌生人为空...</h4></div>
+<table class="table table-condensed table-striped table-bordered table-hover" id="id_contacts_stranger" style="display:none">
+<thead>
+    <tr>
+        <!--<th>用户名</th><th>昵称</th><th>状态</th><th>性别</th><th>星座</th><th>邮箱</th><th>操作</th>-->
+        <th>用户名</th><th>昵称</th><th>状态</th><th>性别</th><th>操作</th>
+    </tr>
+</thead>
+<tbody>
+
+</tbody>
+</table>
+
+<div style="text-align:center" id="id_contacts_blacklist_null" style="display:none"><h4>黑名单为空...</h4></div>
+<table class="table table-condensed table-striped table-bordered table-hover" id="id_contacts_blacklist" style="display:none">
+<thead>
+    <tr>
+        <th>用户名</th><th>操作</th>
+    </tr>
+</thead>
+<tbody>
+    
+</tbody>
+</table>
