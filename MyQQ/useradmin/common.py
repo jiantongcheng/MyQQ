@@ -12,6 +12,9 @@ import calendar, datetime #日历相关
 import requests, random, socket, time, http #http.client
 from bs4 import BeautifulSoup
 
+#缓存数据库
+from django.core.cache import cache
+
 # Create your views here.
 
 # 本函数截取自网络，似乎具有通用性
@@ -106,13 +109,21 @@ def get_data_history(html_txt):
 def getWeather(request):
     host = request.POST.get('user_name', '')    #后续需要判断该用户是否有效以及是否在线
     url = request.POST.get('url', '')
+    today = datetime.datetime.today()
+    url_today = url + ',' + str(today.year) + '-' + str(today.month) + '-' + str(today.day)
 
-    html = get_html(url)
-    result = get_data_weather(html)
-    days = []
-    for i in result:
-        print(i)        #打印天气情况
-        days.append(i)
+    if cache.has_key(url_today):
+        days_str = cache.get(url_today)
+        days = json.loads(days_str)
+    else:
+        html = get_html(url)
+        result = get_data_weather(html)
+        days = []
+        for i in result:
+            print(i)        #打印天气情况
+            days.append(i)
+
+        cache.set(url_today, json.dumps(days), 3600*24)     #有效期一天
 
     ret = {
         'stat': 'success',
@@ -124,8 +135,17 @@ def getWeather(request):
 def getHistory(request):
     host = request.POST.get('user_name', '')
 
-    html = get_html('http://www.todayonhistory.com')
-    result = get_data_history(html)
+    url = 'http://www.todayonhistory.com'
+    today = datetime.datetime.today()
+    url_today = url + ',' + str(today.year) + '-' + str(today.month) + '-' + str(today.day)
+
+    if cache.has_key(url_today):
+        result_str = cache.get(url_today)
+        result = json.loads(result_str)
+    else:
+        html = get_html(url)
+        result = get_data_history(html)
+        cache.set(url_today, json.dumps(result), 3600*24)     #有效期一天
 
     ret = {
         'stat': 'success',
