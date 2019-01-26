@@ -62,7 +62,6 @@ def login(request):
                 'permitSearch': permitSearch,
                 'login_time': login_time,
                 'news_hall': 0,
-                'news_bottle': 0,
                 'news_contacts': news_contacts,
                 'news_contacts_base': news_contacts_base,
             },

@@ -22,6 +22,8 @@ from useradmin import write as useradmin_write
 from useradmin import news as useradmin_news
 from useradmin import chats as useradmin_chats
 
+from useradmin import common as useradmin_common
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),                                       #管理员页面
 
@@ -58,5 +60,10 @@ urlpatterns = [
     url(r'read_newChat', useradmin_chats.user_readNewChat),
 
     # ----------testpost 调试
-    url(r'testpost', useradmin_chats.testpost),
+    # url(r'testpost', useradmin_chats.testpost),
+    # url(r'testpost', useradmin_common.testpost),
+
+    url(r'getCalendar', useradmin_common.getCalendar),
+    url(r'getWeather', useradmin_common.getWeather),
+    url(r'getHistory', useradmin_common.getHistory),
 ]

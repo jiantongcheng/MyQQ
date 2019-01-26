@@ -27,9 +27,9 @@
             <li><a @click="init_contacts()" href="#contacts" data-toggle="tab">
                 <span id="news_contacts" style="background-color:orange" class="badge pull-right"></span>
                 联系人&nbsp;</a></li>
-            <li><a href="#bottle" data-toggle="tab">
+            <!--<li><a href="#bottle" data-toggle="tab">
                 <span id="news_bottle" style="background-color:orange" class="badge pull-right"></span>
-                漂流瓶&nbsp;</a></li>
+                漂流瓶&nbsp;</a></li>-->
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">我的<b class="caret"></b></a>
                 <ul class="dropdown-menu">
@@ -49,14 +49,14 @@
 <!--上面为导航栏，下面为内容-->
 <div class="tab-content">
     <div class="tab-pane fade in active" id="hall">
-        <p>Hall</p>
+        {% include 'home_hall.html' %}
     </div>
     <div class="tab-pane fade" id="contacts">
         {% include 'home_contacts.html' %}
     </div>
-    <div class="tab-pane fade" id="bottle">
+    <!--<div class="tab-pane fade" id="bottle">
         <p>bottle</p>
-    </div>
+    </div>-->
     <div class="tab-pane fade" id="modify_base">
         {% include 'home_modifyBase.html' %}
     </div>
@@ -563,29 +563,212 @@ function refresh_news_badge()       //刷新表示新消息的徽章badge
         $('#news_contacts').hide();
 }
 
+function change_calendar(cmd)
+{
+    if(cmd == 'now'){
+        getCalendar()
+    }
+    else if(cmd == 'prev'){
+        if(g_calendar.year > 1970 || (g_calendar.year == 1970) && (g_calendar.month > 1) )
+        {
+            if(g_calendar.month > 1){
+                month = Number(g_calendar.month) - 1;
+                year = g_calendar.year;
+            }
+            else{
+                year = Number(g_calendar.year) - 1;
+                month = 12;
+            }
+            
+            getCalendar_assign(year, month);
+        }
+        
+    }
+    else if(cmd == 'next'){
+        if(g_calendar.year < 2100){
+            if(g_calendar.month < 12){
+                year = g_calendar.year;
+                month = Number(g_calendar.month) + 1;
+            }
+            else{
+                year = Number(g_calendar.year) + 1;
+                month = 1;
+            }
+        }
+
+        getCalendar_assign(year, month);
+    }
+}
+
+function getCalendar_assign(year, month)
+{
+    $.post("getCalendar", 
+    {
+        user_name: g_user_name,
+        type: 1,    //0表示获取当月的日历，1表示指定年月的日历
+        year: year,
+        month: month,
+    },
+    function(data){
+        // alert(data);    //约定格式....asdf
+        var obj = JSON.parse(data);
+        if(obj.stat == 'success')
+        {
+            cal_rows = obj.cal_table.split("\n");
+            $('#calendar_head').html(obj.year+"年"+obj.month+"月");
+            g_calendar.year = obj.year;
+            g_calendar.month = obj.month;
+
+            $('#calendar_body').empty();
+            var body = "";
+            if(cal_rows.length > 2){
+                body = "<div>一&nbsp;&nbsp;&nbsp;二&nbsp;&nbsp;&nbsp;三&nbsp;&nbsp;&nbsp;四&nbsp;&nbsp;&nbsp;五&nbsp;&nbsp;&nbsp;六&nbsp;&nbsp;&nbsp;日</div>";
+                $('#calendar_body').append(body);
+
+                for(var i=2;i<(cal_rows.length-1);i++)
+                {
+                    days = $.trim(cal_rows[i]).split(/\s+/);
+                    if(i == 2){     //第一行，
+                        body = "<div>";
+                        for(var j=0;j<(7-days.length);j++)
+                            body += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                        for(var j=0;j<days.length;j++)
+                            body += "&nbsp;&nbsp;&nbsp;" + days[j] + "&nbsp;";
+                        body += "</div>";
+                        $('#calendar_body').append(body);
+                    }
+                    else{
+                        body = "<div>";
+                        for(var j=0;j<days.length;j++){
+                            if(days[j].length == 1)
+                                body += "&nbsp;&nbsp;&nbsp;" + days[j] + "&nbsp;";
+                            else
+                                body += "&nbsp;" + days[j] + "&nbsp;";
+                        }
+                        body += "</div>";
+                        $('#calendar_body').append(body);
+                    }
+                }
+            }
+
+        }
+        else{
+            alert("something error@getCalendar back");
+        }
+    });
+}
+
+function getCalendar()
+{
+    $.post("getCalendar", 
+    {
+        user_name: g_user_name,
+        type: 0,    //0表示获取当月的日历，1表示指定年月的日历
+    },
+    function(data){
+        // alert(data);    //约定格式....asdf
+        var obj = JSON.parse(data);
+        if(obj.stat == 'success')
+        {
+            cal_rows = obj.cal_table.split("\n");
+            $('#calendar_head').html(obj.year+"年"+obj.month+"月");
+            g_calendar.year = obj.year;
+            g_calendar.month = obj.month;
+            today = obj.day
+
+            $('#calendar_body').empty();
+            var body = "";
+            if(cal_rows.length > 2){
+                body = "<div>一&nbsp;&nbsp;&nbsp;二&nbsp;&nbsp;&nbsp;三&nbsp;&nbsp;&nbsp;四&nbsp;&nbsp;&nbsp;五&nbsp;&nbsp;&nbsp;六&nbsp;&nbsp;&nbsp;日</div>";
+                $('#calendar_body').append(body);
+
+                for(var i=2;i<(cal_rows.length-1);i++)
+                {
+                    days = $.trim(cal_rows[i]).split(/\s+/);
+                    if(i == 2){     //第一行，
+                        body = "<div>";
+                        for(var j=0;j<(7-days.length);j++)
+                            body += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                        for(var j=0;j<days.length;j++){
+                            if(days[j] == today)
+                                body += "&nbsp;&nbsp;&nbsp;<font color='red'>" + days[j] + "</font>&nbsp;";
+                            else
+                                body += "&nbsp;&nbsp;&nbsp;" + days[j] + "&nbsp;";
+                        }
+                        body += "</div>";
+                        $('#calendar_body').append(body);
+                    }
+                    else{
+                        body = "<div>";
+                        for(var j=0;j<days.length;j++){
+                            if(days[j].length == 1){
+                                if(days[j] == today)
+                                    body += "&nbsp;&nbsp;&nbsp;<font color='red'>" + days[j] + "</font>&nbsp;";
+                                else
+                                    body += "&nbsp;&nbsp;&nbsp;" + days[j] + "&nbsp;";
+                            }
+                            else{
+                                if(days[j] == today)
+                                    body += "&nbsp;<font color='red'>" + days[j] + "</font>&nbsp;";
+                                else
+                                    body += "&nbsp;" + days[j] + "&nbsp;";
+                            }
+                        }
+                        body += "</div>";
+                        $('#calendar_body').append(body);
+                    }
+                }
+            }
+
+        }
+        else{
+            alert("something error@getCalendar back");
+        }
+    });
+}
+
 function test_post()
 {   
-    $('#inform_div').fadeToggle("slow");
-
-    // $.post("testpost", 
-    //     {
-    //         host: g_user_name,
-    //     },
-    //     function(data){
-    //         alert(data);    //约定格式....
-    //         var obj = JSON.parse(data);
-    //         if(obj.stat == 'success')
-    //         {
-
-    //         }
-    //         else{
-    //             alert("something error@testpost back");
-    //         }
-    //     });
+    $.post("testpost", 
+        {
+            host: g_user_name,
+        },
+        function(data){
+            // alert(data);    //约定格式....
+            
+            var obj = JSON.parse(data);
+            if(obj.stat == 'success')
+            {
+                for(i=0;i<obj.days.length;i++)
+                {
+                    $('#weather_body_'+i).find('div.weather_date').html(obj.days[i][0]);
+                    $('#weather_body_'+i).find('div.weather_desc').html(obj.days[i][1]);
+                    if(obj.days[i][2])
+                        $('#weather_body_'+i).find('div.weather_temp').html(obj.days[i][3] + " ~ " + obj.days[i][2] + "度");
+                    else
+                        $('#weather_body_'+i).find('div.weather_temp').html(obj.days[i][3]  + "度");
+                }
+            }
+            else{
+                alert("something error@testpost back");
+            }
+        });
 }
 
 var g_user_name = '{{user.name}}';      //记得加引号哦
 var ret_login = 0;
+
+var g_calendar = 
+{
+    year: 0,
+    month: 0,
+}
+
+var g_weather = 
+{
+    city: 'A',
+
+}
 
 var g_obj_contacts =        //联系人相关标志
 {
@@ -640,6 +823,84 @@ var g_obj_user =            //用户基本信息
     permitSearch: '{{user.permitSearch}}',
     permitAdd_will: 0,
     permitSearch_will: 0,
+}
+
+function weather_get_byCity(city)
+{
+    var city_num = '';
+
+    switch(city) 
+    {
+        case 'A': city_num = '101210101';
+            break;
+        case 'B': city_num = '101210401'; 
+            break;
+        case 'C':city_num = '101210701'; 
+            break;
+        case 'D':city_num = '101210501'; 
+            break;
+        case 'E':city_num = '101210201'; 
+            break;
+        case 'F':city_num = '101210301'; 
+            break;
+        case 'G':city_num = '101210901'; 
+            break;
+        case 'H':city_num = '101211001'; 
+            break;
+        case 'J':city_num = '101210601'; 
+            break;
+        case 'K':city_num = '101210801'; 
+            break;
+        case 'L':city_num = '101211101'; 
+            break;
+        default: break;
+    }
+
+    url_weather = 'http://www.weather.com.cn/weather/'+ city_num +'.shtml';
+
+    $('.weather_body').hide();
+    $('.weather_hint').show();
+
+    $.post("getWeather", 
+        {
+            user_name: g_user_name,
+            url: url_weather
+        },
+        function(data){
+            // alert(data);    //约定格式....
+            
+            var obj = JSON.parse(data);
+            if(obj.stat == 'success')
+            {
+                $('.weather_hint').hide();
+                for(i=0;i<obj.days.length;i++)
+                {
+                    $('#weather_body_'+i).find('div.weather_date').html(obj.days[i][0]);
+                    $('#weather_body_'+i).find('div.weather_desc').html(obj.days[i][1]);
+                    if(obj.days[i][2])
+                        $('#weather_body_'+i).find('div.weather_temp').html(obj.days[i][3] + " ~ " + obj.days[i][2] + "度");
+                    else
+                        $('#weather_body_'+i).find('div.weather_temp').html(obj.days[i][3]  + "度");
+
+                    $('#weather_body_'+i).show();
+                }
+            }
+            else{
+                alert("something error@testpost back");
+            }
+        });
+}
+
+function weather_get(event)
+{
+    obj = event.currentTarget;
+    city = $(obj).val();
+    if(city == g_weather.city)
+        return;
+
+    g_weather.city = city;
+
+    weather_get_byCity(city);
 }
 
 function show_chat(event)
@@ -931,10 +1192,48 @@ function check_news()
     }
 }
 
+function history_today()
+{
+
+    $('#today_history_hint').show();
+    $('#today_history_content').hide();
+
+    $('#today_history').modal('show');
+
+    $.post("getHistory", 
+        {
+            user_name: g_user_name,
+        },
+        function(data){
+            // alert(data);    //约定格式....
+            var obj = JSON.parse(data);
+            // alert(obj.history.length);
+            if(obj.stat == 'success')
+            {
+                $('#today_history_hint').hide();
+                $('#today_history_content').empty();
+                var txt = "";
+                for(var i=0;i<obj.history.length;i++)
+                {
+                    txt += obj.history[i].date + "  " + obj.history[i].incident + "<br />";
+                }
+
+                $('#today_history_content').append(txt);
+                $('#today_history_content').show();
+            }
+            else{
+                alert("something error@getHistory back");
+            }
+        });
+}
+
 $(function () {         //页面加载事件
 
     refresh_news_badge();
     setInterval(check_news, g_heart.heart_cycle*1000);    
+
+    getCalendar();
+    weather_get_byCity(g_weather.city);
 
     //---------------------------------------------------
     $('#myEmailVerify').on('show.bs.modal', function () {
