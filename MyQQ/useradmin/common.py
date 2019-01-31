@@ -107,7 +107,7 @@ def get_data_history(html_txt):
     # return HttpResponse(json.dumps(ret))
 
 def getWeather(request):
-    host = request.POST.get('user_name', '')    #后续需要判断该用户是否有效以及是否在线
+    host = request.session.get('username', None)
     url = request.POST.get('url', '')
     today = datetime.datetime.today()
     url_today = url + ',' + str(today.year) + '-' + str(today.month) + '-' + str(today.day)
@@ -133,7 +133,7 @@ def getWeather(request):
     return HttpResponse(json.dumps(ret))
 
 def getHistory(request):
-    host = request.POST.get('user_name', '')
+    host = request.session.get('username', None)
 
     url = 'http://www.todayonhistory.com'
     today = datetime.datetime.today()
@@ -155,7 +155,8 @@ def getHistory(request):
     return HttpResponse(json.dumps(ret))
 
 def getCalendar(request):
-    host = request.POST.get('user_name', '')    #后续需要判断该用户是否有效以及是否在线
+    host = request.session.get('username', None)   
+    print "----Get calendar"
     calType = request.POST.get('type', '')
     if calType == '0':                  #查看当天所在的日历
         today = datetime.datetime.today()

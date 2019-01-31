@@ -801,10 +801,12 @@ var g_chat =
 
 var g_heart =     
 {
+    handle: null,         //句柄
     heart_cycle: 5,       //5秒执行一次，在聊天时可以缩短为2秒
     heart_cycle_fast: 2,    //适合实时聊天
-    quiet_keep_max: (10*60)/5,     //10分钟保持安静，就停止发心跳
-    quiet_keep_cnt: (10*60)/5,     //每次心跳减1
+    //修改策略，不使用下面两个变量
+    // quiet_keep_max: (10*60)/5,     //10分钟保持安静，就停止发心跳
+    // quiet_keep_cnt: (10*60)/5,     //每次心跳减1
 
 }
 
@@ -992,204 +994,211 @@ function show_chat(event)
 **************************************************************************/
 function check_news()
 {
-    if(g_heart.quiet_keep_cnt > 0){
-        g_heart.quiet_keep_cnt -= 1;
-        $.post("check_news", 
-            { user_name: g_user_name},
-            function(data){     
-                // alert(data);    //约定格式....
-                var obj = JSON.parse(data);
-                if(obj.stat == "success"){
-                    if((obj.news_contacts != g_news.new_contacts) || (obj.news_contacts_base != g_news.new_contacts_base)){
-                        g_news.new_contacts = obj.news_contacts;
-                        g_news.new_contacts_base = obj.news_contacts_base;
-                        // if(g_user_name == "asdfasdf")
-                        //     alert(g_news.new_contacts + " " + g_news.new_contacts_base);
-                        refresh_news_badge();       //刷新徽章
-                    }
+    // if(g_heart.quiet_keep_cnt > 0){
+    //     g_heart.quiet_keep_cnt -= 1;
+    $.post("check_news", 
+        { user_name: g_user_name},
+        function(data){     
+            // alert(data);    //约定格式....
+            var obj = JSON.parse(data);
+            if(obj.stat == "success"){
+                if((obj.news_contacts != g_news.new_contacts) || (obj.news_contacts_base != g_news.new_contacts_base)){
+                    g_news.new_contacts = obj.news_contacts;
+                    g_news.new_contacts_base = obj.news_contacts_base;
+                    // if(g_user_name == "asdfasdf")
+                    //     alert(g_news.new_contacts + " " + g_news.new_contacts_base);
+                    refresh_news_badge();       //刷新徽章
+                }
 
-                    if(obj.news_contacts_status > 0){   //发现有状态变化
+                if(obj.news_contacts_status > 0){   //发现有状态变化
 
-                        $.post("check_status",
-                            {user_name: g_user_name},
-                            function(data){
-                                // alert(data);
-                                var obj = JSON.parse(data);
-                                if(obj.stat == "success"){
-                                    if(obj.cnt > 0){
-                                        if(!g_news.inform_handle)   //说明需要重新显示新通知
-                                            $('#inform_text').empty();
+                    $.post("check_status",
+                        {user_name: g_user_name},
+                        function(data){
+                            // alert(data);
+                            var obj = JSON.parse(data);
+                            if(obj.stat == "success"){
+                                if(obj.cnt > 0){
+                                    if(!g_news.inform_handle)   //说明需要重新显示新通知
+                                        $('#inform_text').empty();
 
-                                        for(var i=0;i<obj.cnt;i++){
-                                            var name = obj.status_list[i].name;
-                                            var status = obj.status_list[i].status;
-                                            var status_str = "";
-                                            var color = "";
-                                            switch(status)
-                                            {
-                                                case 0:
-                                                    status_str = "离线";
-                                                    color = "lightsteelblue";
-                                                    break;
-                                                case 1:
-                                                    status_str = "上线";
-                                                    color = "lightskyblue";
-                                                    break;
-                                                case 2:
-                                                    status_str = "离开";
-                                                    color = "aquamarine";
-                                                    break;
+                                    for(var i=0;i<obj.cnt;i++){
+                                        var name = obj.status_list[i].name;
+                                        var status = obj.status_list[i].status;
+                                        var status_str = "";
+                                        var color = "";
+                                        switch(status)
+                                        {
+                                            case 0:
+                                                status_str = "离线";
+                                                color = "lightsteelblue";
+                                                break;
+                                            case 1:
+                                                status_str = "上线";
+                                                color = "lightskyblue";
+                                                break;
+                                            case 2:
+                                                status_str = "离开";
+                                                color = "aquamarine";
+                                                break;
+                                        }
+                                        var alert_info = "用户"+name+status_str+"了!<br />"
+                                        $('#inform_text').append(alert_info);
+
+                                        $('tr.tr_'+name).find('td.status').html(status_str);
+                                        $('tr.tr_'+name).css("background-color", color);
+                                    }
+
+                                    if(!g_news.inform_handle){
+                                        $('#inform_div').fadeIn("fast");
+                                        g_news.inform_handle = setTimeout(function(){
+                                                g_news.inform_handle = null;
+                                                $('#inform_div').fadeOut(1500);
+                                            }, 3500);
+                                    }
+                                    else{   //说明之前的通知框还存在，又来了新消息
+                                        clearTimeout(g_news.inform_handle);
+                                        g_news.inform_handle = setTimeout(function(){
+                                                g_news.inform_handle = null;
+                                                $('#inform_div').fadeOut(1500);
+                                            }, 3500);
+                                    }
+                                    
+                                }
+                            }
+                            else if(obj.stat == "fail"){
+                                alert("something error@check_status back");
+                            }
+                    });
+                    
+                }
+
+                if(obj.news_contacts_chat != g_news.new_contacts_chat){     //发现有聊天信息
+                    g_news.new_contacts_chat = obj.news_contacts_chat;
+
+                    if(g_news.new_contacts_chat > 0)
+                        $('#friend_chats').show().html(g_news.new_contacts_chat);
+                    else
+                        $('#friend_chats').hide();
+                    //这时候需要发送查询命令到后台，查询是哪些用户发来了新消息
+                    $.post("check_chats",
+                        {user_name: g_user_name},
+                        function(data){
+                            // alert(data);
+                            var obj = JSON.parse(data);
+                            if(obj.stat == "success"){
+                                if(obj.cnt_users > 0){
+                                    for(var i=0;i<obj.cnt_users;i++){
+                                        var name = obj.chats_list[i].name;
+                                        var cnt = obj.chats_list[i].cnt;
+
+                                        if((g_chat.current_guest != "") && (g_chat.current_guest == name)){
+                                            $.post("read_newChat",
+                                                {
+                                                    host: g_user_name,
+                                                    guest: name
+                                                },
+                                                function(data){
+                                                    // alert(data);
+                                                    var obj = JSON.parse(data);
+                                                    if(obj.stat == "success"){
+
+                                                        var msg_old = "";
+                                                        var time_tmp = '';
+                                                        var day_tmp = '';
+                                                        var sec_tmp = 0;
+
+                                                        for(var i=0;i<obj.count;i++){
+                                                            if(g_chat.new_chat_flag == 0){
+                                                                g_chat.new_chat_flag = 1;
+                                                                msg_old += "<div style='text-align:center'><span style='color: deeppink'>* 新消息 *</span></div>"
+                                                            }
+
+                                                            time_tmp = obj.chats[i].time;
+                                                            var arry = time_tmp.split(" ");
+                                                            day_tmp = arry[0];      //年-月-日
+                                                            var arry_2 = arry[1].split(":");
+                                                            sec_tmp = arry_2[0]*3600 + arry_2[1]*60 + arry_2[2];    //当天秒数
+                                                            if(day_tmp != g_chat.timestamp_1_day || ((sec_tmp-g_chat.timestamp_1_sec) > 60*5)
+                                                                || ((sec_tmp-g_chat.timestamp_2_sec) > (60*2)) ){
+                                                                //不在同一天，或者消息比显示了时间的消息多了5分钟，或者比上一条消息多了2分钟
+                                                                g_chat.timestamp_1_day = day_tmp;
+                                                                g_chat.timestamp_1_sec = sec_tmp;
+                                                                g_chat.timestamp_2_sec = sec_tmp;
+                                                                msg_old += "<div style='text-align:center'><span style='color: deeppink'>* "+ time_tmp +" *</span></div>";
+                                                            }
+                                                            else{
+                                                                g_chat.timestamp_2_sec = sec_tmp;
+                                                            }
+
+                                                            var message = obj.chats[i].message;
+                                                            if(obj.chats[i].type == 1)
+                                                                message = "【自动回复】您好，我现在有事不在，一会再和您联系！";
+
+                                                            msg_old += "<div style='text-align:right; color:blue'>" + message + " &lt;"+ g_chat.current_guest +"&gt;</div>"
+
+                                                            $('#chatDisplay').append(msg_old);
+                                                        }
+
+                                                    }
+                                                    else if(obj.stat == "fail"){
+                                                        alert("something error@read_newChat back");
+                                                    }
+                                            });
+                                            
+                                        }
+                                        else{
+                                            var old = $('#id_contacts_friend').find("tr.tr_"+name).find("span.chat_badge").html();
+                                            if(old == "") old = 0;
+                                            $('#id_contacts_friend').find("tr.tr_"+name).find("span.chat_badge").show().html(cnt);
+                                            if(old != cnt){
+                                                var diff = cnt - old;
+                                                var alert_info = "用户"+name+"发来"+diff+"条新消息!<br />"
+
+                                                if(!g_news.inform_handle)   //说明需要重新显示新通知
+                                                    $('#inform_text').empty();
+                                                $('#inform_text').append(alert_info);
+
+                                                if(!g_news.inform_handle){
+                                                    $('#inform_div').fadeIn("fast");
+                                                    g_news.inform_handle = setTimeout(function(){
+                                                            g_news.inform_handle = null;
+                                                            $('#inform_div').fadeOut(1500);
+                                                        }, 3500);
+                                                }
+                                                else{   //说明之前的通知框还存在，又来了新消息
+                                                    clearTimeout(g_news.inform_handle);
+                                                    g_news.inform_handle = setTimeout(function(){
+                                                            g_news.inform_handle = null;
+                                                            $('#inform_div').fadeOut(1500);
+                                                        }, 3500);
+                                                }
+                                                
                                             }
-                                            var alert_info = "用户"+name+status_str+"了!<br />"
-                                            $('#inform_text').append(alert_info);
-
-                                            $('tr.tr_'+name).find('td.status').html(status_str);
-                                            $('tr.tr_'+name).css("background-color", color);
-                                        }
-
-                                        if(!g_news.inform_handle){
-                                            $('#inform_div').fadeIn("fast");
-                                            g_news.inform_handle = setTimeout(function(){
-                                                    g_news.inform_handle = null;
-                                                    $('#inform_div').fadeOut(1500);
-                                                }, 3500);
-                                        }
-                                        else{   //说明之前的通知框还存在，又来了新消息
-                                            clearTimeout(g_news.inform_handle);
-                                            g_news.inform_handle = setTimeout(function(){
-                                                    g_news.inform_handle = null;
-                                                    $('#inform_div').fadeOut(1500);
-                                                }, 3500);
                                         }
                                         
                                     }
                                 }
-                                else if(obj.stat == "fail"){
-                                    alert("something error@check_status back");
-                                }
+                            }
+                            else if(obj.stat == "fail"){
+                                alert("something error@check_chats back");
+                            }
+
                         });
-                        
-                    }
-
-                    if(obj.news_contacts_chat != g_news.new_contacts_chat){     //发现有聊天信息
-                        g_news.new_contacts_chat = obj.news_contacts_chat;
-
-                        if(g_news.new_contacts_chat > 0)
-                            $('#friend_chats').show().html(g_news.new_contacts_chat);
-                        else
-                            $('#friend_chats').hide();
-                        //这时候需要发送查询命令到后台，查询是哪些用户发来了新消息
-                        $.post("check_chats",
-                            {user_name: g_user_name},
-                            function(data){
-                                // alert(data);
-                                var obj = JSON.parse(data);
-                                if(obj.stat == "success"){
-                                    if(obj.cnt_users > 0){
-                                        for(var i=0;i<obj.cnt_users;i++){
-                                            var name = obj.chats_list[i].name;
-                                            var cnt = obj.chats_list[i].cnt;
-
-                                            if((g_chat.current_guest != "") && (g_chat.current_guest == name)){
-                                                $.post("read_newChat",
-                                                    {
-                                                        host: g_user_name,
-                                                        guest: name
-                                                    },
-                                                    function(data){
-                                                        // alert(data);
-                                                        var obj = JSON.parse(data);
-                                                        if(obj.stat == "success"){
-
-                                                            var msg_old = "";
-                                                            var time_tmp = '';
-                                                            var day_tmp = '';
-                                                            var sec_tmp = 0;
-
-                                                            for(var i=0;i<obj.count;i++){
-                                                                if(g_chat.new_chat_flag == 0){
-                                                                    g_chat.new_chat_flag = 1;
-                                                                    msg_old += "<div style='text-align:center'><span style='color: deeppink'>* 新消息 *</span></div>"
-                                                                }
-
-                                                                time_tmp = obj.chats[i].time;
-                                                                var arry = time_tmp.split(" ");
-                                                                day_tmp = arry[0];      //年-月-日
-                                                                var arry_2 = arry[1].split(":");
-                                                                sec_tmp = arry_2[0]*3600 + arry_2[1]*60 + arry_2[2];    //当天秒数
-                                                                if(day_tmp != g_chat.timestamp_1_day || ((sec_tmp-g_chat.timestamp_1_sec) > 60*5)
-                                                                    || ((sec_tmp-g_chat.timestamp_2_sec) > (60*2)) ){
-                                                                    //不在同一天，或者消息比显示了时间的消息多了5分钟，或者比上一条消息多了2分钟
-                                                                    g_chat.timestamp_1_day = day_tmp;
-                                                                    g_chat.timestamp_1_sec = sec_tmp;
-                                                                    g_chat.timestamp_2_sec = sec_tmp;
-                                                                    msg_old += "<div style='text-align:center'><span style='color: deeppink'>* "+ time_tmp +" *</span></div>";
-                                                                }
-                                                                else{
-                                                                    g_chat.timestamp_2_sec = sec_tmp;
-                                                                }
-
-                                                                var message = obj.chats[i].message;
-                                                                if(obj.chats[i].type == 1)
-                                                                    message = "【自动回复】您好，我现在有事不在，一会再和您联系！";
-
-                                                                msg_old += "<div style='text-align:right; color:blue'>" + message + " &lt;"+ g_chat.current_guest +"&gt;</div>"
-
-                                                                $('#chatDisplay').append(msg_old);
-                                                            }
-
-                                                        }
-                                                        else if(obj.stat == "fail"){
-                                                            alert("something error@read_newChat back");
-                                                        }
-                                                });
-                                                
-                                            }
-                                            else{
-                                                var old = $('#id_contacts_friend').find("tr.tr_"+name).find("span.chat_badge").html();
-                                                if(old == "") old = 0;
-                                                $('#id_contacts_friend').find("tr.tr_"+name).find("span.chat_badge").show().html(cnt);
-                                                if(old != cnt){
-                                                    var diff = cnt - old;
-                                                    var alert_info = "用户"+name+"发来"+diff+"条新消息!<br />"
-
-                                                    if(!g_news.inform_handle)   //说明需要重新显示新通知
-                                                        $('#inform_text').empty();
-                                                    $('#inform_text').append(alert_info);
-
-                                                    if(!g_news.inform_handle){
-                                                        $('#inform_div').fadeIn("fast");
-                                                        g_news.inform_handle = setTimeout(function(){
-                                                                g_news.inform_handle = null;
-                                                                $('#inform_div').fadeOut(1500);
-                                                            }, 3500);
-                                                    }
-                                                    else{   //说明之前的通知框还存在，又来了新消息
-                                                        clearTimeout(g_news.inform_handle);
-                                                        g_news.inform_handle = setTimeout(function(){
-                                                                g_news.inform_handle = null;
-                                                                $('#inform_div').fadeOut(1500);
-                                                            }, 3500);
-                                                    }
-                                                    
-                                                }
-                                            }
-                                            
-                                        }
-                                    }
-                                }
-                                else if(obj.stat == "fail"){
-                                    alert("something error@check_chats back");
-                                }
-
-                            });
-                    }
                 }
-                else if(obj.stat == "fail"){
+            }
+            else if(obj.stat == "fail"){
+                if(obj.reason == 'SESSION_INVALID'){
+                    clearInterval(g_heart.handle);
+                    alert("因为您长时间没有操作页面，请重新登录^_^");
+                    window.location.href = "login";
+                }
+                else
                     alert("something error@check_news back");
-                }
-            });
-    }
+            }
+
+        });
+    // }
 }
 
 function history_today()
@@ -1230,7 +1239,7 @@ function history_today()
 $(function () {         //页面加载事件
 
     refresh_news_badge();
-    setInterval(check_news, g_heart.heart_cycle*1000);    
+    g_heart.handle = setInterval(check_news, g_heart.heart_cycle*1000);    
 
     getCalendar();
     weather_get_byCity(g_weather.city);

@@ -23,7 +23,7 @@ def insert_user_news_classtype2(host, action, guest):
 
 def user_setting(request):
     if request.method == 'POST':
-        user_name = request.POST.get('user_name', '')
+        user_name = request.session.get('username', None)
         try:
             obj = userAdmin.objects.get(user_name=user_name)
         except userAdmin.DoesNotExist:

@@ -50,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'useradmin.middleware.WolfMiddleware',
 ]
 
 ROOT_URLCONF = 'MyQQ.urls'
@@ -146,7 +147,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-SESSION_COOKIE_AGE = 15
+SESSION_COOKIE_AGE = 60     #这是全局设置
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 

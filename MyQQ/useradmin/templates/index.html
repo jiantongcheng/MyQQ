@@ -508,7 +508,7 @@ var vm_register = new Vue({
             }
             //2. 本地不存在的情况下才去向后台查询
             if(exist == 0){
-                $.post("/register/check_user_name", { user_name: user_name},
+                $.post("/register/check", { user_name: user_name},
                 function(data){     //后续data需要改成json格式
                     // alert(data);         //约定格式，userName:Exist./NotExist.
                     arry = data.split(":");

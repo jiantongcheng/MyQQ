@@ -168,7 +168,7 @@ def insert_user_news_classtype0(host, action, guest):
 
 def user_deleteNew(request):
     if request.method == 'POST':
-        host = request.POST.get('user_name', '')
+        host = request.session.get('username', None)
         newsId = request.POST.get('id', '')
         hostClass = get_user_news(host)
         news_obj, exist = hostClass.objects.get_or_create(id=newsId)
@@ -201,7 +201,7 @@ def user_compromise(request):
 
 def user_responseNew(request):
     if request.method == 'POST':
-        host = request.POST.get('user_name', '')
+        host = request.session.get('username', None)
         newsId = request.POST.get('id', '')
         hostClass = get_user_news(host)
         news_obj, exist = hostClass.objects.get_or_create(id=newsId)
@@ -246,7 +246,7 @@ def user_responseNew(request):
 
 def user_readNewsByClasstype0(request):
     if request.method == 'POST':
-        host = request.POST.get('user_name', '')
+        host = request.session.get('username', None)
         hostClass = get_user_news(host)
         news_objs = hostClass.objects.filter(classtype=0)
         news_count = news_objs.count()

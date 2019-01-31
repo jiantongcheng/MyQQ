@@ -12,7 +12,7 @@ import json
 
 def searchContacts(request):
     if request.method == 'POST':
-        user_name = request.POST.get('user_name', '')
+        user_name = request.session.get('username', None)
         try:
             obj = userAdmin.objects.get(user_name=user_name)
         except userAdmin.DoesNotExist:
@@ -79,7 +79,7 @@ def searchContacts(request):
 
 def readContacts(request):
     if request.method == 'POST':
-        user_name = request.POST.get('user_name', '')
+        user_name = request.session.get('username', None)
         try:
             obj = userAdmin.objects.get(user_name=user_name)
         except userAdmin.DoesNotExist:
