@@ -113,24 +113,31 @@ def return_login(request):
         }
     return render(request, 'index.html', my_dict)       #进入登陆页面
 
+#下线清理，包括session和数据库
+def offline_clean(request):
+    userName = request.session.get('username', None)
+    # if userName != None:    #因为加了拦截器，这里不再判断，程序简洁！
+    request.session.flush()     #清空session
+    ret, obj = user_valid(userName)
+    if ret:
+        obj.user_status = 0     #offline
+        obj.save()              #记得save
+        #通知小伙伴们，我下线了
+        hostClass = get_user_contacts(userName)
+        guestObjs = hostClass.objects.exclude(status=0)  #排除离线的家伙们
+        for guest in guestObjs:
+            guest_name = guest.name
+            insert_user_news_classtype2(guest_name, 0, userName)
+        return True
+    else:
+        return False
+
 #注销操作
 def logout(request):
     if request.method == 'POST':
-        userName = request.session.get('username', None)
-        # if userName != None:    #因为加了拦截器，这里不再判断，程序简洁！
-        request.session.flush()     #清空session
         print "---Logout---"
-        hint = "None_None"
-        ret, obj = user_valid(userName)
-        if ret:
-            obj.user_status = 0     #offline
-            obj.save()              #记得save
-            #通知小伙伴们，我下线了
-            hostClass = get_user_contacts(userName)
-            guestObjs = hostClass.objects.exclude(status=0)  #排除离线的家伙们
-            for guest in guestObjs:
-                guest_name = guest.name
-                insert_user_news_classtype2(guest_name, 0, userName)
+        if offline_clean(request):
+            hint = "None_None"
         else:
             hint = "退出登录失败!"
 
