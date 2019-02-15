@@ -25,7 +25,7 @@ class WolfMiddleware(MiddlewareMixin):
                 if request.session.get('username', None):
                     curr_tm = int(time.time())
                     request.session['timesec'] = curr_tm
-                    request.session.set_expiry(60)              #600
+                    request.session.set_expiry(600)              #600
                     pass
                 else:
                     print "SESSION_INVALID"
@@ -43,7 +43,7 @@ class WolfMiddleware(MiddlewareMixin):
                     last_tm = request.session.get('timesec', None)
                     if last_tm:
                         span_tm = curr_tm - last_tm
-                        if span_tm >= (60-15):   #小于session期限15秒左右
+                        if span_tm >= (600-15):   #小于session期限15秒左右
                             print '---------over'
                             offline_clean(request)
                             pass_flag = 0

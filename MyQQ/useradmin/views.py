@@ -80,7 +80,7 @@ def login(request):
         if first_login == 1:
             obj.login_time = datetime.datetime.now()    #记住这次的登录时间
             obj.user_status = 1     #online
-            obj.status_heart = 2    #打算数据库周期事件定为30秒，所以心跳没了之后1分钟左右视为超时
+            # obj.status_heart = 2    #打算数据库周期事件定为30秒，所以心跳没了之后1分钟左右视为超时
             obj.save()              #记得save
             #通知小伙伴们，我上线了
             hostClass = get_user_contacts(userName)

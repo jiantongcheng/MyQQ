@@ -45,8 +45,8 @@ def user_checkNews(request):
                 'reason': 'host is not exist',
             }
         else:
-            host_obj.status_heart = 2       #更新心跳初始值
-            host_obj.save()
+            # host_obj.status_heart = 2       #更新心跳初始值
+            # host_obj.save()
 
             news_contacts, news_contacts_base, news_contacts_status, news_contacts_chat = news_contacts_new_count(host, 0)
 

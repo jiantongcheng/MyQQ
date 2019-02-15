@@ -28,8 +28,9 @@ class userAdmin(models.Model):
     user_sign = models.IntegerField(default=0)                  #星座
     user_gender = models.IntegerField(default=3)                #性别，1 男 2 女 3 保密
     user_status = models.IntegerField(default=0)                #状态，0:offline, 1:online, 2:leave
-    status_heart = models.IntegerField(default=1)       
+    # status_heart = models.IntegerField(default=1)       
     #登陆之后被赋予某个值，每次心跳到来也赋相同的值，mysql数据库周期事件每次减一，减到零后将user_status置为0   
+    #有了handle_time之后，也许就不需要status_heart字段了
 
     register_time = models.DateTimeField(auto_now=False, auto_now_add=True) #注册时间
     login_time = models.DateTimeField(auto_now=False, auto_now_add=False, default = timezone.now)   #登陆时间
