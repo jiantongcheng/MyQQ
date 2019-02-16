@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+动态创建数据库表
+"""
 
 from useradmin.models import user_contacts, user_news, user_chats
 

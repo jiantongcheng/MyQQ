@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+联系人聊天相关
+"""
 from __future__ import unicode_literals
 
 from django.shortcuts import render
@@ -12,6 +15,10 @@ import json
 # Create your views here.
 
 def insert_chat(host, guest, io, in_status, chat_type, message):
+    '''
+    类型：工具
+    对方有新消息
+    '''
     chatHostClass = get_user_chats(host)
     newChatObj = chatHostClass()
     newChatObj.name = guest
@@ -25,6 +32,10 @@ def insert_chat(host, guest, io, in_status, chat_type, message):
     newChatObj.save()
 
 def user_checkChats(request):
+    '''
+    类型：接口
+    检查新聊天消息
+    '''
     host = request.POST.get('user_name', '')
     chatHostClass = get_user_chats(host)
     objs = chatHostClass.objects.filter(in_status=0).values('name')
@@ -64,6 +75,10 @@ def user_checkChats(request):
 
     
 def testpost(request):
+    '''
+    类型：接口
+    保留测试用
+    '''
     host = request.POST.get('host', '')
     chatHostClass = get_user_chats(host)
 
@@ -98,6 +113,10 @@ def testpost(request):
     return HttpResponse(json.dumps(ret))
 
 def user_chatSend(request):
+    '''
+    类型：接口
+    发送聊天消息
+    '''
     if request.method == 'POST':
         host = request.POST.get('host', '')
         guest = request.POST.get('guest', '')
@@ -128,6 +147,10 @@ def user_chatSend(request):
         return HttpResponse(json.dumps(ret))
 
 def user_chatClear(request):
+    '''
+    类型：接口
+    清空聊天消息
+    '''
     if request.method == 'POST':
         host = request.POST.get('host', '')
         guest = request.POST.get('guest', '')
@@ -142,6 +165,10 @@ def user_chatClear(request):
         return HttpResponse(json.dumps(ret))
 
 def user_readNewChat(request):
+    '''
+    类型：接口
+    读取新聊天消息
+    '''
     host = request.POST.get('host', '')
     guest = request.POST.get('guest', '')
     chatHostClass = get_user_chats(host)
@@ -177,6 +204,10 @@ def user_readNewChat(request):
 
         
 def user_readChats(request):
+    '''
+    类型：接口
+    读取聊天记录
+    '''
     if request.method == 'POST':
         host = request.POST.get('host', '')
         guest = request.POST.get('guest', '')

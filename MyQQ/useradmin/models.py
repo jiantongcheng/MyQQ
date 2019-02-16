@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+模型，对应数据库
+"""
 from __future__ import unicode_literals
 
 from django.db import models
@@ -6,7 +9,10 @@ import django.utils.timezone as timezone
 
 # Create your models here.
 
-class userAdminManager(models.Manager):       #自定义管理器
+class userAdminManager(models.Manager):       
+    '''
+    自定义管理器
+    '''
     def email_used(self, email):
         cnt = self.filter(user_email__exact=email).count()
         if cnt > 0:
@@ -17,8 +23,10 @@ class userAdminManager(models.Manager):       #自定义管理器
 # class userContactsManager(models.Manager):
     
 
-#用户基本资料
 class userAdmin(models.Model):
+    '''
+    用户基本资料
+    '''
     user_name = models.CharField('aa', unique=True, max_length=32)           #用户名
 
     user_nickname = models.CharField('bb', max_length=32)       #昵称
@@ -52,8 +60,10 @@ class userAdmin(models.Model):
     def __unicode__(self):
             return self.user_name
 
-#抽象类，联系人列表
 class user_contacts(models.Model):
+    '''
+    抽象类，联系人列表
+    '''
     name = models.CharField('username', unique=True, max_length=32)         #用户名唯一
     relation = models.IntegerField(default=0)   #0:friend, 1:stranger
     status = models.IntegerField(default=0)     #0:offline, 1:online, 2:leave
@@ -68,8 +78,10 @@ class user_contacts(models.Model):
         abstract = True
         ordering=['relation','status','remark', 'nickname']     #排序
 
-#抽象类，聊天
 class user_chats(models.Model):
+    '''
+    抽象类，聊天
+    '''
     name = models.CharField('username', max_length=32)      #聊天对象
     io = models.IntegerField(default=0)     #方向,0表示out, 1表示in
     chat_time = models.DateTimeField(auto_now=False, auto_now_add=True) #时间
@@ -81,8 +93,10 @@ class user_chats(models.Model):
         abstract = True
         ordering=['name','chat_time']     #排序
 
-#抽象类，信息
 class user_news(models.Model):
+    '''
+    抽象类，信息
+    '''
     news_time = models.DateTimeField(auto_now=False, auto_now_add=True) #时间
     classtype = models.IntegerField(default=0) 
     #class和type都是关键字，所以用classtype表示信息的类型

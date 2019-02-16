@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+修改用户设置或状态
+"""
 from __future__ import unicode_literals
 
 from django.shortcuts import render
@@ -11,6 +14,10 @@ import json
 # Create your views here.
 
 def insert_user_news_classtype2(host, action, guest):
+    '''
+    类型：工具
+    通知我的非离线的联系人，我的状态改变了
+    '''
     hostClass = get_user_news(host)
     host_news = hostClass()
     # host_news.status  不重要
@@ -22,6 +29,10 @@ def insert_user_news_classtype2(host, action, guest):
     return True
 
 def user_setting(request):
+    '''
+    类型：接口
+    修改用户设置或状态
+    '''
     if request.method == 'POST':
         user_name = request.session.get('username', None)
         try:

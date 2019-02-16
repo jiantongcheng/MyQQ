@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+读取、搜索联系人
+"""
 from __future__ import unicode_literals
 
 from django.shortcuts import render
@@ -11,6 +14,9 @@ import json
 # Create your views here.
 
 def searchContacts(request):
+    '''
+    搜索联系人
+    '''
     if request.method == 'POST':
         user_name = request.session.get('username', None)
         try:
@@ -78,6 +84,9 @@ def searchContacts(request):
                 return HttpResponse(json.dumps(ret))
 
 def readContacts(request):
+    '''
+    读取联系人列表
+    '''
     if request.method == 'POST':
         user_name = request.session.get('username', None)
         try:

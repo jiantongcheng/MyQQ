@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*- 
+"""
+中间件，主要用于session和心跳处理，也做为拦截器
+"""
 from django.shortcuts import render, HttpResponse, redirect, HttpResponseRedirect
 from views import offline_clean
 import json, time

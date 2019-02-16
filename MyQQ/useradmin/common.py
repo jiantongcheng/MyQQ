@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+"""
+大厅相关业务
+包括：读取日历、查看天气、获取历史上的今天等功能
+"""
 from __future__ import unicode_literals
 
 from django.shortcuts import render
@@ -20,6 +24,7 @@ from django.core.cache import cache
 # 本函数截取自网络，似乎具有通用性
 def get_html(url,data=None):
     """
+    类型：工具
     模拟浏览器来获取网页的html代码
     """
     header={
@@ -53,8 +58,11 @@ def get_html(url,data=None):
 
     return rep.text
 
-# 本函数截取自网络
 def get_data_weather(html_txt):
+    """
+    类型：工具
+    本函数截取自网络，获取天气信息
+    """
     final=[]
     bs=BeautifulSoup(html_txt,"html.parser")   #创建BeautifulSoup对象
     body=bs.body   #获取body部分
@@ -82,6 +90,10 @@ def get_data_weather(html_txt):
     return final
 
 def get_data_history(html_txt):
+    """
+    类型：工具
+    获取历史上的今天信息
+    """
     final=[]
     bs=BeautifulSoup(html_txt,"html.parser")   #创建BeautifulSoup对象
     body=bs.body   #获取body部分
@@ -107,6 +119,10 @@ def get_data_history(html_txt):
     # return HttpResponse(json.dumps(ret))
 
 def getWeather(request):
+    """
+    类型：接口
+    获取天气信息
+    """
     host = request.session.get('username', None)
     url = request.POST.get('url', '')
     today = datetime.datetime.today()
@@ -133,6 +149,10 @@ def getWeather(request):
     return HttpResponse(json.dumps(ret))
 
 def getHistory(request):
+    """
+    类型：接口
+    获取历史上的今天
+    """
     host = request.session.get('username', None)
 
     url = 'http://www.todayonhistory.com'
@@ -155,6 +175,10 @@ def getHistory(request):
     return HttpResponse(json.dumps(ret))
 
 def getCalendar(request):
+    """
+    类型：接口
+    获取日历
+    """
     host = request.session.get('username', None)   
     print "----Get calendar"
     calType = request.POST.get('type', '')

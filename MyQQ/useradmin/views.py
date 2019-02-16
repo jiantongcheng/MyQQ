@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+"""
+基础操作
+包括如下：
+登陆、注销、注册、用户名检测、忘记密码、新增密码、读取/修改基本资料、修改密码、邮箱验证等功能
+"""
 from __future__ import unicode_literals
 
 from django.shortcuts import render
@@ -17,8 +22,11 @@ import json
 
 # Create your views here.
 
-#查看用户名在数据库中是否存在
 def user_valid(user_name):
+    '''
+    类型：工具
+    查看用户名在数据库中是否存在，若存在则返回相应的模型对象
+    '''
     ret = ''
     try:
         obj = userAdmin.objects.get(user_name=user_name)
@@ -30,8 +38,11 @@ def user_valid(user_name):
 
     return (ret, obj)
 
-#进入登录页面或者执行登录操作
 def login(request):
+    '''
+    类型：接口
+    进入登录页面或者执行登录操作
+    '''
     userName = request.session.get('username', None)  
     first_login = 0
     # print request.session.items()
@@ -104,8 +115,11 @@ def login(request):
     else:
         return return_login(request)
 
-#进入登陆页面
 def return_login(request):
+    '''
+    类型：接口
+    进入登陆页面
+    '''
     alert_info = "None_None"
     my_dict = {
             'index': 'index_login',
@@ -113,8 +127,11 @@ def return_login(request):
         }
     return render(request, 'index.html', my_dict)       #进入登陆页面
 
-#下线清理，包括session和数据库
 def offline_clean(request):
+    '''
+    类型：工具
+    下线清理，包括session和数据库操作
+    '''
     userName = request.session.get('username', None)
     # if userName != None:    #因为加了拦截器，这里不再判断，程序简洁！
     request.session.flush()     #清空session
@@ -132,8 +149,11 @@ def offline_clean(request):
     else:
         return False
 
-#注销操作
 def logout(request):
+    '''
+    类型：接口
+    注销操作
+    '''
     if request.method == 'POST':
         print "---Logout---"
         if offline_clean(request):
@@ -149,6 +169,10 @@ def logout(request):
         return HttpResponse(json.dumps(ret))
 
 def create_userAdmin(my_form):
+    '''
+    类型：工具
+    创建模型数据，对应数据库表格
+    '''
     usr = userAdmin(user_name=my_form['user_name'])
     usr.user_nickname = my_form['user_nickname']
     usr.user_password = my_form['user_password']
@@ -166,8 +190,11 @@ def create_userAdmin(my_form):
 
     return 0
 
-#检测用户名是否已被注册
 def register_check(request):
+    '''
+    类型：接口
+    检测用户名是否已被注册
+    '''
     if request.method == 'GET':
         print "-----------------------GET"
         user_name = request.GET.get('user_name', '')
@@ -187,8 +214,11 @@ def register_check(request):
 
     return HttpResponse(ret)
 
-#修改密码
 def modifyPassword(request):
+    '''
+    类型：接口
+    修改密码
+    '''
     if request.method == 'POST':
         userName = request.session.get('username', None)  
         user_old_password = request.POST.get('user_old_password', '')
@@ -217,8 +247,11 @@ def modifyPassword(request):
     else:
         None
 
-# 修改基本资料
 def modifyBase(request):
+    '''
+    类型：接口
+    修改基本资料
+    '''
     if request.method == 'POST':
         userName = request.session.get('username', None)  
         user_nickname = request.POST.get('user_nickname', '')
@@ -244,8 +277,11 @@ def modifyBase(request):
     else:
         None
     
-#读取用户基本信息
 def readBase(request):
+    '''
+    类型：接口
+    读取用户基本信息
+    '''
     if request.method == 'POST':
         userName = request.session.get('username', None)  
         ret, obj = user_valid(userName)
@@ -273,8 +309,11 @@ def readBase(request):
     else:
         None
 
-#邮箱验证码发送
 def emailVerify_send(request):
+    '''
+    类型：接口
+    邮箱验证码发送
+    '''
     if request.method == 'POST':
         userName = request.session.get('username', None)
         ret, obj = user_valid(userName)
@@ -329,8 +368,11 @@ def emailVerify_send(request):
     else:
         None
 
-#邮箱验证码接收
 def emailVerify_recv(request):
+    '''
+    类型：接口
+    邮箱验证码接收
+    '''
     if request.method == 'POST':
         userName = request.session.get('username', None)
         ret, obj = user_valid(userName)
@@ -380,8 +422,11 @@ def emailVerify_recv(request):
     else:
         None
 
-#注册新用户
 def register(request):
+    '''
+    类型：接口
+    注册新用户
+    '''
     if request.method == 'POST':
         print 'post_register'
         my_form = {}
@@ -424,8 +469,11 @@ def register(request):
     
     return render(request, 'index.html', my_dict)
 
-#忘记密码
 def forget(request):
+    '''
+    类型：接口
+    忘记密码
+    '''
     alert_info = "None_None"
     if request.method == 'POST':
         print 'tttttt_forget'
@@ -477,6 +525,10 @@ def forget(request):
     return render(request, 'forget.html', my_dict)        
 
 def modify(request):
+    '''
+    类型：接口
+    通过密码找回，修改密码
+    '''
     valid = False
 
     if request.method == 'GET':

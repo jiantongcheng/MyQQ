@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+一系列联系人之间的行为
+"""
 from __future__ import unicode_literals
 
 from django.shortcuts import render
@@ -11,7 +14,10 @@ import json
 # Create your views here.
 
 def news_contacts_new_count(host, act_type):      #联系人新消息,act_type=0表示所有消息，=1表示基本消息，=2表示聊天消息
-    
+    '''
+    类型：工具
+    获取新消息
+    '''
     if act_type == 0:
         newsHostClass = get_user_news(host)
         cnt_base = newsHostClass.objects.filter(classtype=0).filter(status=0).count()
@@ -36,6 +42,10 @@ def news_contacts_new_count(host, act_type):      #联系人新消息,act_type=0
     # return cnt
 
 def user_checkNews(request):
+    '''
+    类型：接口
+    检查新消息
+    '''
     if request.method == 'POST':
         host = request.POST.get('user_name', '')
         host_obj, exist = userAdmin.objects.get_or_create(user_name=host)
@@ -61,6 +71,10 @@ def user_checkNews(request):
         return HttpResponse(json.dumps(ret))
 
 def user_checkStatus(request):
+    '''
+    类型：接口
+    检查状态
+    '''
     if request.method == 'POST':
         host = request.POST.get('user_name', '')
         newsHostClass = get_user_news(host)
@@ -86,6 +100,10 @@ def user_checkStatus(request):
         return HttpResponse(json.dumps(ret))
 
 def change_user_contact(host, guest, relation):
+    '''
+    类型：工具
+    改变联系人关系
+    '''
     placeholder, exist = userAdmin.objects.get_or_create(user_name=host)
     if exist == True:
         ret = {
@@ -111,6 +129,10 @@ def change_user_contact(host, guest, relation):
     return ret
 
 def delete_user_contact(host, guest):   #host必须存在，guest可以不存在
+    '''
+    类型：工具
+    删除联系人
+    '''
     placeholder, exist = userAdmin.objects.get_or_create(user_name=host)
     if exist == True:
         ret = {
@@ -133,6 +155,10 @@ def delete_user_contact(host, guest):   #host必须存在，guest可以不存在
     return ret
 
 def insert_user_contact(host, guest, relation):
+    '''
+    类型：工具
+    新增或修改联系人
+    '''
     usr_guest = userAdmin.objects.get(user_name=guest)
     # if usr_guest.user_emailValid == 0:    #不添加未认证的用户
     if usr_guest.user_emailValid == 1:    
@@ -156,6 +182,10 @@ def insert_user_contact(host, guest, relation):
         return True
 
 def insert_user_news_classtype0(host, action, guest):
+    '''
+    类型：工具
+    插入联系人相关消息
+    '''
     hostClass = get_user_news(host)
     host_news = hostClass()
     host_news.status = 0
@@ -167,6 +197,10 @@ def insert_user_news_classtype0(host, action, guest):
     return True
 
 def user_deleteNew(request):
+    '''
+    类型：接口
+    删除消息
+    '''
     if request.method == 'POST':
         host = request.session.get('username', None)
         newsId = request.POST.get('id', '')
@@ -186,6 +220,10 @@ def user_deleteNew(request):
         return HttpResponse(json.dumps(ret))
 
 def user_compromise(request):
+    '''
+    类型：接口
+    联系人希望和解
+    '''
     if request.method == 'POST':
         dst_username = request.POST.get('dst', '')
         src_username = request.POST.get('src', '')
@@ -200,6 +238,10 @@ def user_compromise(request):
 
 
 def user_responseNew(request):
+    '''
+    类型：接口
+    来自联系人的响应
+    '''
     if request.method == 'POST':
         host = request.session.get('username', None)
         newsId = request.POST.get('id', '')
@@ -245,6 +287,10 @@ def user_responseNew(request):
             return HttpResponse(json.dumps(ret))
 
 def user_readNewsByClasstype0(request):
+    '''
+    类型：接口
+    读取特定类型的消息
+    '''
     if request.method == 'POST':
         host = request.session.get('username', None)
         hostClass = get_user_news(host)
@@ -276,6 +322,10 @@ def user_readNewsByClasstype0(request):
         return HttpResponse(json.dumps(ret))
 
 def user_add_friend(request):
+    '''
+    类型：接口
+    添加好友申请
+    '''
     if request.method == 'POST':
         dst_username = request.POST.get('dst', '')
         dst_obj = userAdmin.objects.get(user_name=dst_username)
@@ -309,6 +359,10 @@ def user_add_friend(request):
         return HttpResponse(json.dumps(ret))
     
 def user_delRelation(request):
+    '''
+    类型：接口
+    删除联系人
+    '''
     if request.method == 'POST':
         host = request.POST.get('host', '')
         guest = request.POST.get('guest', '')
@@ -318,6 +372,10 @@ def user_delRelation(request):
         return HttpResponse(json.dumps(ret))
 
 def insert_user_blacklist(host, guest):
+    '''
+    类型：工具
+    插入黑名单
+    '''
     user_host, exist = userAdmin.objects.get_or_create(user_name=host)
     if exist == True:
         ret = {
@@ -340,6 +398,10 @@ def insert_user_blacklist(host, guest):
         return ret
 
 def delete_user_blacklist(host, guest):
+    '''
+    类型：工具
+    删除黑名单某联系人
+    '''
     user_host, exist = userAdmin.objects.get_or_create(user_name=host)
     if exist == True:
         ret = {
@@ -367,6 +429,10 @@ def delete_user_blacklist(host, guest):
     return HttpResponse(json.dumps(ret))
 
 def user_changeRelation(request):
+    '''
+    类型：接口
+    改变联系人关系
+    '''
     if request.method == 'POST':
         host = request.POST.get('host', '')
         guest = request.POST.get('guest', '')
