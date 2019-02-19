@@ -4,5 +4,6 @@
 *.egg
 *.egg-info
 *.dist
+*.log
 build
 MyQQ/useradmin/migrations
