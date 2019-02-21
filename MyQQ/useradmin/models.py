@@ -29,6 +29,7 @@ class userAdmin(models.Model):
     '''
     user_name = models.CharField('aa', unique=True, max_length=32)           #用户名
 
+    user_level = models.IntegerField(default=0)                 #用户经验值
     user_nickname = models.CharField('bb', max_length=32)       #昵称
     user_password = models.CharField('cc', max_length=32)       #密码
     user_email = models.EmailField(unique=True)                            #邮箱，也是唯一

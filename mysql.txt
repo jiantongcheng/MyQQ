@@ -1,0 +1,11 @@
+#让数据库表格能保存中文，需要在mysql客户端中执行下面操作再创建表格
+set acteracter_set_server=utf8
+set acteracter_set_database=utf8
+
+#数据库事件，周期性查看非离线的用户，若最后一次操作时间距离现在超过一定时间，则将其状态改为离线
+create event if not exists check_user_die on schedule every 5 minute on completion preserve 
+do update useradmin_useradmin set user_status = 0 where user_status > 0 and TIMESTAMPDIFF(MINUTE, handle_time, NOW()) > (8*60+12);
+
+#数据库事件，在每天凌晨3点，去查看长期不登陆的账号，删除其相关的表格
+
+

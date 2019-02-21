@@ -84,15 +84,35 @@ def login(request):
 
         permitAdd = obj.setting_permitAdd
         permitSearch = obj.setting_permitSearch
-        login_time = obj.login_time         # 返回上次的登录时间
+        levelOrig = obj.user_level
+        if levelOrig == 0:
+            level = 0
+        elif levelOrig < 10:
+            level = 1
+        elif levelOrig < 30:
+            level = 2
+        elif levelOrig < 100:
+            level = 3
+        elif levelOrig < 300:
+            level = 4
+        else:
+            level = 5 
+        login_time_last = obj.login_time         # 返回上次的登录时间
+        login_time = login_time_last.strftime("%Y-%m-%d %H:%M:%S")
         news_contacts, news_contacts_base, news_contacts_status, news_contacts_chat = news_contacts_new_count(userName, 0)
         #暂不将news_contacts_status和news_contacts_chat作为回复，让浏览器定期获取
         
         if first_login == 1:
-            obj.login_time = datetime.datetime.now()    #记住这次的登录时间
+            login_time_now = datetime.datetime.now()+datetime.timedelta(hours=8)    #记住这次的登录时间
+            obj.login_time = login_time_now
             obj.user_status = 1     #online
-            # obj.status_heart = 2    #打算数据库周期事件定为30秒，所以心跳没了之后1分钟左右视为超时
+            login_time_last_day = login_time_last.strftime("%Y-%m-%d")
+            login_time_now_day = login_time_now.strftime("%Y-%m-%d")
+            if login_time_last_day != login_time_now_day:   #说明是当天第一次登陆
+                obj.user_level += 1
+
             obj.save()              #记得save
+
             #通知小伙伴们，我上线了
             hostClass = get_user_contacts(userName)
             guestObjs = hostClass.objects.exclude(status=0)  #排除离线的家伙们
@@ -105,6 +125,7 @@ def login(request):
                 'name': userName,
                 'permitAdd': permitAdd,
                 'permitSearch': permitSearch,
+                'level': level,
                 'login_time': login_time,
                 'news_hall': 0,
                 'news_contacts': news_contacts,
@@ -138,7 +159,26 @@ def offline_clean(request):
     ret, obj = user_valid(userName)
     if ret:
         obj.user_status = 0     #offline
+        start_time = obj.login_time.strftime("%Y-%m-%d %H:%M:%S")
+        # start_time = start_time.strftime("%Y-%m-%d %H:%M:%S")
+        start_time = datetime.datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
+
+        leave_time = datetime.datetime.now()+datetime.timedelta(hours=8)
+        leave_time = leave_time.strftime("%Y-%m-%d %H:%M:%S")
+        leave_time = datetime.datetime.strptime(leave_time, "%Y-%m-%d %H:%M:%S")
+
+        stride_sec = (leave_time-start_time).seconds
+        if stride_sec > 60*30:
+            obj.user_level += 3
+        elif stride_sec > 60*15:
+            obj.user_level += 2
+        elif stride_sec > 60*5:
+            obj.user_level += 1
+        else:
+            None
+    
         obj.save()              #记得save
+
         #通知小伙伴们，我下线了
         hostClass = get_user_contacts(userName)
         guestObjs = hostClass.objects.exclude(status=0)  #排除离线的家伙们
@@ -286,7 +326,9 @@ def readBase(request):
         userName = request.session.get('username', None)  
         ret, obj = user_valid(userName)
         if ret:
-            register_time = obj.register_time.strftime("%Y-%m-%d %H:%M:%S")
+            timeOrig = obj.register_time + datetime.timedelta(hours=8)  #转化为北京时间
+            register_time = timeOrig.strftime("%Y-%m-%d %H:%M:%S")
+
             ret = {
                 'stat': 'success',
                 'user_nickname': obj.user_nickname,
@@ -399,6 +441,7 @@ def emailVerify_recv(request):
                             'hint': '',
                         }
                         obj.user_emailValid = 1
+                        obj.user_level += 10     #经验值+10
                     else:
                         ret = {
                             'stat': 'fail',
