@@ -23,6 +23,7 @@ from useradmin import news as useradmin_news
 from useradmin import chats as useradmin_chats
 
 from useradmin import common as useradmin_common
+from useradmin import vote as useradmin_vote
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),                                       #管理员页面
@@ -63,6 +64,10 @@ urlpatterns = [
     url(r'getCalendar', useradmin_common.getCalendar),                      #读取日历
     url(r'getWeather', useradmin_common.getWeather),                        #读取天气
     url(r'getHistory', useradmin_common.getHistory),                        #历史上的今天
+    #----------投票----------
+    url(r'read_vote', useradmin_vote.readVote),                             #读取投票相关信息
+    url(r'vote_invite_check', useradmin_vote.vote_invite_check),            #验证投票邀请码
+    url(r'commit_vote', useradmin_vote.commit_vote),            #提交投票消息
     # ----------testpost 调试
     # url(r'testpost', useradmin_chats.testpost),
     # url(r'testpost', useradmin_common.testpost),

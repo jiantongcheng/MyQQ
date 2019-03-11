@@ -41,6 +41,8 @@ class userAdmin(models.Model):
     #登陆之后被赋予某个值，每次心跳到来也赋相同的值，mysql数据库周期事件每次减一，减到零后将user_status置为0   
     #有了handle_time之后，也许就不需要status_heart字段了
 
+    limit_reason = models.IntegerField(default=0)       #功能限制，限制时间可以放在redis缓存中；0-正常，1-敏感语，2-聊天太快，3-聊天太多
+
     register_time = models.DateTimeField(auto_now=False, auto_now_add=True) #注册时间
     login_time = models.DateTimeField(auto_now=False, auto_now_add=False, default = timezone.now)   #登陆时间
     handle_time = models.DateTimeField(auto_now=True, auto_now_add=False)   #操作时间
@@ -60,6 +62,14 @@ class userAdmin(models.Model):
 
     def __unicode__(self):
             return self.user_name
+
+class vote(models.Model):
+    '''
+    投票相关
+    '''
+    vote_id = models.IntegerField(default=0)                #投票编码：1-小学，2-初中，3-高中，4-大学
+    vote_user = models.CharField('name', max_length=32)     #投票用户
+    vote_act = models.CharField('act', max_length=1024)     #投票行为，格式1:A,2:C,3:D,...
 
 class user_contacts(models.Model):
     '''

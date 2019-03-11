@@ -13,12 +13,16 @@ from useradmin.models import userAdmin
 from useradmin.dynamic_model import create_user_contacts, get_user_contacts, create_user_news, get_user_news, create_user_chats, get_user_chats
 from django.db import models
 from django.core.mail import send_mail
-from news import news_contacts_new_count
+from news import news_contacts_new_count, insert_user_contact
+from chats import insert_chat
 from write import insert_user_news_classtype2
 
 import random
 import datetime
 import json
+
+#缓存数据库
+from django.core.cache import cache
 
 # Create your views here.
 
@@ -53,9 +57,9 @@ def login(request):
     #     print i.get_decoded()
     # request.session.set_test_cookie()
     
+    alert_info = "None_None"
     #第一次判断
     if userName == None:
-        alert_info = "None_None"
         if request.method == 'POST':
             print '...Login...'
             userName = request.POST.get('user_name', '')
@@ -77,6 +81,39 @@ def login(request):
             None
         else:
             userName = None
+
+    #多加一个权限判断
+    if userName != None:    
+        if obj.limit_reason != 0:
+            print "-- 1"
+            key_name = userName+",limit"
+            print key_name
+            # cache.set(key_name, "limit", 90)  #调试
+            
+            if cache.has_key(key_name):
+                print "-- 2"
+                limit_val = cache.ttl(key_name)
+                if limit_val == None:   #说明之前没有设置超时期限，将在这里设置
+                    print "-- 3"
+                    cache.set(key_name, "limit", 3600)    #3600
+                    limit_val = cache.ttl(key_name)
+
+                if obj.limit_reason == 1:
+                    alert_info = "登录失败!原因:你输入过敏感词汇！解封剩余时间:"+str(limit_val)+"秒"
+                elif obj.limit_reason == 2:
+                    alert_info = "登录失败!原因:上次聊天频率太快！解封剩余时间:"+str(limit_val)+"秒"
+                elif obj.limit_reason == 3:
+                    alert_info = "登录失败!原因:上次聊天信息过多！解封剩余时间:"+str(limit_val)+"秒"
+                else:
+                    alert_info = "登录失败!原因:未知！"
+                
+                userName = None
+            else:       #说明缓存期限满了，被自动删除了
+                obj.limit_reason = 0
+                obj.save()      #这里save应该不会影响下面继续使用obj吧？
+        else:
+            print "-- 4"
+            None
 
     #第二次判断
     if userName != None:
@@ -102,7 +139,8 @@ def login(request):
         news_contacts, news_contacts_base, news_contacts_status, news_contacts_chat = news_contacts_new_count(userName, 0)
         #暂不将news_contacts_status和news_contacts_chat作为回复，让浏览器定期获取
         
-        if first_login == 1:
+        if first_login == 1:    
+            #第一次登陆需要做的操作
             login_time_now = datetime.datetime.now()+datetime.timedelta(hours=8)    #记住这次的登录时间
             obj.login_time = login_time_now
             obj.user_status = 1     #online
@@ -134,14 +172,14 @@ def login(request):
         }
         return render(request, 'home.html', my_dict)        #进入主页
     else:
-        return return_login(request)
+        return return_login(request, alert_info)
 
-def return_login(request):
+def return_login(request, alert_info):
     '''
     类型：接口
     进入登陆页面
     '''
-    alert_info = "None_None"
+    # alert_info = "None_None"
     my_dict = {
             'index': 'index_login',
             'alert': alert_info,
@@ -487,7 +525,7 @@ def register(request):
         alert_info = "None_None"
 
         ret, _Null_ = user_valid(my_form['user_name'])
-        if ret:
+        if ret or my_form['user_name'] == "MyQ_jiantong":   #暂且将MyQ_jiantong作为管理员
             ret = "index_register"
             alert_info = '注册失败！用户名\'' + my_form['user_name'] + '\'已存在！'
         else:
@@ -497,6 +535,10 @@ def register(request):
             else:
                 ret = "index_login"
                 create_userAdmin(my_form)
+                insert_user_contact(my_form['user_name'], 'MyQ_jiantong', 0)
+                insert_user_contact('MyQ_jiantong', my_form['user_name'], 0)
+                message = "您好，欢迎来到MyQ，我是管理员建通，有事您叫我^_^"
+                insert_chat(my_form['user_name'], 'MyQ_jiantong', 1, 0, 0, message)
                 alert_info = "注册成功，请登录！"
 
         my_dict = {

@@ -27,6 +27,8 @@
             <li><a @click="init_contacts()" href="#contacts" data-toggle="tab">
                 <span id="news_contacts" style="background-color:orange" class="badge pull-right"></span>
                 联系人&nbsp;</a></li>
+            <li><a @click="init_vote()" href="#vote" data-toggle="tab">
+                投票&nbsp;</a></li>
             <!--<li><a href="#bottle" data-toggle="tab">
                 <span id="news_bottle" style="background-color:orange" class="badge pull-right"></span>
                 漂流瓶&nbsp;</a></li>-->
@@ -54,9 +56,9 @@
     <div class="tab-pane fade" id="contacts">
         {% include 'home_contacts.html' %}
     </div>
-    <!--<div class="tab-pane fade" id="bottle">
-        <p>bottle</p>
-    </div>-->
+    <div class="tab-pane fade" id="vote">
+        {% include 'home_vote.html' %}
+    </div>
     <div class="tab-pane fade" id="modify_base">
         {% include 'home_modifyBase.html' %}
     </div>
@@ -825,6 +827,12 @@ var g_obj_user =            //用户基本信息
     permitSearch: '{{user.permitSearch}}',
     permitAdd_will: 0,
     permitSearch_will: 0,
+}
+
+var g_vote = 
+{
+    id: 0,
+
 }
 
 function weather_get_byCity(city)
@@ -1838,6 +1846,178 @@ var vue_contacts = new Vue({
         }
 
     }
+})
+
+var vue_vote = new Vue({
+    delimiters:['[[', ']]'],
+    el: '#vote',
+    data: {
+        hint_vote_invite: '请输入投票邀请码',
+        vote_cnt: 0,
+        vote_mx_1_A: 0,vote_mx_1_B: 0,vote_mx_1_C: 0,
+        vote_mx_2_A: 0,vote_mx_2_B: 0,vote_mx_2_C: 0,
+        vote_mx_3_A: 0,vote_mx_3_B: 0,vote_mx_3_C: 0,
+        vote_mx_4_A: 0, vote_mx_4_B: 0,vote_mx_4_C: 0,
+        vote_mx_5_A: 0,vote_mx_5_B: 0,vote_mx_5_C: 0,
+        vote_mx_6_A: 0,vote_mx_6_B: 0,vote_mx_6_C: 0,
+        vote_mx_7_A: 0,vote_mx_7_B: 0,vote_mx_7_C: 0,
+        vote_mx_8_A: 0,vote_mx_8_B: 0,vote_mx_8_C: 0,
+        vote_mx_9_A: 0,vote_mx_9_B: 0,vote_mx_9_C: 0,
+        vote_mx_10_A: 0,vote_mx_10_B: 0,vote_mx_10_C: 0,
+
+        vote_yz_1_A: 0,vote_yz_1_B: 0,vote_yz_1_C: 0,
+        vote_yz_2_A: 0,vote_yz_2_B: 0,vote_yz_2_C: 0,
+        vote_yz_3_A: 0,vote_yz_3_B: 0,vote_yz_3_C: 0,
+        vote_yz_4_A: 0, vote_yz_4_B: 0,vote_yz_4_C: 0,
+        vote_yz_5_A: 0,vote_yz_5_B: 0,vote_yz_5_C: 0,
+        vote_yz_6_A: 0,vote_yz_6_B: 0,vote_yz_6_C: 0,
+        vote_yz_7_A: 0,vote_yz_7_B: 0,vote_yz_7_C: 0,
+        vote_yz_8_A: 0,vote_yz_8_B: 0,vote_yz_8_C: 0,
+        vote_yz_9_A: 0,vote_yz_9_B: 0,vote_yz_9_C: 0,
+        vote_yz_10_A: 0,vote_yz_10_B: 0,vote_yz_10_C: 0,
+    },
+    methods:{
+        read_vote:function(id){
+            //读取用户投票信息
+            g_vote.id = id;
+            $('.btn_vote').removeClass("btn-warning").addClass("btn-info");
+            $('#btn_vote_'+id).removeClass("btn-info").addClass("btn-warning");
+
+            $('#vote_invite_div').hide();
+            $('#vote_invite_warning').hide();
+            $('#vote_mx').hide();
+            $('#vote_yz').hide();
+            $('#vote_cnt').hide();
+            $('.vote_info').hide();
+
+            $.post("read_vote", 
+                {id: id},
+                function(data){
+                    // alert(data);    //约定格式....
+                    var obj = JSON.parse(data);
+                    if(obj.join == 'NO'){
+                        $('#vote_invite_div').show();
+                    }
+                    else{   //YES
+                        if(obj.id == 1){
+                            // alert(obj.act);
+                            statistics_obj = JSON.parse(obj.statistics);
+                            vue_vote.vote_cnt = statistics_obj.cnt;
+                            $('#vote_cnt').show();
+
+                            for(var i=0;i<statistics_obj.info.length;i++){
+                                vue_vote['vote_mx_'+ (i+1) +'_A'] = '('+ statistics_obj.info[i].A +')';
+                                vue_vote['vote_mx_'+ (i+1) +'_B'] = '('+ statistics_obj.info[i].B +')';
+                                vue_vote['vote_mx_'+ (i+1) +'_C'] = '('+ statistics_obj.info[i].C +')';
+                            }
+                            $('.vote_info').show();
+                            
+                            act_obj = JSON.parse(obj.act);
+                            for(var i=0;i<act_obj.length;i++){
+                                $("input:radio[name='vote_mx_"+ act_obj[i].pos +"'][value='"+ act_obj[i].select +"']").prop("checked", "checked");
+                            }
+
+                            $('#vote_mx').find("input").attr("disabled", "disabled");   //已经投过票就不能在投咯
+                            $('#vote_mx_commit_div').hide();        //隐藏提交按钮
+                            $('#vote_mx').show();
+                        }
+                        else if(obj.id == 2){
+                            statistics_obj = JSON.parse(obj.statistics);
+                            vue_vote.vote_cnt = statistics_obj.cnt;
+                            $('#vote_cnt').show();
+
+                            for(var i=0;i<statistics_obj.info.length;i++){
+                                vue_vote['vote_yz_'+ (i+1) +'_A'] = '('+ statistics_obj.info[i].A +')';
+                                vue_vote['vote_yz_'+ (i+1) +'_B'] = '('+ statistics_obj.info[i].B +')';
+                                vue_vote['vote_yz_'+ (i+1) +'_C'] = '('+ statistics_obj.info[i].C +')';
+                            }
+                            $('.vote_info').show();
+
+                            act_obj = JSON.parse(obj.act);
+                            for(var i=0;i<act_obj.length;i++){
+                                $("input:radio[name='vote_yz_"+ act_obj[i].pos +"'][value='"+ act_obj[i].select +"']").prop("checked", "checked");
+                            }
+
+                            $('#vote_yz').find("input").attr("disabled", "disabled");
+                            $('#vote_yz_commit_div').hide();    
+                            $('#vote_yz').show();
+                        }
+
+                    }
+            });
+        },
+        vote_invite_check:function(){
+            // 发送投票邀请码
+            invite = $('#vote_invite').val()
+            if(invite == ""){
+                $('#vote_invite').focus();
+                return;
+            }
+                
+            $.post("vote_invite_check", 
+                {
+                    id: g_vote.id,
+                    invite: invite,
+                },
+                function(data){
+                    // alert(data);    //约定格式....
+                    var obj = JSON.parse(data);
+                    if(obj.check == 'OK'){
+                        $('#vote_invite_warning').hide();
+                        $('#vote_invite_div').hide();
+                        //显示投票题目
+                        if(obj.id == 1){
+                            $('#vote_mx_commit_div').show();
+                            $('#vote_mx').show();
+                        }
+                        else if(obj.id == 2){
+                            $('#vote_yz_commit_div').show();
+                            $('#vote_yz').show();
+                        }
+                    }
+                    else{
+                        $('#vote_invite_warning').show();
+                    }
+            });
+
+        },
+        commit_vote:function(id){
+            //提交用户投票选择
+            var act = new Array();
+
+            if(id == 1){
+                for(var i=1;i<=10;i++){
+                    tmp = $("input:radio[name='vote_mx_"+i+ "']:checked").val();
+                    act[i-1] = new Object();
+                    act[i-1].pos = i;
+                    act[i-1].select = tmp;
+                }
+            }
+            else if(id == 2){
+                for(var i=1;i<=10;i++){
+                    tmp = $("input:radio[name='vote_yz_"+i+ "']:checked").val();
+                    act[i-1] = new Object();
+                    act[i-1].pos = i;
+                    act[i-1].select = tmp;
+                }
+            }
+            else
+            {}  //nothing
+
+            // alert(JSON.stringify(act));
+
+            $.post("commit_vote", 
+                {
+                    id: id,
+                    act: JSON.stringify(act),
+                },
+                function(data){
+                    // alert(data);    //约定格式....
+                    var obj = JSON.parse(data);
+                    vue_vote.read_vote(obj.id);
+            });
+        },
+    },
 })
 
 var vue_modify_password = new Vue({

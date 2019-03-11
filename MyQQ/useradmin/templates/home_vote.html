@@ -1,0 +1,430 @@
+<div class="dropdown">
+    <button id="btn_vote_1" type="button" class="btn btn-info btn_vote" @click="read_vote(1)">马 小</button>
+    <button id="btn_vote_2" type="button" class="btn btn-info btn_vote" @click="read_vote(2)">姚 中</button>
+</div>
+<br />
+<div id="vote_invite_div" class="col-sm-6" style="display:none">
+    <div class="input-group">
+        <input maxlength='16' id='vote_invite' type="text" :placeholder="hint_vote_invite" class="form-control">
+        <span class="input-group-btn">
+            <button class="btn btn-default" @click="vote_invite_check()" type="button">验证</button>
+        </span>
+    </div><!-- /input-group -->
+    <div id='vote_invite_warning' style="color:red;display:none">
+        *对不起，邀请码错误！
+    </div>
+</div>
+
+<h3 id="vote_cnt" style="margin-left:50px;display:none"> 当前参与人数: [[vote_cnt]]</h3>
+<div class="form-group" id="vote_mx" style="margin-left:100px;display:none">
+    <label >1. 请问你是？</label>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_1" 
+                value="A" checked>A. 男同学 <span class="vote_info">[[vote_mx_1_A]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_1" 
+                value="B">B. 女同学 <span class="vote_info">[[vote_mx_1_B]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_1" 
+                value="C">C. 老师 <span class="vote_info">[[vote_mx_1_C]]</span>
+        </label>
+    </div>
+
+    <label >2. 你觉得同学会的时间在何时举行比较好？</label>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_2" 
+                value="A" checked>A. 五一、元旦等小长假 <span class="vote_info">[[vote_mx_2_A]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_2" 
+                value="B">B. 国庆假期 <span class="vote_info">[[vote_mx_2_B]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_2" 
+                value="C">C. 过年前后 <span class="vote_info">[[vote_mx_2_C]]</span>
+        </label>
+    </div>
+
+    <label >3. xxxxxxx</label>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_3" 
+                value="A" checked>A. xxxxx <span class="vote_info">[[vote_mx_3_A]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_3" 
+                value="B">B. xxxxx <span class="vote_info">[[vote_mx_3_B]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_3" 
+                value="C">C. xxxxx <span class="vote_info">[[vote_mx_3_C]]</span>
+        </label>
+    </div>
+
+    <label >4. xxxxxxx</label>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_4" 
+                value="A" checked>A. xxxxx <span class="vote_info">[[vote_mx_4_A]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_4" 
+                value="B">B. xxxxx <span class="vote_info">[[vote_mx_4_B]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_4" 
+                value="C">C. xxxxx <span class="vote_info">[[vote_mx_4_C]]</span>
+        </label>
+    </div>
+
+    <label >5. xxxxxxx</label>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_5" 
+                value="A" checked>A. xxxxx <span class="vote_info">[[vote_mx_5_A]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_5" 
+                value="B">B. xxxxx <span class="vote_info">[[vote_mx_5_B]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_5" 
+                value="C">C. xxxxx <span class="vote_info">[[vote_mx_5_C]]</span>
+        </label>
+    </div>
+
+    <label >6. xxxxxxx</label>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_6" 
+                value="A" checked>A. xxxxx <span class="vote_info">[[vote_mx_6_A]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_6" 
+                value="B">B. xxxxx <span class="vote_info">[[vote_mx_6_B]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_6" 
+                value="C">C. xxxxx <span class="vote_info">[[vote_mx_6_C]]</span>
+        </label>
+    </div>
+
+    <label >7. xxxxxxx</label>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_7" 
+                value="A" checked>A. xxxxx <span class="vote_info">[[vote_mx_7_A]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_7" 
+                value="B">B. xxxxx <span class="vote_info">[[vote_mx_7_B]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_7" 
+                value="C">C. xxxxx <span class="vote_info">[[vote_mx_7_C]]</span>
+        </label>
+    </div>
+
+    <label >8. xxxxxxx</label>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_8" 
+                value="A" checked>A. xxxxx <span class="vote_info">[[vote_mx_8_A]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_8" 
+                value="B">B. xxxxx <span class="vote_info">[[vote_mx_8_B]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_8" 
+                value="C">C. xxxxx <span class="vote_info">[[vote_mx_8_C]]</span>
+        </label>
+    </div>
+
+    <label >9. xxxxxxx</label>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_9" 
+                value="A" checked>A. xxxxx <span class="vote_info">[[vote_mx_9_A]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_9" 
+                value="B">B. xxxxx <span class="vote_info">[[vote_mx_9_B]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_9" 
+                value="C">C. xxxxx <span class="vote_info">[[vote_mx_9_C]]</span>
+        </label>
+    </div>
+
+    <label >10. xxxxxxx</label>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_10" 
+                value="A" checked>A. xxxxx <span class="vote_info">[[vote_mx_10_A]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_10" 
+                value="B">B. xxxxx <span class="vote_info">[[vote_mx_10_B]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_10" 
+                value="C">C. xxxxx <span class="vote_info">[[vote_mx_10_C]]</span>
+        </label>
+    </div>
+
+    <div id="vote_mx_commit_div">
+        <button type="button" class="btn btn-primary" @click="commit_vote(1)">提 交</button>
+    </div>
+</div>
+
+<div class="form-group" id="vote_yz" style="margin-left:100px;display:none">
+    <label >1. 请问你是？</label>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_1" 
+                value="A" checked>A. 男同学 <span class="vote_info">[[vote_yz_1_A]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_1" 
+                value="B">B. 女同学 <span class="vote_info">[[vote_yz_1_B]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_1" 
+                value="C">C. 老师 <span class="vote_info">[[vote_yz_1_C]]</span>
+        </label>
+    </div>
+
+    <label >2. xxxxxxx</label>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_2" 
+                value="A" checked>A. xxxxx <span class="vote_info">[[vote_yz_2_A]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_2" 
+                value="B">B. xxxxx <span class="vote_info">[[vote_yz_2_B]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_2" 
+                value="C">C. xxxxx <span class="vote_info">[[vote_yz_2_C]]</span>
+        </label>
+    </div>
+
+    <label >3. xxxxxxx</label>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_3" 
+                value="A" checked>A. xxxxx <span class="vote_info">[[vote_yz_3_A]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_3" 
+                value="B">B. xxxxx <span class="vote_info">[[vote_yz_3_B]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_3" 
+                value="C">C. xxxxx <span class="vote_info">[[vote_yz_3_C]]</span>
+        </label>
+    </div>
+
+    <label >4. xxxxxxx</label>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_4" 
+                value="A" checked>A. xxxxx <span class="vote_info">[[vote_yz_4_A]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_4" 
+                value="B">B. xxxxx <span class="vote_info">[[vote_yz_4_B]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_4" 
+                value="C">C. xxxxx <span class="vote_info">[[vote_yz_4_C]]</span>
+        </label>
+    </div>
+
+    <label >5. xxxxxxx</label>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_5" 
+                value="A" checked>A. xxxxx <span class="vote_info">[[vote_yz_5_A]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_5" 
+                value="B">B. xxxxx <span class="vote_info">[[vote_yz_5_B]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_5" 
+                value="C">C. xxxxx <span class="vote_info">[[vote_yz_5_C]]</span>
+        </label>
+    </div>
+
+    <label >6. xxxxxxx</label>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_6" 
+                value="A" checked>A. xxxxx <span class="vote_info">[[vote_yz_6_A]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_6" 
+                value="B">B. xxxxx <span class="vote_info">[[vote_yz_6_B]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_6" 
+                value="C">C. xxxxx <span class="vote_info">[[vote_yz_6_C]]</span>
+        </label>
+    </div>
+
+    <label >7. xxxxxxx</label>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_7" 
+                value="A" checked>A. xxxxx <span class="vote_info">[[vote_yz_7_A]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_7" 
+                value="B">B. xxxxx <span class="vote_info">[[vote_yz_7_B]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_7" 
+                value="C">C. xxxxx <span class="vote_info">[[vote_yz_7_C]]</span>
+        </label>
+    </div>
+
+    <label >8. xxxxxxx</label>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_8" 
+                value="A" checked>A. xxxxx <span class="vote_info">[[vote_yz_8_A]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_8" 
+                value="B">B. xxxxx <span class="vote_info">[[vote_yz_8_B]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_8" 
+                value="C">C. xxxxx <span class="vote_info">[[vote_yz_8_C]]</span>
+        </label>
+    </div>
+
+    <label >9. xxxxxxx</label>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_9" 
+                value="A" checked>A. xxxxx <span class="vote_info">[[vote_yz_9_A]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_9" 
+                value="B">B. xxxxx <span class="vote_info">[[vote_yz_9_B]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_9" 
+                value="C">C. xxxxx <span class="vote_info">[[vote_yz_9_C]]</span>
+        </label>
+    </div>
+
+    <label >10. xxxxxxx</label>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_10" 
+                value="A" checked>A. xxxxx <span class="vote_info">[[vote_yz_10_A]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_10" 
+                value="B">B. xxxxx <span class="vote_info">[[vote_yz_10_B]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_10" 
+                value="C">C. xxxxx <span class="vote_info">[[vote_yz_10_C]]</span>
+        </label>
+    </div>
+
+    <div id="vote_yz_commit_div">
+        <button type="button" class="btn btn-primary" @click="commit_vote(2)">提 交</button>
+    </div>
+</div>
+
