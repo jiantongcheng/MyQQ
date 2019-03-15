@@ -16,6 +16,7 @@ from django.core.mail import send_mail
 from news import news_contacts_new_count, insert_user_contact
 from chats import insert_chat
 from write import insert_user_news_classtype2
+from tool import read_binary, write_binary
 
 import random
 import datetime
@@ -42,6 +43,25 @@ def user_valid(user_name):
 
     return (ret, obj)
 
+def set_limit(user_name, pos):
+    ret = ''
+    try:
+        obj = userAdmin.objects.get(user_name=user_name)
+    except userAdmin.DoesNotExist:
+        ret = False
+    else:
+        obj.limit_reason = write_binary(obj.limit_reason, pos, 1)
+        obj.save()
+
+        if pos == 1:
+            key_name = user_name + ",limit:2"
+            cache.set(key_name, "limit", 3600)
+
+        ret = True
+    
+    return ret
+
+
 def login(request):
     '''
     类型：接口
@@ -67,7 +87,7 @@ def login(request):
             if ret:
                 userPassword = request.POST.get('user_password', '')
                 if obj.user_password == userPassword:
-                    request.session['username'] = userName
+                    # request.session['username'] = userName
                     first_login = 1
                 else:   #密码不正确
                     alert_info = "登录失败!用户名或者密码错误!"
@@ -83,42 +103,42 @@ def login(request):
             userName = None
 
     #多加一个权限判断
-    if userName != None:    
-        if obj.limit_reason != 0:
-            print "-- 1"
-            key_name = userName+",limit"
-            print key_name
-            # cache.set(key_name, "limit", 90)  #调试
-            
+    if userName != None:
+        if read_binary(obj.limit_reason, 0) == 1:   #敏感语
+            key_name = userName+",limit:1"      #注意这里是1而不是0
             if cache.has_key(key_name):
-                print "-- 2"
                 limit_val = cache.ttl(key_name)
                 if limit_val == None:   #说明之前没有设置超时期限，将在这里设置
-                    print "-- 3"
                     cache.set(key_name, "limit", 3600)    #3600
                     limit_val = cache.ttl(key_name)
 
-                if obj.limit_reason == 1:
-                    alert_info = "登录失败!原因:你输入过敏感词汇！解封剩余时间:"+str(limit_val)+"秒"
-                elif obj.limit_reason == 2:
-                    alert_info = "登录失败!原因:上次聊天频率太快！解封剩余时间:"+str(limit_val)+"秒"
-                elif obj.limit_reason == 3:
-                    alert_info = "登录失败!原因:上次聊天信息过多！解封剩余时间:"+str(limit_val)+"秒"
-                else:
-                    alert_info = "登录失败!原因:未知！"
-                
+                alert_info = "登录失败!原因:你输入过敏感词汇！解封剩余时间:"+str(limit_val)+"秒"
                 userName = None
-            else:       #说明缓存期限满了，被自动删除了
-                obj.limit_reason = 0
-                obj.save()      #这里save应该不会影响下面继续使用obj吧？
+            else:   #说明缓存期限满了，被自动删除了
+                obj.limit_reason = write_binary(obj.limit_reason, 0, 0)
+                obj.save()
         else:
-            print "-- 4"
             None
+
+        if userName != None:
+            if read_binary(obj.limit_reason, 1) == 1:   #提交太频繁
+                key_name = userName+",limit:2"      
+                if cache.has_key(key_name):
+                    limit_val = cache.ttl(key_name)
+                    if limit_val == None:   #说明之前没有设置超时期限，将在这里设置
+                        cache.set(key_name, "limit", 3600)    #3600
+                        limit_val = cache.ttl(key_name)
+
+                    alert_info = "登录失败!原因:你上次提交数据太过频繁！解封剩余时间:"+str(limit_val)+"秒"
+                    userName = None
+                else:   #说明缓存期限满了，被自动删除了
+                    obj.limit_reason = write_binary(obj.limit_reason, 1, 0)
+                    obj.save()
+            else:
+                None
 
     #第二次判断
     if userName != None:
-        request.session.set_expiry(600)  #600
-
         permitAdd = obj.setting_permitAdd
         permitSearch = obj.setting_permitSearch
         levelOrig = obj.user_level
@@ -135,13 +155,15 @@ def login(request):
         else:
             level = 5 
         login_time_last = obj.login_time         # 返回上次的登录时间
-        login_time = login_time_last.strftime("%Y-%m-%d %H:%M:%S")
+        login_time = (login_time_last+datetime.timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")
         news_contacts, news_contacts_base, news_contacts_status, news_contacts_chat = news_contacts_new_count(userName, 0)
         #暂不将news_contacts_status和news_contacts_chat作为回复，让浏览器定期获取
         
         if first_login == 1:    
+            request.session['username'] = userName
+            request.session.set_expiry(600)  #600
             #第一次登陆需要做的操作
-            login_time_now = datetime.datetime.now()+datetime.timedelta(hours=8)    #记住这次的登录时间
+            login_time_now = datetime.datetime.now()    #记住这次的登录时间
             obj.login_time = login_time_now
             obj.user_status = 1     #online
             login_time_last_day = login_time_last.strftime("%Y-%m-%d")
@@ -157,6 +179,8 @@ def login(request):
             for guest in guestObjs:
                 guest_name = guest.name
                 insert_user_news_classtype2(guest_name, 1, userName)
+        else:
+            request.session.set_expiry(600)  #600
         
         my_dict = {
             'user': {
@@ -219,9 +243,12 @@ def offline_clean(request):
 
         #通知小伙伴们，我下线了
         hostClass = get_user_contacts(userName)
+        print '-------------1'
         guestObjs = hostClass.objects.exclude(status=0)  #排除离线的家伙们
         for guest in guestObjs:
+            print '-------------2'
             guest_name = guest.name
+            print guest_name
             insert_user_news_classtype2(guest_name, 0, userName)
         return True
     else:

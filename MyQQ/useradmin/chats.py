@@ -9,7 +9,11 @@ from django.http import HttpResponse
 from useradmin.models import userAdmin
 from django.db.models import Count
 from useradmin.dynamic_model import get_user_news, get_user_contacts, get_user_chats
+#缓存数据库
+from django.core.cache import cache
+from tool import read_binary, write_binary
 
+import datetime
 import json
 
 # Create your views here.
@@ -119,6 +123,71 @@ def user_chatSend(request):
     '''
     if request.method == 'POST':
         host = request.POST.get('host', '')
+        # 1. 判断是否发送太频繁了
+        wait_flag = 0
+        
+        userName = host
+        key_name = userName + ",chat_often"
+        if cache.has_key(key_name): #在生存期限内
+            cnt_str = cache.get(key_name)
+            if cnt_str == "wait":
+                wait_flag = 1
+            else:
+                cnt = int(cnt_str) + 1
+                if cnt >= 5:   #在较短时间间隔内频繁发送请求，需要禁言N秒
+                    cache.set(key_name, "wait", 15)     #15秒 
+                    wait_flag = 1
+                else:
+                    cnt_str = str(cnt)
+                    print "------" + cnt_str
+                    cache.set(key_name, cnt_str, 1)     # expire
+        else:
+            cache.set(key_name, "0", 1)   # expire
+
+        if wait_flag == 1:
+            ret = {
+                'stat': 'fail',
+                'reason': "CHAT_TOO_OFTEN",
+            }
+
+            return HttpResponse(json.dumps(ret))
+
+        # 2. 判断是否达到当天发送次数
+        wait_flag = 0
+        key_name = userName + ",chat_much"
+        if cache.has_key(key_name):     #在生存期限内
+            is_wait = cache.get(key_name)
+            if is_wait == "wait":
+                wait_flag = 1
+                remain_time = cache.ttl(key_name)
+            else:
+                key_cnt = userName + ",chat_cnt"
+                cnt_str = cache.get(key_cnt)
+                cnt = int(cnt_str) + 1
+                if cnt >= 10:   #在一定时间间隔内发送较多请求，需要禁言N分钟
+                    cache.set(key_name, "wait", 60*10)     
+                    wait_flag = 1
+                    remain_time = cache.ttl(key_name)
+                else:
+                    cnt_str = str(cnt)
+                    print "------" + cnt_str
+                    cache.set(key_cnt, cnt_str, 60*10+60)     
+        else:
+            cache.set(key_name, "start", 60*10)   # expire
+            key_cnt = userName + ",chat_cnt"
+            cache.set(key_cnt, "0", 60*10+60)   # 要比...,chat_much的expire大
+
+        if wait_flag == 1:
+            ret = {
+                'stat': 'fail',
+                'reason': "CHAT_TOO_MUCH",
+                'remain': remain_time,
+            }
+
+            return HttpResponse(json.dumps(ret))
+
+            
+        # 3. 操作数据库
         guest = request.POST.get('guest', '')
         message = request.POST.get('message', '')
         chat_type = request.POST.get('type', '')
@@ -127,7 +196,7 @@ def user_chatSend(request):
         insert_chat(guest, host, 1, 0, chat_type, message)
         chatHostClass = get_user_chats(host)
         objs = chatHostClass.objects.filter(name=guest).filter(io=0).order_by('-chat_time')[:1]
-        chat_time = objs[0].chat_time.strftime("%Y-%m-%d %H:%M:%S")
+        chat_time = (objs[0].chat_time + datetime.timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")
 
 
         status_leave = 0
@@ -179,7 +248,7 @@ def user_readNewChat(request):
 
     chats = []
     for chat in chat_objs:
-        chat_time = chat.chat_time.strftime("%Y-%m-%d %H:%M:%S")
+        chat_time = (chat.chat_time + datetime.timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")
         chats.append(
             {
                 'time': chat_time,
@@ -220,7 +289,7 @@ def user_readChats(request):
 
         chats = []
         for chat in chat_objs:
-            chat_time = chat.chat_time.strftime("%Y-%m-%d %H:%M:%S")
+            chat_time = (chat.chat_time + datetime.timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")
             chats.append(
                 {
                     'time': chat_time,

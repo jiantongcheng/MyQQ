@@ -211,8 +211,9 @@ function contact_add_row(obj, relation)
         tr.append('<td>'+sign_str+'</td>');
         tr.append('<td>'+obj.email+'</td>');
         var handle = '<div class="dropdown">'
-            + '<button type="button" class="btn btn-info" onclick="show_chat(event)"><span style="display:none;background-color:orange" class="chat_badge badge pull-right"></span>聊天</button> ' 
-            + '<button type="button" class="btn btn-info dropdown-toggle" id="dropdownMenuFriendMove" data-toggle="dropdown">' 
+            + '<button type="button" class="btn btn-info" onclick="show_chat(event)"><span style="display:none;background-color:orange" class="chat_badge badge pull-right"></span>聊天</button> ';
+        if(obj.name != "MyQ_jiantong"){ 
+            handle += '<button type="button" class="btn btn-info dropdown-toggle" id="dropdownMenuFriendMove" data-toggle="dropdown">' 
             + '移 动<span class="caret"></span></button> '
             + '<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenuFriendMove">'
             + '<li role="presentation">'
@@ -222,8 +223,10 @@ function contact_add_row(obj, relation)
                 + '<a role="menuitem" style="cursor:pointer;" tabindex="-1" onclick="change_relation(event, 2)">黑名单</a>'
             + '</li>'
             + '</ul>'
-            + '<button type="button" class="btn btn-info" onclick="del_relation(event)">删除</button>'
-            + '</div>';
+            + '<button type="button" class="btn btn-info" onclick="del_relation(event)">删除</button>';
+        }
+            // + '</div>';
+        handle += '</div>';
         tr.append('<td>'+handle+'</td>');
         $('#id_contacts_friend tbody').append(tr);
     }
@@ -1198,7 +1201,7 @@ function check_news()
             else if(obj.stat == "fail"){
                 if(obj.reason == 'SESSION_INVALID'){
                     clearInterval(g_heart.handle);
-                    alert("因为您长时间没有操作页面，请重新登录^_^");
+                    alert("因为您长时间没有操作页面或者有非法操作，请重新登录^_^");
                     window.location.href = "login";
                 }
                 else
@@ -1326,7 +1329,7 @@ var vue_nav = new Vue({
                 $.post("/home/readBase", 
                     { user_name: g_user_name},
                     function(data){     
-                        alert(data);    //约定格式....
+                        // alert(data);    //约定格式....
                         var obj = JSON.parse(data);
                         if(obj.stat == "success"){
                             g_obj_user.nickname = obj.user_nickname;
@@ -1773,8 +1776,19 @@ var vue_contacts = new Vue({
                         $('#chatDisplay').append(msg_old);
                     }
                     else{
-                        alert("something error@chatSend back");
+                        if(obj.reason == "CHAT_TOO_OFTEN"){
+                            var msg_old = "<div>【您发送太快了！请稍后再试...】</div>";
+                            $('#chatDisplay').append(msg_old);
+                        }
+                        else if(obj.reason == "CHAT_TOO_MUCH"){
+                            var remain = obj.remain;
+                            var msg_old = "<div>【您在过去10分钟发送消息数量有点多！请等候" + remain + "秒再发...】</div>";
+                            $('#chatDisplay').append(msg_old);
+                        }
+                        else
+                            alert("something error@chatSend back");
                     }
+                    $('#chatSend').focus();
                 });
         },
         setting_status:function(){          //状态改变
@@ -1879,6 +1893,9 @@ var vue_vote = new Vue({
     methods:{
         read_vote:function(id){
             //读取用户投票信息
+
+            if(id == g_vote.id)
+                return;
             g_vote.id = id;
             $('.btn_vote').removeClass("btn-warning").addClass("btn-info");
             $('#btn_vote_'+id).removeClass("btn-info").addClass("btn-warning");

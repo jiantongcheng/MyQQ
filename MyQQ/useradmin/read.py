@@ -110,6 +110,8 @@ def readContacts(request):
                 status = guest_obj.user_status      #状态是动态数据，需要动态获取
                 if status != 0:
                     count_friend_alive += 1
+                fri.status = status
+                fri.save()
                 friend.append(
                     {'name': fri.name,
                     'status': status,           
@@ -128,6 +130,8 @@ def readContacts(request):
                 status = guest_obj.user_status      #状态是动态数据，需要动态获取
                 if status != 0:
                     count_stranger_alive += 1
+                stra.status = status
+                stra.save()
                 stranger.append(
                     {'name': stra.name,
                     'status': status,

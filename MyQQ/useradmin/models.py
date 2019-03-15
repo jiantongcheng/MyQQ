@@ -41,7 +41,14 @@ class userAdmin(models.Model):
     #登陆之后被赋予某个值，每次心跳到来也赋相同的值，mysql数据库周期事件每次减一，减到零后将user_status置为0   
     #有了handle_time之后，也许就不需要status_heart字段了
 
-    limit_reason = models.IntegerField(default=0)       #功能限制，限制时间可以放在redis缓存中；0-正常，1-敏感语，2-聊天太快，3-聊天太多
+    #功能限制，限制时间可以放在redis缓存中
+    #二进制，0-正常，1-敏感语, 10-提交太频繁，100-聊天太快，1000-聊天太多
+    #b0-敏感语, 由人工校验，人工修改或删除数据库; web登陆时给以提醒，限制登陆1小时
+    #b1-提交太频繁，给出提醒，退出登陆，限制登陆1小时，防止恶意攻击，web登陆时再次给以提醒
+    #b2-聊天太快，聊天界面给以提醒，禁言15秒
+    #b3-N分钟内聊天太多，聊天界面给以提醒，禁言10分钟
+    
+    limit_reason = models.IntegerField(default=0)       
 
     register_time = models.DateTimeField(auto_now=False, auto_now_add=True) #注册时间
     login_time = models.DateTimeField(auto_now=False, auto_now_add=False, default = timezone.now)   #登陆时间

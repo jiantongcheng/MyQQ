@@ -3,7 +3,10 @@
 中间件，主要用于session和心跳处理，也做为拦截器
 """
 from django.shortcuts import render, HttpResponse, redirect, HttpResponseRedirect
-from views import offline_clean
+from views import offline_clean, set_limit
+#缓存数据库
+from django.core.cache import cache
+
 import json, time
 
 try:
@@ -24,8 +27,30 @@ class WolfMiddleware(MiddlewareMixin):
         elif request.path == '/modify':                         #通过密码找回修改密码   
             pass
         else:
+            userName = request.session.get('username', None)
+            if userName != None:    
+                key_name = userName+",request"
+                if cache.has_key(key_name):
+                    cnt_str = cache.get(key_name)
+                    cnt = int(cnt_str) + 1
+                    if cnt > 15:    #在较短时间间隔内频繁发送请求，需要禁止这种情况
+                        set_limit(userName, 1)  
+                        offline_clean(request)
+                        print "Game Over!"
+                        ret = {
+                            'stat': 'serious',
+                            'reason': 'REQ_TOO_OFTEN',
+                        }
+                        return HttpResponse(json.dumps(ret))
+                    else:
+                        cnt_str = str(cnt)
+                        cache.set(key_name, cnt_str, 1)   
+                else:   #不存在，就新建
+                    cache.set(key_name, "0", 1)   #1秒 expire
+
+            #------------------------------------------#
             if request.path != '/check_news':                   #非心跳消息，即常规请求，需要更新session有效期
-                if request.session.get('username', None):
+                if userName != None:
                     curr_tm = int(time.time())
                     request.session['timesec'] = curr_tm
                     request.session.set_expiry(600)              #600
@@ -40,7 +65,7 @@ class WolfMiddleware(MiddlewareMixin):
             else:       #check_news, 相当于心跳
                 pass_flag = 0
 
-                if request.session.get('username', None):
+                if userName != None:
                     #要判断即将过期的情况，这样才能销毁session以及做些数据库操作
                     curr_tm = int(time.time())
                     last_tm = request.session.get('timesec', None)

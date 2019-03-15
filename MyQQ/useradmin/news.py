@@ -9,6 +9,7 @@ from django.http import HttpResponse
 from useradmin.models import userAdmin
 from useradmin.dynamic_model import get_user_news, get_user_contacts, get_user_chats
 
+import datetime
 import json
 
 # Create your views here.
@@ -298,7 +299,7 @@ def user_readNewsByClasstype0(request):
         news_count = news_objs.count()
         news = []
         for new in news_objs:
-            news_time = new.news_time.strftime("%Y-%m-%d %H:%M:%S")
+            news_time = (new.news_time + datetime.timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")
             news.append(
                 {
                     'id': new.id,
