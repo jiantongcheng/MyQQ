@@ -85,7 +85,7 @@ DATABASES = {
     # },
     'default':{
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django_MyQ',
+        'NAME': 'django_MyQQQ',
         'USER': 'root',
         'PASSWORD': '123456',
         'HOST': "localhost",

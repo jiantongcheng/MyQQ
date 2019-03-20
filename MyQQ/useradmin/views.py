@@ -338,6 +338,7 @@ def modifyPassword(request):
             else:
                 obj.user_password = user_new_password
                 obj.save()
+                # offline_clean(request)
                 ret = {
                     'stat': 'success',
                     'hint': '修改成功，请重新登录！',
@@ -501,9 +502,10 @@ def emailVerify_recv(request):
                     nowTime = datetime.datetime.now()
                     diff = (nowTime - fit_forget_time).seconds
                     if diff < 60*5:     #N分钟内有效
+                        # offline_clean(request)
                         ret = {
                             'stat': 'success',
-                            'hint': '',
+                            'hint': '邮箱绑定验证成功，请重新登录',
                         }
                         obj.user_emailValid = 1
                         obj.user_level += 10     #经验值+10
@@ -552,7 +554,7 @@ def register(request):
         alert_info = "None_None"
 
         ret, _Null_ = user_valid(my_form['user_name'])
-        if ret or my_form['user_name'] == "MyQ_jiantong":   #暂且将MyQ_jiantong作为管理员
+        if ret:         #暂且将MyQ_jiantong作为管理员
             ret = "index_register"
             alert_info = '注册失败！用户名\'' + my_form['user_name'] + '\'已存在！'
         else:
@@ -562,10 +564,11 @@ def register(request):
             else:
                 ret = "index_login"
                 create_userAdmin(my_form)
-                insert_user_contact(my_form['user_name'], 'MyQ_jiantong', 0)
-                insert_user_contact('MyQ_jiantong', my_form['user_name'], 0)
-                message = "您好，欢迎来到MyQ，我是管理员建通，有事您叫我^_^"
-                insert_chat(my_form['user_name'], 'MyQ_jiantong', 1, 0, 0, message)
+                if my_form['user_name'] != 'MyQ_jiantong':
+                    insert_user_contact(my_form['user_name'], 'MyQ_jiantong', 0)
+                    insert_user_contact('MyQ_jiantong', my_form['user_name'], 0)
+                    message = "您好，欢迎来到MyQ，我是管理员建通，有事您叫我^_^"
+                    insert_chat(my_form['user_name'], 'MyQ_jiantong', 1, 0, 0, message)
                 alert_info = "注册成功，请登录！"
 
         my_dict = {

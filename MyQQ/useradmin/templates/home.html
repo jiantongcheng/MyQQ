@@ -247,7 +247,7 @@ function change_relation(event, relation)
 {
     obj = event.currentTarget;
     name = $(obj).closest("tr").find("td.name").html();
-    alert("change " + name);
+    // alert("change " + name);
 
     g_guest_username = name;
     g_obj_will = obj;               //先将对象通过全局变量保存
@@ -258,7 +258,7 @@ function change_relation(event, relation)
             relation: relation,
         },
         function(data){
-            alert(data);    //约定格式....
+            // alert(data);    //约定格式....
             var obj = JSON.parse(data);
             if(obj.stat == 'success')
             {
@@ -306,7 +306,7 @@ function del_relation(event)
 {
     obj = event.currentTarget;
     name = $(obj).closest("tr").find("td.name").html();
-    alert("remove " + name);
+    // alert("remove " + name);
 
     g_guest_username = name;
     g_obj_will = obj;               //先将对象通过全局变量保存
@@ -316,7 +316,7 @@ function del_relation(event)
             guest: name, 
         },
         function(data){
-            alert(data);    //约定格式....
+            // alert(data);    //约定格式....
             var obj = JSON.parse(data);
             if(obj.stat == 'success')
             {
@@ -1832,7 +1832,7 @@ var vue_contacts = new Vue({
             else    //uncond
                 items.setting_permitAdd = 0;
 
-            alert(JSON.stringify(items))
+            // alert(JSON.stringify(items))
 
             g_obj_user.permitAdd_will = items.setting_permitAdd;
             g_obj_user.permitSearch_will = items.setting_permitSearch;

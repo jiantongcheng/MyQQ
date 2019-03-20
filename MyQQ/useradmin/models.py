@@ -76,7 +76,15 @@ class vote(models.Model):
     '''
     vote_id = models.IntegerField(default=0)                #投票编码：1-小学，2-初中，3-高中，4-大学
     vote_user = models.CharField('name', max_length=32)     #投票用户
-    vote_act = models.CharField('act', max_length=1024)     #投票行为，格式1:A,2:C,3:D,...
+    vote_act = models.CharField('actor', max_length=1024)     #投票行为，格式1:A,2:C,3:D,...
+
+class vote(models.Model):
+    '''
+    投票相关
+    '''
+    vote_id = models.IntegerField(default=0)                #投票编码：1-小学，2-初中，3-高中，4-大学
+    vote_user = models.CharField('name', max_length=32)     #投票用户
+    vote_act = models.CharField('actor', max_length=1024)     #投票行为，格式1:A,2:C,3:D,...
 
 class user_contacts(models.Model):
     '''

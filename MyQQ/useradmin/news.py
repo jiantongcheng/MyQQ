@@ -160,27 +160,30 @@ def insert_user_contact(host, guest, relation):
     类型：工具
     新增或修改联系人
     '''
-    usr_guest = userAdmin.objects.get(user_name=guest)
-    # if usr_guest.user_emailValid == 0:    #不添加未认证的用户
-    if usr_guest.user_emailValid == 1:    
+    if host == guest:
         return False
-    else:
-        usr_hostClass = get_user_contacts(host)
-        usr_host, new = usr_hostClass.objects.get_or_create(name=usr_guest.user_name)
-        if new == True:
-            print "-------------add new relation------"
-            usr_host.relation = relation
-            usr_host.status = usr_guest.user_status
-            usr_host.nickname = usr_guest.user_nickname
-            usr_host.remark = ''  #注释默认为空
-            usr_host.email = usr_guest.user_email
-            usr_host.gender = usr_guest.user_gender
-            usr_host.sign = usr_guest.user_sign
-        else:   #已经存在时只改变关系
-            usr_host.relation = relation
+        
+    usr_guest = userAdmin.objects.get(user_name=guest)
+    # if usr_guest.user_emailValid == 0 and host != "MyQ_jiantong" and guest != "MyQ_jiantong" :    #不添加未认证的用户, MyQ_jiantong除外
+    #     return False
+    # else:
 
-        usr_host.save()
-        return True
+    usr_hostClass = get_user_contacts(host)
+    usr_host, new = usr_hostClass.objects.get_or_create(name=usr_guest.user_name)
+    if new == True:
+        print "-------------add new relation------"
+        usr_host.relation = relation
+        usr_host.status = usr_guest.user_status
+        usr_host.nickname = usr_guest.user_nickname
+        usr_host.remark = ''  #注释默认为空
+        usr_host.email = usr_guest.user_email
+        usr_host.gender = usr_guest.user_gender
+        usr_host.sign = usr_guest.user_sign
+    else:   #已经存在时只改变关系
+        usr_host.relation = relation
+
+    usr_host.save()
+    return True
 
 def insert_user_news_classtype0(host, action, guest):
     '''
