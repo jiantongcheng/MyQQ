@@ -164,7 +164,7 @@ def user_chatSend(request):
                 key_cnt = userName + ",chat_cnt"
                 cnt_str = cache.get(key_cnt)
                 cnt = int(cnt_str) + 1
-                if cnt >= 10:   #在一定时间间隔内发送较多请求，需要禁言N分钟
+                if cnt >= 100:   #在一定时间间隔内发送较多请求，需要禁言N分钟
                     cache.set(key_name, "wait", 60*10)     
                     wait_flag = 1
                     remain_time = cache.ttl(key_name)

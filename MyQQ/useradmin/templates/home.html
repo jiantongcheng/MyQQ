@@ -1149,6 +1149,8 @@ function check_news()
                                                             msg_old += "<div style='text-align:right; color:blue'>" + message + " &lt;"+ g_chat.current_guest +"&gt;</div>"
 
                                                             $('#chatDisplay').append(msg_old);
+                                                            $('#chatDisplay').append("<input type='button' value='***' />");
+                                                            $('#chatDisplay').find('input:last-child').focus().remove();
                                                         }
 
                                                     }
@@ -1304,6 +1306,18 @@ $(function () {         //页面加载事件
         g_chat.timestamp_1_day = '';
         g_chat.timestamp_1_sec = -3600;
         g_chat.timestamp_2_sec = -3600;
+    })
+
+    $('#chat_window').on('shown.bs.modal', function () {
+        $('#chatDisplay').append("<input type='button' value='***' />");
+        $('#chatDisplay').find('input:last-child').focus().remove();
+    })
+
+    $('#chatSend').bind('keypress', function(event){
+        if(event.keyCode == '13')
+		{
+            vue_contacts.chatSend();
+        }
     })
 });
 
@@ -1788,6 +1802,9 @@ var vue_contacts = new Vue({
                         else
                             alert("something error@chatSend back");
                     }
+                    $('#chatDisplay').append("<input type='button' value='***' />");
+                    $('#chatDisplay').find('input:last-child').focus().remove();
+
                     $('#chatSend').focus();
                 });
         },
