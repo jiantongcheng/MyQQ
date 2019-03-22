@@ -1,6 +1,6 @@
 <div class="dropdown">
-    <button id="btn_vote_1" type="button" class="btn btn-info btn_vote" @click="read_vote(1)">马 小</button>
-    <button id="btn_vote_2" type="button" class="btn btn-info btn_vote" @click="read_vote(2)">姚 中</button>
+    <button id="btn_vote_1" type="button" class="btn btn-info btn_vote" @click="read_vote(1)">同学会(马小)</button>
+    <button id="btn_vote_2" type="button" class="btn btn-info btn_vote" @click="read_vote(2)">同学会(姚中)</button>
 </div>
 <br />
 <div id="vote_invite_div" class="col-sm-6" style="display:none">
@@ -17,203 +17,203 @@
 
 <h3 id="vote_cnt" style="margin-left:50px;display:none"> 当前参与人数: [[vote_cnt]]</h3>
 <div class="form-group" id="vote_mx" style="margin-left:100px;display:none">
-    <label >1. 请问你是？</label>
+    <label >1. 你觉得同学会的时间在何时举行比较好？</label>
     <div class="radio">
         <label>
             <input type="radio" name="vote_mx_1" 
-                value="A" checked>A. 男同学 <span class="vote_info">[[vote_mx_1_A]]</span>
-        </label>
-    </div>
-    <div class="radio">
-        <label>
-            <input type="radio" name="vote_mx_1" 
-                value="B">B. 女同学 <span class="vote_info">[[vote_mx_1_B]]</span>
+                value="A" checked>A. 五一、元旦等小长假 <span class="vote_info">[[vote_mx_1_A]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_mx_1" 
-                value="C">C. 老师 <span class="vote_info">[[vote_mx_1_C]]</span>
+                value="B">B. 国庆假期 <span class="vote_info">[[vote_mx_1_B]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_1" 
+                value="C">C. 过年前后 <span class="vote_info">[[vote_mx_1_C]]</span>
         </label>
     </div>
 
-    <label >2. 你觉得同学会的时间在何时举行比较好？</label>
+    <label >2. 如果在年后举行同学会，你通常什么时候有空？</label>
     <div class="radio">
         <label>
             <input type="radio" name="vote_mx_2" 
-                value="A" checked>A. 五一、元旦等小长假 <span class="vote_info">[[vote_mx_2_A]]</span>
+                value="A" checked>A. 初一~初三 <span class="vote_info">[[vote_mx_2_A]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_mx_2" 
-                value="B">B. 国庆假期 <span class="vote_info">[[vote_mx_2_B]]</span>
+                value="B">B.  初三~初五<span class="vote_info">[[vote_mx_2_B]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_mx_2" 
-                value="C">C. 过年前后 <span class="vote_info">[[vote_mx_2_C]]</span>
+                value="C">C.  初六及以后<span class="vote_info">[[vote_mx_2_C]]</span>
         </label>
     </div>
 
-    <label >3. xxxxxxx</label>
+    <label >3. 你认为每人交多少钱合适？</label>
     <div class="radio">
         <label>
             <input type="radio" name="vote_mx_3" 
-                value="A" checked>A. xxxxx <span class="vote_info">[[vote_mx_3_A]]</span>
-        </label>
-    </div>
-    <div class="radio">
-        <label>
-            <input type="radio" name="vote_mx_3" 
-                value="B">B. xxxxx <span class="vote_info">[[vote_mx_3_B]]</span>
+                value="A" checked>A. 100~200 <span class="vote_info">[[vote_mx_3_A]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_mx_3" 
-                value="C">C. xxxxx <span class="vote_info">[[vote_mx_3_C]]</span>
+                value="B">B. 200~400 <span class="vote_info">[[vote_mx_3_B]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_3" 
+                value="C">C. 400~600 <span class="vote_info">[[vote_mx_3_C]]</span>
         </label>
     </div>
 
-    <label >4. xxxxxxx</label>
+    <label >4. 你期望的同学会形式是？</label>
     <div class="radio">
         <label>
             <input type="radio" name="vote_mx_4" 
-                value="A" checked>A. xxxxx <span class="vote_info">[[vote_mx_4_A]]</span>
+                value="A" checked>A. 吃饭、唱歌等常规形式 <span class="vote_info">[[vote_mx_4_A]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_mx_4" 
-                value="B">B. xxxxx <span class="vote_info">[[vote_mx_4_B]]</span>
+                value="B">B. 户外活动、附近旅游 <span class="vote_info">[[vote_mx_4_B]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_mx_4" 
-                value="C">C. xxxxx <span class="vote_info">[[vote_mx_4_C]]</span>
+                value="C">C. 打牌、台球、娱乐 <span class="vote_info">[[vote_mx_4_C]]</span>
         </label>
     </div>
 
-    <label >5. xxxxxxx</label>
+    <label >5. 同学会的费用是否应该均摊？</label>
     <div class="radio">
         <label>
             <input type="radio" name="vote_mx_5" 
-                value="A" checked>A. xxxxx <span class="vote_info">[[vote_mx_5_A]]</span>
-        </label>
-    </div>
-    <div class="radio">
-        <label>
-            <input type="radio" name="vote_mx_5" 
-                value="B">B. xxxxx <span class="vote_info">[[vote_mx_5_B]]</span>
+                value="A" checked>A. 均摊 <span class="vote_info">[[vote_mx_5_A]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_mx_5" 
-                value="C">C. xxxxx <span class="vote_info">[[vote_mx_5_C]]</span>
+                value="B">B. 大家自愿出多少就多少 <span class="vote_info">[[vote_mx_5_B]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_5" disabled = 'disabled'
+                value="C">C. --- <span class="vote_info">[[vote_mx_5_C]]</span>
         </label>
     </div>
 
-    <label >6. xxxxxxx</label>
+    <label >6. 如果有晚上唱K环节，你愿意一起玩到后半夜吗？</label>
     <div class="radio">
         <label>
             <input type="radio" name="vote_mx_6" 
-                value="A" checked>A. xxxxx <span class="vote_info">[[vote_mx_6_A]]</span>
+                value="A" checked>A. 愿意 <span class="vote_info">[[vote_mx_6_A]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_mx_6" 
-                value="B">B. xxxxx <span class="vote_info">[[vote_mx_6_B]]</span>
+                value="B">B. 不是很愿意 <span class="vote_info">[[vote_mx_6_B]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_mx_6" 
-                value="C">C. xxxxx <span class="vote_info">[[vote_mx_6_C]]</span>
+                value="C">C. 看情况 <span class="vote_info">[[vote_mx_6_C]]</span>
         </label>
     </div>
 
-    <label >7. xxxxxxx</label>
+    <label >7. 多少人以上的同学会，你愿意去？</label>
     <div class="radio">
         <label>
             <input type="radio" name="vote_mx_7" 
-                value="A" checked>A. xxxxx <span class="vote_info">[[vote_mx_7_A]]</span>
-        </label>
-    </div>
-    <div class="radio">
-        <label>
-            <input type="radio" name="vote_mx_7" 
-                value="B">B. xxxxx <span class="vote_info">[[vote_mx_7_B]]</span>
+                value="A" checked>A. 吃饭能凑一桌就行 <span class="vote_info">[[vote_mx_7_A]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_mx_7" 
-                value="C">C. xxxxx <span class="vote_info">[[vote_mx_7_C]]</span>
+                value="B">B. 吃饭能凑两桌 <span class="vote_info">[[vote_mx_7_B]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_mx_7" 
+                value="C">C. 吃饭能凑三桌 <span class="vote_info">[[vote_mx_7_C]]</span>
         </label>
     </div>
 
-    <label >8. xxxxxxx</label>
+    <label >8. 将同学会费用拿出一部分买烟、零食等，你同意吗？</label>
     <div class="radio">
         <label>
             <input type="radio" name="vote_mx_8" 
-                value="A" checked>A. xxxxx <span class="vote_info">[[vote_mx_8_A]]</span>
+                value="A" checked>A. 可以的 <span class="vote_info">[[vote_mx_8_A]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_mx_8" 
-                value="B">B. xxxxx <span class="vote_info">[[vote_mx_8_B]]</span>
+                value="B">B. 还是不要，自费吧 <span class="vote_info">[[vote_mx_8_B]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
-            <input type="radio" name="vote_mx_8" 
-                value="C">C. xxxxx <span class="vote_info">[[vote_mx_8_C]]</span>
+            <input type="radio" name="vote_mx_8" disabled = 'disabled'
+                value="C">C. --- <span class="vote_info">[[vote_mx_8_C]]</span>
         </label>
     </div>
 
-    <label >9. xxxxxxx</label>
+    <label >9. 你举得在哪举行同学会比较好？</label>
     <div class="radio">
         <label>
             <input type="radio" name="vote_mx_9" 
-                value="A" checked>A. xxxxx <span class="vote_info">[[vote_mx_9_A]]</span>
+                value="A" checked>A. 马金 <span class="vote_info">[[vote_mx_9_A]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_mx_9" 
-                value="B">B. xxxxx <span class="vote_info">[[vote_mx_9_B]]</span>
+                value="B">B. 开化 <span class="vote_info">[[vote_mx_9_B]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_mx_9" 
-                value="C">C. xxxxx <span class="vote_info">[[vote_mx_9_C]]</span>
+                value="C">C. 随便啦 <span class="vote_info">[[vote_mx_9_C]]</span>
         </label>
     </div>
 
-    <label >10. xxxxxxx</label>
+    <label >10. 去母校看看怎么样？</label>
     <div class="radio">
         <label>
             <input type="radio" name="vote_mx_10" 
-                value="A" checked>A. xxxxx <span class="vote_info">[[vote_mx_10_A]]</span>
+                value="A" checked>A. 支持 <span class="vote_info">[[vote_mx_10_A]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_mx_10" 
-                value="B">B. xxxxx <span class="vote_info">[[vote_mx_10_B]]</span>
+                value="B">B. 不去了吧，主要是同学的友谊 <span class="vote_info">[[vote_mx_10_B]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_mx_10" 
-                value="C">C. xxxxx <span class="vote_info">[[vote_mx_10_C]]</span>
+                value="C">C. 不去了吧，母校已不是当年的母校 <span class="vote_info">[[vote_mx_10_C]]</span>
         </label>
     </div>
 
@@ -223,203 +223,203 @@
 </div>
 
 <div class="form-group" id="vote_yz" style="margin-left:100px;display:none">
-    <label >1. 请问你是？</label>
+    <label >1. 你觉得同学会的时间在何时举行比较好？</label>
     <div class="radio">
         <label>
             <input type="radio" name="vote_yz_1" 
-                value="A" checked>A. 男同学 <span class="vote_info">[[vote_yz_1_A]]</span>
-        </label>
-    </div>
-    <div class="radio">
-        <label>
-            <input type="radio" name="vote_yz_1" 
-                value="B">B. 女同学 <span class="vote_info">[[vote_yz_1_B]]</span>
+                value="A" checked>A. 五一、元旦等小长假 <span class="vote_info">[[vote_yz_1_A]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_yz_1" 
-                value="C">C. 老师 <span class="vote_info">[[vote_yz_1_C]]</span>
+                value="B">B. 国庆假期 <span class="vote_info">[[vote_yz_1_B]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_1" 
+                value="C">C. 过年前后 <span class="vote_info">[[vote_yz_1_C]]</span>
         </label>
     </div>
 
-    <label >2. xxxxxxx</label>
+    <label >2. 如果在年后举行同学会，你通常什么时候有空？</label>
     <div class="radio">
         <label>
             <input type="radio" name="vote_yz_2" 
-                value="A" checked>A. xxxxx <span class="vote_info">[[vote_yz_2_A]]</span>
+                value="A" checked>A. 初一~初三 <span class="vote_info">[[vote_yz_2_A]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_yz_2" 
-                value="B">B. xxxxx <span class="vote_info">[[vote_yz_2_B]]</span>
+                value="B">B. 初三~初五 <span class="vote_info">[[vote_yz_2_B]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_yz_2" 
-                value="C">C. xxxxx <span class="vote_info">[[vote_yz_2_C]]</span>
+                value="C">C. 初六及以后 <span class="vote_info">[[vote_yz_2_C]]</span>
         </label>
     </div>
 
-    <label >3. xxxxxxx</label>
+    <label >3. 你认为每人交多少钱合适？</label>
     <div class="radio">
         <label>
             <input type="radio" name="vote_yz_3" 
-                value="A" checked>A. xxxxx <span class="vote_info">[[vote_yz_3_A]]</span>
-        </label>
-    </div>
-    <div class="radio">
-        <label>
-            <input type="radio" name="vote_yz_3" 
-                value="B">B. xxxxx <span class="vote_info">[[vote_yz_3_B]]</span>
+                value="A" checked>A. 100~200 <span class="vote_info">[[vote_yz_3_A]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_yz_3" 
-                value="C">C. xxxxx <span class="vote_info">[[vote_yz_3_C]]</span>
+                value="B">B. 200~400 <span class="vote_info">[[vote_yz_3_B]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_3" 
+                value="C">C. 400~600 <span class="vote_info">[[vote_yz_3_C]]</span>
         </label>
     </div>
 
-    <label >4. xxxxxxx</label>
+    <label >4. 你期望的同学会形式是？</label>
     <div class="radio">
         <label>
             <input type="radio" name="vote_yz_4" 
-                value="A" checked>A. xxxxx <span class="vote_info">[[vote_yz_4_A]]</span>
+                value="A" checked>A. 吃饭、唱歌等常规形式 <span class="vote_info">[[vote_yz_4_A]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_yz_4" 
-                value="B">B. xxxxx <span class="vote_info">[[vote_yz_4_B]]</span>
+                value="B">B. 户外活动、附近旅游 <span class="vote_info">[[vote_yz_4_B]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_yz_4" 
-                value="C">C. xxxxx <span class="vote_info">[[vote_yz_4_C]]</span>
+                value="C">C. 打牌、台球、娱乐 <span class="vote_info">[[vote_yz_4_C]]</span>
         </label>
     </div>
 
-    <label >5. xxxxxxx</label>
+    <label >5. 同学会的费用是否应该均摊？</label>
     <div class="radio">
         <label>
             <input type="radio" name="vote_yz_5" 
-                value="A" checked>A. xxxxx <span class="vote_info">[[vote_yz_5_A]]</span>
-        </label>
-    </div>
-    <div class="radio">
-        <label>
-            <input type="radio" name="vote_yz_5" 
-                value="B">B. xxxxx <span class="vote_info">[[vote_yz_5_B]]</span>
+                value="A" checked>A. 均摊 <span class="vote_info">[[vote_yz_5_A]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_yz_5" 
-                value="C">C. xxxxx <span class="vote_info">[[vote_yz_5_C]]</span>
+                value="B">B. 大家自愿出多少就多少 <span class="vote_info">[[vote_yz_5_B]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_5" disabled = 'disabled'
+                value="C">C. --- <span class="vote_info">[[vote_yz_5_C]]</span>
         </label>
     </div>
 
-    <label >6. xxxxxxx</label>
+    <label >6. 如果有晚上唱K环节，你愿意一起玩到后半夜吗？</label>
     <div class="radio">
         <label>
             <input type="radio" name="vote_yz_6" 
-                value="A" checked>A. xxxxx <span class="vote_info">[[vote_yz_6_A]]</span>
+                value="A" checked>A. 愿意 <span class="vote_info">[[vote_yz_6_A]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_yz_6" 
-                value="B">B. xxxxx <span class="vote_info">[[vote_yz_6_B]]</span>
+                value="B">B. 不是很愿意 <span class="vote_info">[[vote_yz_6_B]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_yz_6" 
-                value="C">C. xxxxx <span class="vote_info">[[vote_yz_6_C]]</span>
+                value="C">C. 看情况 <span class="vote_info">[[vote_yz_6_C]]</span>
         </label>
     </div>
 
-    <label >7. xxxxxxx</label>
+    <label >7. 多少人以上的同学会，你愿意去？</label>
     <div class="radio">
         <label>
             <input type="radio" name="vote_yz_7" 
-                value="A" checked>A. xxxxx <span class="vote_info">[[vote_yz_7_A]]</span>
-        </label>
-    </div>
-    <div class="radio">
-        <label>
-            <input type="radio" name="vote_yz_7" 
-                value="B">B. xxxxx <span class="vote_info">[[vote_yz_7_B]]</span>
+                value="A" checked>A. 吃饭能凑一桌就行 <span class="vote_info">[[vote_yz_7_A]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_yz_7" 
-                value="C">C. xxxxx <span class="vote_info">[[vote_yz_7_C]]</span>
+                value="B">B. 吃饭能凑两桌 <span class="vote_info">[[vote_yz_7_B]]</span>
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="vote_yz_7" 
+                value="C">C. 吃饭能凑三桌 <span class="vote_info">[[vote_yz_7_C]]</span>
         </label>
     </div>
 
-    <label >8. xxxxxxx</label>
+    <label >8. 将同学会费用拿出一部分买烟、零食等，你同意吗？</label>
     <div class="radio">
         <label>
             <input type="radio" name="vote_yz_8" 
-                value="A" checked>A. xxxxx <span class="vote_info">[[vote_yz_8_A]]</span>
+                value="A" checked>A. 可以的 <span class="vote_info">[[vote_yz_8_A]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_yz_8" 
-                value="B">B. xxxxx <span class="vote_info">[[vote_yz_8_B]]</span>
+                value="B">B. 还是不要，自费吧 <span class="vote_info">[[vote_yz_8_B]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
-            <input type="radio" name="vote_yz_8" 
-                value="C">C. xxxxx <span class="vote_info">[[vote_yz_8_C]]</span>
+            <input type="radio" name="vote_yz_8" disabled = 'disabled'
+                value="C">C. --- <span class="vote_info">[[vote_yz_8_C]]</span>
         </label>
     </div>
 
-    <label >9. xxxxxxx</label>
+    <label >9. 你举得在哪举行同学会比较好？</label>
     <div class="radio">
         <label>
             <input type="radio" name="vote_yz_9" 
-                value="A" checked>A. xxxxx <span class="vote_info">[[vote_yz_9_A]]</span>
+                value="A" checked>A. 马金 <span class="vote_info">[[vote_yz_9_A]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_yz_9" 
-                value="B">B. xxxxx <span class="vote_info">[[vote_yz_9_B]]</span>
+                value="B">B. 开化 <span class="vote_info">[[vote_yz_9_B]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_yz_9" 
-                value="C">C. xxxxx <span class="vote_info">[[vote_yz_9_C]]</span>
+                value="C">C. 随便啦 <span class="vote_info">[[vote_yz_9_C]]</span>
         </label>
     </div>
 
-    <label >10. xxxxxxx</label>
+    <label >10. 去母校看看怎么样？</label>
     <div class="radio">
         <label>
             <input type="radio" name="vote_yz_10" 
-                value="A" checked>A. xxxxx <span class="vote_info">[[vote_yz_10_A]]</span>
+                value="A" checked>A. 支持 <span class="vote_info">[[vote_yz_10_A]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_yz_10" 
-                value="B">B. xxxxx <span class="vote_info">[[vote_yz_10_B]]</span>
+                value="B">B. 不去了吧，主要是同学的友谊 <span class="vote_info">[[vote_yz_10_B]]</span>
         </label>
     </div>
     <div class="radio">
         <label>
             <input type="radio" name="vote_yz_10" 
-                value="C">C. xxxxx <span class="vote_info">[[vote_yz_10_C]]</span>
+                value="C">C. 不去了吧，母校已不是当年的母校 <span class="vote_info">[[vote_yz_10_C]]</span>
         </label>
     </div>
 

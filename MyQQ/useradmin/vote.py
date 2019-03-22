@@ -54,7 +54,7 @@ def vote_invite_check(request):
 
     if vote_id == '1' and invite == "MX-2000":
         check = 'OK'
-    elif vote_id == '2' and invite == "YZ-2003":
+    elif vote_id == '2' and invite == "yz-2003":
         check = 'OK'
     else:
         check = "FAIL"
