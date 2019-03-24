@@ -11,7 +11,7 @@ from django.db.models import Count
 from useradmin.dynamic_model import get_user_news, get_user_contacts, get_user_chats
 #缓存数据库
 from django.core.cache import cache
-from tool import read_binary, write_binary
+from tool import read_binary, write_binary, log_file
 
 import datetime
 import json
@@ -137,6 +137,7 @@ def user_chatSend(request):
                 if cnt >= 5:   #在较短时间间隔内频繁发送请求，需要禁言N秒
                     cache.set(key_name, "wait", 15)     #15秒 
                     wait_flag = 1
+                    log_file(userName, "Chat forbid, because of CHAT_TOO_OFTEN.")
                 else:
                     cnt_str = str(cnt)
                     print "------" + cnt_str
@@ -167,6 +168,7 @@ def user_chatSend(request):
                 if cnt >= 100:   #在一定时间间隔内发送较多请求，需要禁言N分钟
                     cache.set(key_name, "wait", 60*10)     
                     wait_flag = 1
+                    log_file(userName, "Chat forbid, because of CHAT_TOO_MUCH.")
                     remain_time = cache.ttl(key_name)
                 else:
                     cnt_str = str(cnt)

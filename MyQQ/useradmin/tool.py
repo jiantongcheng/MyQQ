@@ -3,6 +3,7 @@
 工具函数
 """
 from __future__ import unicode_literals
+import datetime
 
 
 def read_binary(orig, pos):     # pos从0开始
@@ -18,6 +19,12 @@ def write_binary(orig, pos, val):
         ret = orig & ~(1 << pos)
 
     return ret
+
+def log_file(username, action):
+    file = open("/tmp/MyQ_log", "a")
+    time = (datetime.datetime.now()+datetime.timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")
+    file.write(username + "/" +  time + "/" + action + '\n')
+    file.close()
 
 # print read_binary(5, 0)
 

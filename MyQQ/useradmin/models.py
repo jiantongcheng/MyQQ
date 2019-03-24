@@ -32,7 +32,7 @@ class userAdmin(models.Model):
     user_level = models.IntegerField(default=0)                 #用户经验值
     user_nickname = models.CharField('bb', max_length=32)       #昵称
     user_password = models.CharField('cc', max_length=32)       #密码
-    user_email = models.EmailField(unique=True)                            #邮箱，也是唯一
+    user_email = models.EmailField(unique=True)                 #邮箱，也是唯一
     user_emailValid = models.IntegerField(default=0)            #邮箱有效性 0 无效 1 有效， 无效邮箱的用户无法参与很多业务
     user_sign = models.IntegerField(default=0)                  #星座
     user_gender = models.IntegerField(default=3)                #性别，1 男 2 女 3 保密

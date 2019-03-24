@@ -7,6 +7,8 @@ from views import offline_clean, set_limit
 #缓存数据库
 from django.core.cache import cache
 
+from tool import log_file
+
 import json, time
 
 try:
@@ -35,6 +37,7 @@ class WolfMiddleware(MiddlewareMixin):
                     cnt = int(cnt_str) + 1
                     if cnt > 15:    #在较短时间间隔内频繁发送请求，需要禁止这种情况
                         set_limit(userName, 1)  
+                        log_file(userName, "Logout, because of REQ_TOO_OFTEN.")
                         offline_clean(request)
                         print "Game Over!"
                         ret = {
@@ -73,6 +76,7 @@ class WolfMiddleware(MiddlewareMixin):
                         span_tm = curr_tm - last_tm
                         if span_tm >= (600-15):   #小于session期限15秒左右
                             print '---------over'
+                            log_file(userName, "Logout, because of timeout.")
                             offline_clean(request)
                             pass_flag = 0
                         else:

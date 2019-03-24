@@ -10,6 +10,7 @@ from useradmin.models import userAdmin, vote
 
 #缓存数据库
 from django.core.cache import cache
+from tool import log_file
 
 import json
 
@@ -71,6 +72,8 @@ def commit_vote(request):
     user_name = request.session.get('username', None)
     vote_id = request.POST.get('id', '')
     act = request.POST.get('act', '')
+
+    log_file(user_name, "Vote:" + vote_id)
 
     newObj = vote()
     newObj.vote_id = int(vote_id)

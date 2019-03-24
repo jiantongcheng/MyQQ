@@ -16,7 +16,7 @@ from django.core.mail import send_mail
 from news import news_contacts_new_count, insert_user_contact
 from chats import insert_chat
 from write import insert_user_news_classtype2
-from tool import read_binary, write_binary
+from tool import read_binary, write_binary, log_file
 
 import random
 import datetime
@@ -173,6 +173,8 @@ def login(request):
 
             obj.save()              #记得save
 
+            log_file(userName, "Login...")
+
             #通知小伙伴们，我上线了
             hostClass = get_user_contacts(userName)
             guestObjs = hostClass.objects.exclude(status=0)  #排除离线的家伙们
@@ -260,7 +262,9 @@ def logout(request):
     注销操作
     '''
     if request.method == 'POST':
-        print "---Logout---"
+        userName = request.session.get('username', None)
+        log_file(userName, "Logout...")
+
         if offline_clean(request):
             hint = "None_None"
         else:
@@ -508,6 +512,7 @@ def emailVerify_recv(request):
                             'hint': '邮箱绑定验证成功，请重新登录',
                         }
                         obj.user_emailValid = 1
+                        log_file(userName, "Email verify ok.")
                         obj.user_level += 10     #经验值+10
                     else:
                         ret = {
@@ -722,6 +727,7 @@ def modify(request):
                 nowTime = datetime.datetime.now()
                 diff = (nowTime - fit_forget_time).seconds
                 if diff < 60*10:    #N分钟内有效
+                    log_file(user_name, "Modify passwd ok from forget page.")
                     success = 1
                 else:
                     alert_info = "修改密码失败，原因：超时!"
