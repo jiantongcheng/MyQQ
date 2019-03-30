@@ -798,9 +798,10 @@ var g_news =
 
 var g_chat = 
 {
+    single: 0,              //串行聊天，等上一次返回之后才能进行下一次
     current_guest: '',          //当前聊天的对象
     new_chat_flag: 0,           //新消息的字样只显示一次
-    // message: '',        
+    message_local: '',          //本地输入框的消息
     timestamp_1_sec: -3600,     //上一条显示了时间的信息的时间戳(秒)
     timestamp_1_day: '',    //上一条显示了时间的信息的'年月日'
     timestamp_2_sec: -3600,     //上一条信息的时间戳(秒)
@@ -1741,6 +1742,23 @@ var vue_contacts = new Vue({
                 return;
             }
 
+            if(g_chat.single == 1)
+                return;
+            else
+                g_chat.single = 1;
+            $('#chatSendBtn').attr("disabled", "disabled");
+
+            var msg_old = "";
+            var msg_new = $('#chatSend').val();
+            g_chat.message_local = msg_new;
+            $('#chatSend').val("");     //清空编辑框
+            $('#chatSend').focus();
+
+            msg_old += "<div class='send_tmp'><我> "+msg_new + "【发送中..】" +"</div>";
+            $('#chatDisplay').append(msg_old);
+            $('#chatDisplay').append("<input type='button' value='***' />");
+            $('#chatDisplay').find('input:last-child').focus().remove();
+
             $.post("chatSend", 
                 {
                     host: g_user_name,
@@ -1750,11 +1768,15 @@ var vue_contacts = new Vue({
                 },
                 function(data){
                     // alert(data);    //约定格式....
+                    $('div.send_tmp').remove();
+                    g_chat.single = 0;
+                    $('#chatSendBtn').attr("disabled", null);
+
                     var obj = JSON.parse(data);
                     if(obj.stat == 'success')
                     {
-                        var msg_new = $('#chatSend').val();
-                        $('#chatSend').val("");     //清空编辑框
+                        var msg_new = g_chat.message_local;
+                        // $('#chatSend').val("");     //清空编辑框
 
                         var msg_old = "";
                         var time_tmp = '';
@@ -1809,7 +1831,7 @@ var vue_contacts = new Vue({
                     $('#chatDisplay').append("<input type='button' value='***' />");
                     $('#chatDisplay').find('input:last-child').focus().remove();
 
-                    $('#chatSend').focus();
+                    // $('#chatSend').focus();
                 });
         },
         setting_status:function(){          //状态改变
