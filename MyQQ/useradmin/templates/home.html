@@ -1884,6 +1884,7 @@ var vue_vote = new Vue({
     el: '#vote',
     data: {
         hint_vote_invite: '请输入投票邀请码',
+        hint_vote_point: '另外发表自己的意见和建议，限50字',
         vote_cnt: 0,
         vote_mx_1_A: 0,vote_mx_1_B: 0,vote_mx_1_C: 0,
         vote_mx_2_A: 0,vote_mx_2_B: 0,vote_mx_2_C: 0,
@@ -1908,10 +1909,10 @@ var vue_vote = new Vue({
         vote_yz_10_A: 0,vote_yz_10_B: 0,vote_yz_10_C: 0,
     },
     methods:{
-        read_vote:function(id){
+        read_vote:function(id, mode){
             //读取用户投票信息
 
-            if(id == g_vote.id)
+            if(id == g_vote.id && mode == 'manual')
                 return;
             g_vote.id = id;
             $('.btn_vote').removeClass("btn-warning").addClass("btn-info");
@@ -1951,6 +1952,8 @@ var vue_vote = new Vue({
                                 $("input:radio[name='vote_mx_"+ act_obj[i].pos +"'][value='"+ act_obj[i].select +"']").prop("checked", "checked");
                             }
 
+                            $('#vote_point_mx').val(obj.point);
+
                             $('#vote_mx').find("input").attr("disabled", "disabled");   //已经投过票就不能在投咯
                             $('#vote_mx_commit_div').hide();        //隐藏提交按钮
                             $('#vote_mx').show();
@@ -1971,6 +1974,8 @@ var vue_vote = new Vue({
                             for(var i=0;i<act_obj.length;i++){
                                 $("input:radio[name='vote_yz_"+ act_obj[i].pos +"'][value='"+ act_obj[i].select +"']").prop("checked", "checked");
                             }
+
+                            $('#vote_point_yz').val(obj.point);
 
                             $('#vote_yz').find("input").attr("disabled", "disabled");
                             $('#vote_yz_commit_div').hide();    
@@ -2018,6 +2023,7 @@ var vue_vote = new Vue({
         commit_vote:function(id){
             //提交用户投票选择
             var act = new Array();
+            var point = "";
 
             if(id == 1){
                 for(var i=1;i<=10;i++){
@@ -2026,6 +2032,9 @@ var vue_vote = new Vue({
                     act[i-1].pos = i;
                     act[i-1].select = tmp;
                 }
+
+                point = $('#vote_point_mx').val();
+                if(point == "") point = "NULL";
             }
             else if(id == 2){
                 for(var i=1;i<=10;i++){
@@ -2034,6 +2043,9 @@ var vue_vote = new Vue({
                     act[i-1].pos = i;
                     act[i-1].select = tmp;
                 }
+
+                point = $('#vote_point_yz').val();
+                if(point == "") point = "NULL";
             }
             else
             {}  //nothing
@@ -2044,11 +2056,16 @@ var vue_vote = new Vue({
                 {
                     id: id,
                     act: JSON.stringify(act),
+                    point: point,
                 },
                 function(data){
                     // alert(data);    //约定格式....
                     var obj = JSON.parse(data);
-                    vue_vote.read_vote(obj.id);
+                    if(obj.stat == "success"){
+                        vue_vote.read_vote(obj.id, 'auto');
+                    }
+                    else
+                        alert("something error@commit_vote");
             });
         },
     },

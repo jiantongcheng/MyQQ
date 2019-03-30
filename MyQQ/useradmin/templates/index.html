@@ -427,7 +427,9 @@ var vm_login = new Vue({
 
             //调试时注释掉
             var obj = form.user_verify;
-            if(myVerifyValue == 999){
+            if(obj.value == 666)
+            {}      //pass, 方便快键
+            else if(myVerifyValue == 999){
                 this.hint_user_verify = "请点击左侧'获取校验'！";
                 $('#hintLogin_user_verify').show(); 
                 obj.focus();event.preventDefault();return;
@@ -442,7 +444,6 @@ var vm_login = new Vue({
                 $('#hintLogin_user_verify').show(); 
                 obj.focus();event.preventDefault();return;
             }
-
       }
 
   }

@@ -22,6 +22,7 @@ def readVote(request):
     obj = vote.objects.filter(vote_id__exact=vote_id).filter(vote_user__exact=user_name)
     if obj:
         act = obj[0].vote_act       #要注意这里的obj[0]
+        point = obj[0].vote_point
         # key_name = 'vote_id:'+vote_id
         # if cache.has_key(key_name):
         #     statistics = cache.get(key_name)
@@ -39,6 +40,7 @@ def readVote(request):
             'act': act,
             'statistics': statistics,
             'id': vote_id,
+            'point': point,
         }  
     else:
         ret = {
@@ -72,6 +74,17 @@ def commit_vote(request):
     user_name = request.session.get('username', None)
     vote_id = request.POST.get('id', '')
     act = request.POST.get('act', '')
+    point = request.POST.get('point', 'NULL')
+
+    exist = vote.objects.filter(vote_id=vote_id).filter(vote_user=user_name).count()
+
+    if exist != 0:      #避免重复提交
+        ret = {
+            'stat': 'fail',
+            'id': vote_id,
+        }  
+
+        return HttpResponse(json.dumps(ret))
 
     log_file(user_name, "Vote:" + vote_id)
 
@@ -79,6 +92,7 @@ def commit_vote(request):
     newObj.vote_id = int(vote_id)
     newObj.vote_user = user_name
     newObj.vote_act = act
+    newObj.vote_point = point
     newObj.save()
 
     #将每个用户的投票情况计入到总的统计当中
@@ -133,6 +147,7 @@ def commit_vote(request):
         stat_obj.vote_id = int(vote_id)
         stat_obj.vote_user = "<TJ>"
         stat_obj.vote_act = json.dumps(statistics)
+        stat_obj.vote_point = "NULL"
         stat_obj.save()
 
         # cache.set(key_name, json.dumps(statistics), 3600*24*30)     #如何让其永久有效?

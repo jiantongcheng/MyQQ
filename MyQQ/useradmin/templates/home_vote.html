@@ -1,6 +1,6 @@
 <div class="dropdown">
-    <button id="btn_vote_1" type="button" class="btn btn-info btn_vote" @click="read_vote(1)">同学会(马小)</button>
-    <button id="btn_vote_2" type="button" class="btn btn-info btn_vote" @click="read_vote(2)">同学会(姚中)</button>
+    <button id="btn_vote_1" type="button" class="btn btn-info btn_vote" @click="read_vote(1, 'manual')">同学会(马小)</button>
+    <button id="btn_vote_2" type="button" class="btn btn-info btn_vote" @click="read_vote(2, 'manual')">同学会(姚中)</button>
 </div>
 <br />
 <div id="vote_invite_div" class="col-sm-6" style="display:none">
@@ -15,7 +15,7 @@
     </div>
 </div>
 
-<h3 id="vote_cnt" style="margin-left:50px;display:none"> 当前参与人数: [[vote_cnt]]</h3>
+<h3 id="vote_cnt" style="margin-left:50px;display:none"> 您可联系管理员重新投票，当前总参与人数: [[vote_cnt]]</h3>
 <div class="form-group" id="vote_mx" style="margin-left:100px;display:none">
     <label >1. 你觉得同学会的时间在何时举行比较好？</label>
     <div class="radio">
@@ -216,6 +216,11 @@
                 value="C">C. 不去了吧，母校已不是当年的母校 <span class="vote_info">[[vote_mx_10_C]]</span>
         </label>
     </div>
+
+    <div >
+        <input maxlength='50' style="width:500px;" id='vote_point_mx' type="text" :placeholder="hint_vote_point" class="form-control">
+    </div><!-- /input-group -->
+    <br />
 
     <div id="vote_mx_commit_div">
         <button type="button" class="btn btn-primary" @click="commit_vote(1)">提 交</button>
@@ -422,6 +427,11 @@
                 value="C">C. 不去了吧，母校已不是当年的母校 <span class="vote_info">[[vote_yz_10_C]]</span>
         </label>
     </div>
+
+    <div >
+        <input maxlength='50' style="width:500px;" id='vote_point_yz' type="text" :placeholder="hint_vote_point" class="form-control">
+    </div><!-- /input-group -->
+    <br />
 
     <div id="vote_yz_commit_div">
         <button type="button" class="btn btn-primary" @click="commit_vote(2)">提 交</button>
