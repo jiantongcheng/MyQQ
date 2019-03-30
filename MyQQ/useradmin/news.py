@@ -25,6 +25,9 @@ def news_contacts_new_count(host, act_type):      #联系人新消息,act_type=0
         cnt_status = newsHostClass.objects.filter(classtype=2).count()
         chatsHostClass = get_user_chats(host)
         cnt_chat = chatsHostClass.objects.filter(in_status=0).filter(io=1).count()
+        # print "-------->"
+        # print host
+        # print cnt_chat
         cnt = cnt_base + cnt_status + cnt_chat
 
         return (cnt, cnt_base, cnt_status, cnt_chat)
@@ -56,9 +59,6 @@ def user_checkNews(request):
                 'reason': 'host is not exist',
             }
         else:
-            # host_obj.status_heart = 2       #更新心跳初始值
-            # host_obj.save()
-
             news_contacts, news_contacts_base, news_contacts_status, news_contacts_chat = news_contacts_new_count(host, 0)
 
             ret = {

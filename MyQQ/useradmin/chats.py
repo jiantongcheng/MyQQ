@@ -42,7 +42,7 @@ def user_checkChats(request):
     '''
     host = request.POST.get('user_name', '')
     chatHostClass = get_user_chats(host)
-    objs = chatHostClass.objects.filter(in_status=0).values('name')
+    objs = chatHostClass.objects.filter(io=1).filter(in_status=0).values('name')    #io=1表示为输入的消息，in_status表示为新消息
 
     cnt_chats = 0
     cnt_users = 0
@@ -53,10 +53,10 @@ def user_checkChats(request):
         try:
             chats[name]
         except KeyError:
-            chats[name] = 1
+            chats[name] = 1     #表示发现有好友发来新消息
             cnt_users += 1
         else:
-            chats[name] += 1
+            chats[name] += 1    #有多条信息
 
     chats_list = []
 
@@ -145,7 +145,7 @@ def user_chatSend(request):
         else:
             cache.set(key_name, "0", 1)   # expire
 
-        if wait_flag == 1:
+        if wait_flag == 1:      #提醒客户耐心等待喔
             ret = {
                 'stat': 'fail',
                 'reason': "CHAT_TOO_OFTEN",
@@ -153,7 +153,7 @@ def user_chatSend(request):
 
             return HttpResponse(json.dumps(ret))
 
-        # 2. 判断是否达到当天发送次数
+        # 2. 判断是否在一定时间间隔内发送较多请求
         wait_flag = 0
         key_name = userName + ",chat_much"
         if cache.has_key(key_name):     #在生存期限内
@@ -179,7 +179,7 @@ def user_chatSend(request):
             key_cnt = userName + ",chat_cnt"
             cache.set(key_cnt, "0", 60*10+60)   # 要比...,chat_much的expire大
 
-        if wait_flag == 1:
+        if wait_flag == 1:      #提醒客户耐心等待喔
             ret = {
                 'stat': 'fail',
                 'reason': "CHAT_TOO_MUCH",
@@ -187,10 +187,21 @@ def user_chatSend(request):
             }
 
             return HttpResponse(json.dumps(ret))
-
             
-        # 3. 操作数据库
+        # 3. 判断对方是否是你的好友
         guest = request.POST.get('guest', '')
+        contGuestClass = get_user_contacts(guest)
+        exist = contGuestClass.objects.filter(name=host).filter(relation=0).count()
+
+        if exist == 0:
+            ret = {
+                'stat': 'fail',
+                'reason': "NOT_FRIEND",
+            }
+
+            return HttpResponse(json.dumps(ret))
+
+        # 4. 操作数据库
         message = request.POST.get('message', '')
         chat_type = request.POST.get('type', '')
 

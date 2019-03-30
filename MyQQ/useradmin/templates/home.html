@@ -557,15 +557,15 @@ function addFriend_bySearch(event)
 
 function refresh_news_badge()       //刷新表示新消息的徽章badge
 {
-    if(g_news.new_contacts_base > 0)
-        $('#news_base').show().html(g_news.new_contacts_base);
-    else
-        $('#news_base').hide();
-
     if(g_news.new_contacts > 0)
-        $('#news_contacts').show().html(g_news.new_contacts);
+        $('#news_contacts').html(g_news.new_contacts).show();
     else
         $('#news_contacts').hide();
+
+    if(g_news.new_base > 0)
+        $('#news_base').html(g_news.new_base).show();
+    else
+        $('#news_base').hide();
 }
 
 function change_calendar(cmd)
@@ -734,30 +734,32 @@ function getCalendar()
 
 function test_post()
 {   
-    $.post("testpost", 
-        {
-            host: g_user_name,
-        },
-        function(data){
-            // alert(data);    //约定格式....
+
+    alert(g_news.new_base + "-----" + g_news.new_contacts);
+    // $.post("testpost", 
+    //     {
+    //         host: g_user_name,
+    //     },
+    //     function(data){
+    //         // alert(data);    //约定格式....
             
-            var obj = JSON.parse(data);
-            if(obj.stat == 'success')
-            {
-                for(i=0;i<obj.days.length;i++)
-                {
-                    $('#weather_body_'+i).find('div.weather_date').html(obj.days[i][0]);
-                    $('#weather_body_'+i).find('div.weather_desc').html(obj.days[i][1]);
-                    if(obj.days[i][2])
-                        $('#weather_body_'+i).find('div.weather_temp').html(obj.days[i][3] + " ~ " + obj.days[i][2] + "度");
-                    else
-                        $('#weather_body_'+i).find('div.weather_temp').html(obj.days[i][3]  + "度");
-                }
-            }
-            else{
-                alert("something error@testpost back");
-            }
-        });
+    //         var obj = JSON.parse(data);
+    //         if(obj.stat == 'success')
+    //         {
+    //             for(i=0;i<obj.days.length;i++)
+    //             {
+    //                 $('#weather_body_'+i).find('div.weather_date').html(obj.days[i][0]);
+    //                 $('#weather_body_'+i).find('div.weather_desc').html(obj.days[i][1]);
+    //                 if(obj.days[i][2])
+    //                     $('#weather_body_'+i).find('div.weather_temp').html(obj.days[i][3] + " ~ " + obj.days[i][2] + "度");
+    //                 else
+    //                     $('#weather_body_'+i).find('div.weather_temp').html(obj.days[i][3]  + "度");
+    //             }
+    //         }
+    //         else{
+    //             alert("something error@testpost back");
+    //         }
+    //     });
 }
 
 var g_user_name = '{{user.name}}';      //记得加引号哦
@@ -788,7 +790,7 @@ var g_arry_contacts = [];
 var g_news = 
 {
     new_contacts: '{{user.news_contacts}}',             //新消息，所有联系人消息，包括聊天
-    new_contacts_base: '{{user.news_contacts_base}}',   //新消息，联系人基本信息
+    new_base: '{{user.news_contacts_base}}',   //新消息，联系人基本信息
     new_contacts_chat: 0,   //新消息，聊天, 初始值为0，让定时器周期性地去获取
     // new_contacts_status: 0, 暂时不需要
     inform_handle: null     //通知框相关的处理句柄
@@ -1013,11 +1015,9 @@ function check_news()
             // alert(data);    //约定格式....
             var obj = JSON.parse(data);
             if(obj.stat == "success"){
-                if((obj.news_contacts != g_news.new_contacts) || (obj.news_contacts_base != g_news.new_contacts_base)){
+                if((obj.news_contacts != g_news.new_contacts) || (obj.news_contacts_base != g_news.new_base)){
                     g_news.new_contacts = obj.news_contacts;
-                    g_news.new_contacts_base = obj.news_contacts_base;
-                    // if(g_user_name == "asdfasdf")
-                    //     alert(g_news.new_contacts + " " + g_news.new_contacts_base);
+                    g_news.new_base = obj.news_contacts_base;
                     refresh_news_badge();       //刷新徽章
                 }
 
@@ -1677,8 +1677,8 @@ var vue_contacts = new Vue({
                             $('#contacts_news_table').hide();
                         }
                         
-                        g_news.new_contacts -= g_news.new_contacts_base;
-                        g_news.new_contacts_base = 0;       //新消息都变为旧消息
+                        g_news.new_contacts -= g_news.new_base;
+                        g_news.new_base = 0;       //新消息都变为旧消息
                         refresh_news_badge();
                         $('#contacts_news').modal('show');
                     }
@@ -1797,6 +1797,10 @@ var vue_contacts = new Vue({
                         else if(obj.reason == "CHAT_TOO_MUCH"){
                             var remain = obj.remain;
                             var msg_old = "<div>【您在过去10分钟发送消息数量有点多！请等候" + remain + "秒再发...】</div>";
+                            $('#chatDisplay').append(msg_old);
+                        }
+                        else if(obj.reason == "NOT_FRIEND"){
+                            var msg_old = "<div>【对方已不再是您的好友...】</div>";
                             $('#chatDisplay').append(msg_old);
                         }
                         else
