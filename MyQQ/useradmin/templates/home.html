@@ -2159,6 +2159,11 @@ var vue_modify_password = new Vue({
       },
 
       check_items: function(form){
+            if(g_user_name == 'testforme'){
+                alert("对不起，测试账号暂时不能修改密码！")
+                return;
+            }
+
             var obj = form.user_old_password;
             var pattern = /^([a-zA-z_0-9]{1})([\w]*)$/g;
             if(obj.value == '' || obj.value.length < 6 || obj.value.length > 16 || pattern.test(obj.value) != true){
