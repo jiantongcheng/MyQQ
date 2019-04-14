@@ -124,6 +124,8 @@ function contact_add_row(obj, relation)
             var color = "aquamarine";
         else if(status_num == 0)
             var color = "lightsteelblue";
+        else if(status_num == 9)
+            var color = "white";
         else
         {}
         var tr = $("<tr class='tr_"+ obj.name +"' style='background-color:"+ color  +"'></tr>");
@@ -134,6 +136,7 @@ function contact_add_row(obj, relation)
         if(status_num == 0) status_str = "离线";
         else if(status_num == 1) status_str = "上线";
         else if(status_num == 2) status_str = "离开";
+        else if(status_num == 9) status_str = "注销";
         else {}
         tr.append('<td class="status">'+ status_str +'</td>');
         var gender_num = obj.gender;
@@ -143,17 +146,21 @@ function contact_add_row(obj, relation)
         else if(gender_num == 3)gender_str = "保密";
         else {}
         tr.append('<td>'+ gender_str +'</td>');
-        var handle = '<div class="dropdown">'
-            + '<button type="button" class="btn btn-info" click_valid="valid" onclick="addFriend(event)">交友</button> ' 
-            + '<button type="button" class="btn btn-info dropdown-toggle" id="dropdownMenuStrangerMove" data-toggle="dropdown">' 
-            + '移 动<span class="caret"></span></button> '
-            + '<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenuStrangerMove">'
-            + '<li role="presentation">'
-                + '<a role="menuitem" style="cursor:pointer;" tabindex="-1" onclick="change_relation(event, 2)"">黑名单</a>'
-            + '</li>'
-            + '</ul>'
-            + '<button type="button" class="btn btn-info" onclick="del_relation(event)">删除</button>'
-            + '</div>';
+        var handle = '<div class="dropdown">';
+
+        if(status_num != 9){
+            handle += '<button type="button" class="btn btn-info" click_valid="valid" onclick="addFriend(event)">交友</button> ' 
+                + '<button type="button" class="btn btn-info dropdown-toggle" id="dropdownMenuStrangerMove" data-toggle="dropdown">' 
+                + '移 动<span class="caret"></span></button> '
+                + '<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenuStrangerMove">'
+                + '<li role="presentation">'
+                    + '<a role="menuitem" style="cursor:pointer;" tabindex="-1" onclick="change_relation(event, 2)"">黑名单</a>'
+                + '</li>'
+                + '</ul>';
+        }
+
+        handle += '<button type="button" class="btn btn-info" onclick="del_relation(event)">删除</button>';
+        handle += '</div>';
         tr.append('<td>'+handle+'</td>');
         $('#id_contacts_stranger tbody').append(tr);
     }
@@ -166,8 +173,9 @@ function contact_add_row(obj, relation)
             var color = "aquamarine";
         else if(status_num == 0)
             var color = "lightsteelblue";
-        else
-        {}
+        else if(status_num == 9)
+            var color = "white";
+        else{}
         var tr = $("<tr class='tr_"+ obj.name +"' style='background-color:"+ color  +"'></tr>");
 
         tr.append('<td class="name">'+obj.name+'</td>');
@@ -180,6 +188,8 @@ function contact_add_row(obj, relation)
             status_str = "上线";
         else if(status_num == 2)
             status_str = "离开";
+        else if(status_num == 9)
+            status_str = "注销";
         tr.append('<td class="status">'+ status_str +'</td>');
         var gender_num = obj.gender;
         var gender_str = "";
@@ -210,20 +220,23 @@ function contact_add_row(obj, relation)
         }
         tr.append('<td>'+sign_str+'</td>');
         tr.append('<td>'+obj.email+'</td>');
-        var handle = '<div class="dropdown">'
-            + '<button type="button" class="btn btn-info" onclick="show_chat(event)"><span style="display:none;background-color:orange" class="chat_badge badge pull-right"></span>聊天</button> ';
+        var handle = '<div class="dropdown">';
+        handle += '<button type="button" class="btn btn-info" onclick="show_chat(event)"><span style="display:none;background-color:orange" class="chat_badge badge pull-right"></span>聊天</button> ';
+            
         if(obj.name != "MyQ_jiantong"){ 
-            handle += '<button type="button" class="btn btn-info dropdown-toggle" id="dropdownMenuFriendMove" data-toggle="dropdown">' 
-            + '移 动<span class="caret"></span></button> '
-            + '<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenuFriendMove">'
-            + '<li role="presentation">'
-                +'<a role="menuitem" style="cursor:pointer;" tabindex="-1" onclick="change_relation(event, 1)">陌生人</a>'
-            + '</li>'
-            + '<li role="presentation">'
-                + '<a role="menuitem" style="cursor:pointer;" tabindex="-1" onclick="change_relation(event, 2)">黑名单</a>'
-            + '</li>'
-            + '</ul>'
-            + '<button type="button" class="btn btn-info" onclick="del_relation(event)">删除</button>';
+            if(status_num != 9){     //非注销
+                handle += '<button type="button" class="btn btn-info dropdown-toggle" id="dropdownMenuFriendMove" data-toggle="dropdown">' 
+                + '移 动<span class="caret"></span></button> '
+                + '<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenuFriendMove">'
+                + '<li role="presentation">'
+                    +'<a role="menuitem" style="cursor:pointer;" tabindex="-1" onclick="change_relation(event, 1)">陌生人</a>'
+                + '</li>'
+                + '<li role="presentation">'
+                    + '<a role="menuitem" style="cursor:pointer;" tabindex="-1" onclick="change_relation(event, 2)">黑名单</a>'
+                + '</li>'
+                + '</ul>';
+            }
+            handle += '<button type="button" class="btn btn-info" onclick="del_relation(event)">删除</button>';
         }
             // + '</div>';
         handle += '</div>';

@@ -93,7 +93,7 @@ class user_contacts(models.Model):
     '''
     name = models.CharField('username', unique=True, max_length=32)         #用户名唯一
     relation = models.IntegerField(default=0)   #0:friend, 1:stranger
-    status = models.IntegerField(default=0)     #0:offline, 1:online, 2:leave
+    status = models.IntegerField(default=0)     #0:offline, 1:online, 2:leave,   9:已注销
     nickname = models.CharField('nickname', max_length=32)
     remark = models.CharField('remark', max_length=32, default='')      #备注信息，方便记忆
     email = models.EmailField(unique=True)

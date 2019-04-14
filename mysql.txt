@@ -2,10 +2,106 @@
 set acteracter_set_server=utf8
 set acteracter_set_database=utf8
 
+##-----------------------------------事件event
+
 #数据库事件，周期性查看非离线的用户，若最后一次操作时间距离现在超过一定时间，则将其状态改为离线
 create event if not exists check_user_die on schedule every 5 minute on completion preserve 
 do update useradmin_useradmin set user_status = 0 where user_status > 0 and TIMESTAMPDIFF(MINUTE, handle_time, NOW()) > (8*60+12);
 
 #数据库事件，在每天凌晨3点，去查看长期不登陆的账号，删除其相关的表格
+#1. 创建存储过程
+delimiter //
+create procedure delete_user(in username varchar(32))  
+begin 
+    declare v_sql varchar(100); 
+    declare cnt int(6);
+    set cnt=1;
+    while cnt<5 do
+        if cnt=1 then
+            set v_sql=concat('drop table if exists ', concat('chats_', username)); 
+        elseif cnt=2 then
+            set v_sql=concat('drop table if exists ', concat('news_', username));
+        elseif cnt=3 then
+            set v_sql=concat('drop table if exists ', concat('user_', username));
+        else
+            set v_sql=concat('delete from useradmin_useradmin where user_name=', concat('"', username, '"'));
+        end if;
 
+        set @v_sql=v_sql; 
+        prepare stmt from @v_sql; 
+        EXECUTE stmt; 
+        deallocate prepare stmt; 
+        set cnt=cnt+1;
+    end while;
+end
+//
+
+#2. 创建事件
+delimiter //
+create event check_user_farewell on schedule every 1 day starts '2019-4-14 14:30:00'
+on completion preserve do
+begin
+    declare done int default 0;
+    declare username varchar(32);
+    declare pointer cursor for
+        select user_name from useradmin_useradmin where user_status=0 and timestampdiff(DAY, handle_time, now()) > 30;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done=1;    
+    open pointer;
+    myloop: LOOP
+        fetch pointer into username;
+        if done=1 then
+            leave myloop;
+        end if;
+        if username != 'MyQ_jiantong' then
+            call delete_user(username);
+        end if;
+    END LOOP myloop;
+    close pointer;
+end //
+
+##-----------------------------------触发器trigger
+#创建日志表
+create table useradmin_log(`id` int(11) not null auto_increment, `name` varchar(32) not null, `time` datetime(6) not null, `action` varchar(128), primary key(`id`)) comment='by manual(mysql_client)';
+#创建触发器 register_user
+    delimiter ||
+    create trigger register_user 
+    after insert on useradmin_useradmin 
+    for each row 
+    begin 
+    insert into useradmin_log(`name`, `time`, `action`) values(new.user_name, now(), 'Register..'); 
+    end
+    ||
+    delimiter ;
+
+#创建触发器 delete_user
+    create trigger delete_user 
+    after delete on useradmin_useradmin 
+    for each row 
+    begin 
+    insert into useradmin_log(`name`, `time`, `action`) values(old.user_name, now(), 'Delete..'); 
+    end ||
+
+#创建触发器 status_user
+    create trigger status_user 
+    after update on useradmin_useradmin 
+    for each row 
+    begin 
+        if ((old.user_status = 0 and new.user_status = 1) or (old.user_status <> 0 and new.user_status = 0)) then
+            insert into useradmin_log(`name`, `time`, `action`) values(old.user_name, now(), concat("Login status: ", old.user_status, "->", new.user_status));
+        end if;
+
+        if ((old.limit_reason <> new.limit_reason ) and (new.limit_reason <> 0)) then   # 记录限制发生的时刻，不记录清除的时刻
+            insert into useradmin_log(`name`, `time`, `action`) values(old.user_name, now(), concat("Limit: ", old.limit_reason, "->", new.limit_reason));
+        end if;
+    end ||
+
+#创建触发器 vote_user
+    create trigger vote_user 
+    after insert on useradmin_vote 
+    for each row 
+    begin 
+        if (new.vote_user != '<TJ>' ) then
+            insert into useradmin_log(`name`, `time`, `action`) values(new.vote_user, now(), concat("Vote-", new.vote_id, ": ", new.vote_point));
+        end if;
+    end ||
 

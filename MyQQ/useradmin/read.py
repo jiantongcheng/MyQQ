@@ -106,9 +106,14 @@ def readContacts(request):
             friend = []
             count_friend_alive = 0
             for fri in friend_obj:
-                guest_obj = userAdmin.objects.get(user_name=fri.name)
-                status = guest_obj.user_status      #状态是动态数据，需要动态获取
-                if status != 0:
+                try:
+                    guest_obj = userAdmin.objects.get(user_name=fri.name)
+                except userAdmin.DoesNotExist:
+                    status = 9          #被注销了
+                else:
+                    status = guest_obj.user_status      #状态是动态数据，需要动态获取
+
+                if status != 0 and status != 9:
                     count_friend_alive += 1
                 fri.status = status
                 fri.save()
@@ -126,9 +131,14 @@ def readContacts(request):
             stranger = []
             count_stranger_alive = 0
             for stra in stranger_obj:
-                guest_obj = userAdmin.objects.get(user_name=stra.name)
-                status = guest_obj.user_status      #状态是动态数据，需要动态获取
-                if status != 0:
+                try:
+                    guest_obj = userAdmin.objects.get(user_name=stra.name)
+                except userAdmin.DoesNotExist:
+                    status = 9          #被注销了
+                else:
+                    status = guest_obj.user_status      #状态是动态数据，需要动态获取
+                    
+                if status != 0 and status != 9:
                     count_stranger_alive += 1
                 stra.status = status
                 stra.save()

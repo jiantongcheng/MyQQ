@@ -177,7 +177,7 @@ def login(request):
 
             #通知小伙伴们，我上线了
             hostClass = get_user_contacts(userName)
-            guestObjs = hostClass.objects.exclude(status=0)  #排除离线的家伙们
+            guestObjs = hostClass.objects.exclude(status=0).exclude(status=9)  #排除离线和注销的家伙们
             for guest in guestObjs:
                 guest_name = guest.name
                 insert_user_news_classtype2(guest_name, 1, userName)

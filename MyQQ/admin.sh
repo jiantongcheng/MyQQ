@@ -727,7 +727,7 @@ add_handle()
 {
     user=$1
     #1. 先判断用户名的格式是否正确
-    if [[ $user =~ ^[a-zA-Z_][0-9a-zA-Z_]{6,16}$ ]]; then
+    if [[ $user =~ ^[a-zA-Z_]{1}[0-9a-zA-Z_]{5,15}$ ]]; then
         :   #pass
     else
         echo "错误: 用户名要求包含英文字符、数字、下划线，非数字开头，6~16个字符"
