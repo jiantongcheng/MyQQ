@@ -55,7 +55,7 @@ def vote_invite_check(request):
     vote_id = request.POST.get('id', '')
     invite = request.POST.get('invite', '')
 
-    if vote_id == '1' and invite == "MX-2000":
+    if vote_id == '1' and ( invite == "MX-2000" or invite == "61" ):
         check = 'OK'
     elif vote_id == '2' and invite == "yz-2003":
         check = 'OK'
