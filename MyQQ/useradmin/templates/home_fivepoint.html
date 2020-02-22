@@ -1,0 +1,327 @@
+<button type='button' id="five_point_first" class='btn btn-primary'> 先 手 </button>
+<button type='button' id="five_point_second" class='btn btn-default'> 后 手 </button>
+<br /><br />
+
+<button type='button' id='five_point_debug'  class='btn btn-info'> 打 印 </button>
+<br /><br />
+<button type='button' id='five_point_history'  class='btn btn-info'> 历 史 </button>
+<br /><br />
+<button type='button' id='five_point_start'  class='btn btn-info'> 开 始 </button>
+<button type='button' id='five_point_regret'  class='btn btn-info' style="display:none"> 悔 棋 </button>
+<br /><br />
+<button type='button' id='five_point_giveup'  class='btn btn-info' style="display:none"> 认 输 </button>
+<br /><br />
+
+<div>返回类型: </div>
+<div>&nbsp;<span id="fp_status_type"></span></div>
+<br /><br />
+<div>赢: <span id="fp_win">0</span></div>
+<div>输: <span id="fp_lose">0</span></div>
+
+<div style='width:480px;height:450px;background: white;position:absolute;left:150px;top:100px;'>
+
+    <div pos-y='14' style="border-bottom:1px black solid;height:30px;cursor:pointer">
+        <div  style='background: grey; float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>14</div>
+        <div class='five_point' pos-x='0' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='1' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='2' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='3' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='4' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='5' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='6' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='7' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='8' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='9' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='10' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='11' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='12' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='13' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='14' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+    </div>
+
+    <div pos-y='13' style="border-bottom:1px black solid;height:30px;cursor:pointer">
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>13</div>
+        <div class='five_point' pos-x='0' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='1' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='2' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='3' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='4' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='5' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='6' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='7' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='8' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='9' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='10' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='11' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='12' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='13' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='14' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+    </div>
+
+    <div pos-y='12' style="border-bottom:1px black solid;height:30px;cursor:pointer">
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>12</div>
+        <div class='five_point' pos-x='0' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='1' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='2' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='3' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='4' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='5' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='6' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='7' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='8' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='9' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='10' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='11' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='12' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='13' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='14' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+    </div>
+
+    <div pos-y='11' style="border-bottom:1px black solid;height:30px;cursor:pointer">
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>11</div>
+        <div class='five_point' pos-x='0' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='1' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='2' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='3' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='4' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='5' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='6' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='7' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='8' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='9' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='10' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='11' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='12' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='13' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='14' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+    </div>
+
+    <div pos-y='10' style="border-bottom:1px black solid;height:30px;cursor:pointer">
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>10</div>
+        <div class='five_point' pos-x='0' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='1' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='2' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='3' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='4' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='5' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='6' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='7' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='8' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='9' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='10' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='11' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='12' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='13' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='14' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+    </div>
+
+    <div pos-y='9' style="border-bottom:1px black solid;height:30px;cursor:pointer">
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>9</div>
+        <div class='five_point' pos-x='0' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='1' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='2' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='3' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='4' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='5' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='6' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='7' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='8' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='9' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='10' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='11' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='12' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='13' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='14' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+    </div>
+
+    <div pos-y='8' style="border-bottom:1px black solid;height:30px;cursor:pointer">
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>8</div>
+        <div class='five_point' pos-x='0' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='1' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='2' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='3' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='4' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='5' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='6' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='7' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='8' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='9' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='10' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='11' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='12' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='13' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='14' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+    </div>
+
+    <div pos-y='7' style="border-bottom:1px black solid;height:30px;cursor:pointer">
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>7</div>
+        <div class='five_point' pos-x='0' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='1' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='2' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='3' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='4' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='5' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='6' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='7' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='8' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='9' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='10' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='11' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='12' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='13' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='14' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+    </div>
+
+    <div pos-y='6' style="border-bottom:1px black solid;height:30px;cursor:pointer">
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>6</div>
+        <div class='five_point' pos-x='0' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='1' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='2' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='3' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='4' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='5' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='6' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='7' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='8' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='9' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='10' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='11' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='12' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='13' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='14' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+    </div>
+
+    <div pos-y='5' style="border-bottom:1px black solid;height:30px;cursor:pointer">
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>5</div>
+        <div class='five_point' pos-x='0' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='1' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='2' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='3' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='4' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='5' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='6' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='7' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='8' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='9' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='10' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='11' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='12' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='13' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='14' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+    </div>
+
+    <div pos-y='4' style="border-bottom:1px black solid;height:30px;cursor:pointer">
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>4</div>
+        <div class='five_point' pos-x='0' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='1' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='2' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='3' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='4' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='5' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='6' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='7' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='8' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='9' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='10' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='11' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='12' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='13' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='14' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+    </div>
+
+    <div pos-y='3' style="border-bottom:1px black solid;height:30px;cursor:pointer">
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>3</div>
+        <div class='five_point' pos-x='0' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='1' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='2' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='3' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='4' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='5' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='6' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='7' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='8' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='9' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='10' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='11' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='12' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='13' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='14' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+    </div>
+
+    <div pos-y='2' style="border-bottom:1px black solid;height:30px;cursor:pointer">
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>2</div>
+        <div class='five_point' pos-x='0' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='1' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='2' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='3' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='4' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='5' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='6' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='7' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='8' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='9' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='10' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='11' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='12' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='13' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='14' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+    </div>
+
+    <div pos-y='1' style="border-bottom:1px black solid;height:30px;cursor:pointer">
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>1</div>
+        <div class='five_point' pos-x='0' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='1' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='2' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='3' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='4' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='5' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='6' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='7' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='8' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='9' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='10' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='11' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='12' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='13' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='14' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+    </div>
+
+    <div pos-y='0' style="border-bottom:1px black solid;height:30px;cursor:pointer">
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>0</div>
+        <div class='five_point' pos-x='0' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='1' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='2' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='3' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='4' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='5' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='6' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='7' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='8' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='9' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='10' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='11' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='12' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='13' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div class='five_point' pos-x='14' style='float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+    </div>
+
+    <div  style="border-bottom:1px black solid;height:30px;cursor:pointer">
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>&nbsp;</div>
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>0</div>
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>1</div>
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>2</div>
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>3</div>
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>4</div>
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>5</div>
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>6</div>
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>7</div>
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>8</div>
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>9</div>
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>10</div>
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>11</div>
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>12</div>
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>13</div>
+        <div  style='background: grey;float:left;border:1px black solid;width:30px;height:30px;line-height:30px;text-align:center;'>14</div>
+    </div>
+
+</div>

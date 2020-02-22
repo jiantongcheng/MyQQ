@@ -24,6 +24,7 @@ from useradmin import chats as useradmin_chats
 
 from useradmin import common as useradmin_common
 from useradmin import vote as useradmin_vote
+from useradmin import fivepoint as useradmin_fivepoint
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),                                       #管理员页面
@@ -67,7 +68,17 @@ urlpatterns = [
     #----------投票----------
     url(r'read_vote', useradmin_vote.readVote),                             #读取投票相关信息
     url(r'vote_invite_check', useradmin_vote.vote_invite_check),            #验证投票邀请码
-    url(r'commit_vote', useradmin_vote.commit_vote),            #提交投票消息
+    url(r'commit_vote', useradmin_vote.commit_vote),                        #提交投票消息
+
+    #----------五子棋------
+    url(r'fivepoint_start', useradmin_fivepoint.start),                     #开始对战，机器先下或者用户先下                       
+    url(r'fivepoint_userstep', useradmin_fivepoint.userstep),               #用户下子，机器给出对应的子
+    url(r'fivepoint_regret', useradmin_fivepoint.regret),                   #悔棋，暂时有问题
+    url(r'fivepoint_debug', useradmin_fivepoint.debug_print),               #后台打印调试
+    url(r'fivepoint_history', useradmin_fivepoint.history_print),           #下棋步骤打印
+    
+
+
     # ----------testpost 调试
     # url(r'testpost', useradmin_chats.testpost),
     # url(r'testpost', useradmin_common.testpost),

@@ -32,8 +32,8 @@ class WolfMiddleware(MiddlewareMixin):
             userName = request.session.get('username', None)
             if userName != None:    
                 key_name = userName+",request"
+                cnt_str = cache.get(key_name)
                 if cache.has_key(key_name):
-                    cnt_str = cache.get(key_name)
                     cnt = int(cnt_str) + 1
                     if cnt > 20:    #在较短时间间隔内频繁发送请求，需要禁止这种情况
                         set_limit(userName, 1)  

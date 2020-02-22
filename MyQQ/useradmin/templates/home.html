@@ -24,6 +24,8 @@
             <li class="active"><a href="#hall" data-toggle="tab">
                 <span id="news_hall" style="background-color:orange" class="badge pull-right"></span>
                 大厅&nbsp;</a></li>
+            <li><a href="#fivepoint" data-toggle="tab">
+                五子棋&nbsp;</a></li>
             <li><a @click="init_contacts()" href="#contacts" data-toggle="tab">
                 <span id="news_contacts" style="background-color:orange" class="badge pull-right"></span>
                 联系人&nbsp;</a></li>
@@ -52,6 +54,9 @@
 <div class="tab-content">
     <div class="tab-pane fade in active" id="hall">
         {% include 'home_hall.html' %}
+    </div>
+    <div class="tab-pane fade" id="fivepoint">
+        {% include 'home_fivepoint.html' %}
     </div>
     <div class="tab-pane fade" id="contacts">
         {% include 'home_contacts.html' %}
@@ -790,6 +795,15 @@ var g_weather =
 
 }
 
+var g_five_point = 
+{
+    turn: 'user_first', //取值'user_first' 'user_second'
+    wait: 1,            //取值0/1，表示是否在等待机器走棋
+    last_div_point: null,
+    last_div_my_point: null,
+    last_div_peer_point: null,
+}
+
 var g_obj_contacts =        //联系人相关标志
 {
     cur_status: 'nothing',  //取值'nothing', 'ready','friend', 'stranger', 'blacklist'
@@ -1020,6 +1034,11 @@ function show_chat(event)
 
 **************************************************************************/
 function check_news()
+{
+
+}
+
+function check_news_orig()
 {
     // if(g_heart.quiet_keep_cnt > 0){
     //     g_heart.quiet_keep_cnt -= 1;
@@ -1262,6 +1281,246 @@ function history_today()
             }
         });
 }
+
+
+$(".five_point").hover(function(){
+    if($(this).attr("occupied"))
+    {}
+    else
+        $(this).css("background-color","red");
+},function(){
+    if($(this).attr("occupied"))
+    {}
+    else
+        $(this).css("background-color","white");
+});
+
+$(".five_point").click(function(){
+    if($(this).attr("occupied"))
+    {}
+    else{
+        if(g_five_point.wait == 1)
+            return;
+
+        $(this).attr("occupied", 'Y');
+        $(this).css("background-color","red");
+        g_five_point.wait = 1;
+        $(g_five_point.last_div_point).html("");
+        $(this).html("+");
+        g_five_point.last_div_point = $(this);
+        g_five_point.last_div_my_point = $(this);
+        
+        
+        var pos_x = $(this).attr("pos-x")
+        var pos_y = $(this).parent().attr("pos-y")
+        
+        // alert(pos_x + " " + pos_y);
+
+        $.post("fivepoint_userstep", 
+            {
+                x: pos_x,
+                y: pos_y
+            },
+            function(data){
+                var obj = JSON.parse(data);
+
+                if(obj.stat == 'success'){
+                    if(obj.youwin == '1' || obj.youlose == '1' ){
+                        if(obj.youwin == '1'){
+                            alert("恭喜，你赢了!");
+                            var num_str = $('#fp_win').html();
+                            var num = Number(num_str);
+                            num = num+1;
+                            $('#fp_win').html(num);
+
+                        }
+                        else{
+                            alert("对不起，你输了!");
+                            var num_str = $('#fp_lose').html();
+                            var num = Number(num_str);
+                            num = num+1;
+                            $('#fp_lose').html(num);
+
+                            var div_obj = $("div[pos-y='"+obj.y+"']").find("div[pos-x='"+obj.x+"']");
+
+                            if($(div_obj).attr("occupied")){
+                                alert("something error!");
+                            }
+                            else{
+                                $(g_five_point.last_div_point).html("");
+                                $(div_obj).attr("occupied", 'Y').css("background-color","green").html("+");
+                            }
+                        }
+
+                        $("#five_point_first").attr("disabled", null)
+                        $("#five_point_second").attr("disabled", null)
+                        $('#five_point_start').show();
+                        $('#five_point_regret').hide();
+                        $('#five_point_giveup').hide();
+
+                    }
+                    else{
+                        var div_obj = $("div[pos-y='"+obj.y+"']").find("div[pos-x='"+obj.x+"']");
+
+                        if($(div_obj).attr("occupied")){
+                            alert("something error!");
+                        }
+                        else{
+                            $(g_five_point.last_div_point).html("");
+                            $(div_obj).attr("occupied", 'Y').css("background-color","green").html("+");
+                            g_five_point.last_div_point = $(div_obj);
+                            g_five_point.last_div_peer_point = $(div_obj);
+                            g_five_point.wait = 0;
+                            $('#fp_status_type').html(obj.status_type);
+                        }
+                    }
+                }
+            }
+        )
+
+
+
+    }
+});
+
+$("#five_point_first").click(function(){
+    if(g_five_point.turn == 'user_second'){
+        $("#five_point_first").removeClass("btn-default")
+        $("#five_point_first").addClass("btn-primary")
+
+        $("#five_point_second").removeClass("btn-primary")
+        $("#five_point_second").addClass("btn-default")
+        g_five_point.turn = 'user_first';
+    }
+})
+
+$("#five_point_second").click(function(){
+    if(g_five_point.turn == 'user_first'){
+        $("#five_point_first").removeClass("btn-primary")
+        $("#five_point_first").addClass("btn-default")
+
+        $("#five_point_second").removeClass("btn-default")
+        $("#five_point_second").addClass("btn-primary")
+        g_five_point.turn = 'user_second';
+    }
+})
+
+$('#five_point_debug').click(function(){
+    $.post("fivepoint_debug", {},
+        function(data){
+            var obj = JSON.parse(data);
+            if(obj.stat == "success"){
+                //do nothing
+                
+            }
+            else{
+                alert(obj.reason);
+            }
+            
+    })
+    
+})
+
+$('#five_point_history').click(function(){
+    $.post("fivepoint_history", {},
+        function(data){
+            var obj = JSON.parse(data);
+            if(obj.stat == "success"){
+                //do nothing
+                
+            }
+            else{
+                alert(obj.reason);
+            }
+            
+    })
+    
+})
+
+$('#five_point_giveup').click(function(){
+    if(g_five_point.wait == 0){
+
+        g_five_point.wait = 1;
+
+        var num_str = $('#fp_lose').html();
+        var num = Number(num_str);
+        num = num+1;
+        $('#fp_lose').html(num);
+
+        $("#five_point_first").attr("disabled", null)
+        $("#five_point_second").attr("disabled", null)
+        $('#five_point_start').show();
+        $('#five_point_regret').hide();
+        $('#five_point_giveup').hide();
+
+    }
+    else
+        alert("轮到你下棋时才能认输");
+    
+})
+
+$('#five_point_regret').click(function(){
+    if(g_five_point.wait == 0){
+
+        $.post("fivepoint_regret", {},
+            function(data){
+                var obj = JSON.parse(data);
+                if(obj.stat == "success"){
+                    $(g_five_point.last_div_peer_point).removeAttr("occupied").css("background-color","white").html("");
+                    $(g_five_point.last_div_my_point).removeAttr("occupied").css("background-color","white").html("");
+                }
+                else{
+                    alert(obj.reason);
+                }
+                
+        })
+
+    }
+    else
+        alert("轮到你下棋时才能悔棋");
+})
+
+$('#five_point_start').click(function(){
+
+    $("#five_point_first").attr("disabled", "disabled")
+    $("#five_point_second").attr("disabled", "disabled")
+    $(this).hide();
+    // $('#five_point_regret').show();
+    $('#five_point_giveup').show();
+    $('#fp_status_type').html("");
+
+    $('.five_point').removeAttr("occupied").css("background-color","white").html("");
+    
+
+    if(g_five_point.turn == 'user_second')
+        g_five_point.wait = 1;
+    else
+        g_five_point.wait = 0;
+
+    $.post("fivepoint_start", 
+        {turn: g_five_point.turn},
+        function(data){
+            var obj = JSON.parse(data);
+
+            if(g_five_point.turn == 'user_first'){  //用户先手
+                
+            }
+            else{               //机器先手
+                var div_obj = $("div[pos-y='"+obj.y+"']").find("div[pos-x='"+obj.x+"']");
+
+                if($(div_obj).attr("occupied")){
+                    alert("something error!");
+                }
+                else{
+                    $(g_five_point.last_div_point).html("");
+                    $(div_obj).attr("occupied", 'Y').css("background-color","green").html("+");
+                    g_five_point.wait = 0;
+                    g_five_point.last_div_point = $(div_obj);
+                }
+
+            }
+        })
+})
 
 $(function () {         //页面加载事件
 
