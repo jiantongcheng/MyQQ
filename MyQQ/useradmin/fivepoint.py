@@ -69,7 +69,7 @@ class Match():
     associate_point = [] #成员为元组坐标
     
     class My2():
-        def __init__(self, coords, direction, attr=None, rel_coords=None, attract_coords=None, back_coords=None, other=None):
+        def __init__(self, coords, direction, attr=None, rel_coords=None, attract_coords=None, back_coords=None, other=None, special_coords=None):
             self.coords = coords    #元组类型，不可变
             self.attr = attr
             self.direction = direction
@@ -77,6 +77,7 @@ class Match():
             self.attract_coords = attract_coords    #列表类型，可变
             self.back_coords = back_coords  #列表类型，可变
             self.other = other
+            self.special_coords = special_coords
 
     class My3():
         def __init__(self, coords, direction, attr=None, rel_coords=None, attract_coords=None, back_coords=None, other=None):
@@ -99,7 +100,7 @@ class Match():
             self.other = other
 
     class Peer2():
-        def __init__(self, coords, direction, attr=None, rel_coords=None, attract_coords=None, back_coords=None, other=None):
+        def __init__(self, coords, direction, attr=None, rel_coords=None, attract_coords=None, back_coords=None, other=None, special_coords=None):
             self.coords = coords    #元组类型，不可变
             self.attr = attr
             self.direction = direction
@@ -107,6 +108,7 @@ class Match():
             self.attract_coords = attract_coords    #列表类型，可变
             self.back_coords = back_coords  #列表类型，可变
             self.other = other
+            self.special_coords = special_coords
 
     class Peer3():
         def __init__(self, coords, direction, attr=None, rel_coords=None, attract_coords=None, back_coords=None, other=None):
@@ -222,6 +224,7 @@ class Match():
                     print "rel_coords: " + str(my.rel_coords)
                     print "attract_coords: " + str(my.attract_coords)
                     print "back_coords: " + str(my.back_coords)
+                    print "special_coords: " + str(my.special_coords)
             elif num == 3:
                 print "======>Length of My3: " + str(len(self.M_index[3]))
                 for my in self.M_index[3]:
@@ -260,6 +263,7 @@ class Match():
                     print "rel_coords: " + str(my.rel_coords)
                     print "attract_coords: " + str(my.attract_coords)
                     print "back_coords: " + str(my.back_coords)
+                    print "special_coords: " + str(my.special_coords)
             elif num == 3:
                 print "======>Length of Peer3: " + str(len(self.P_index[3]))
                 for my in self.P_index[3]:
@@ -389,6 +393,7 @@ class Match():
         rel_coords = []
         attract_coords = []
         back_coords = []
+        special_coords = []
 
         if class_name == "My4" or class_name == "Peer4":
             length = 4
@@ -652,6 +657,10 @@ class Match():
                 attract_coords.append(coord2)
                 attract_coords.append(coord3)
                 attract_coords.append(coord4)
+
+                special_coords.append(coord2)
+                special_coords.append(coord3)
+
                 rel_coords.append(coord1)
                 rel_coords.append(coord2)
                 rel_coords.append(coord3)
@@ -662,6 +671,8 @@ class Match():
                 rel_coords.append(coord6)
                 obj.attract_coords = attract_coords[:] 
                 obj.rel_coords = rel_coords[:]
+
+                obj.special_coords = special_coords[:] 
             elif ret_str[0:8] == 'ZZZYYZZH' or ret_str[0:8] == 'HZZYYZZZ':
                 attr = 'A+X'
                 if ret_str[0:8] == 'ZZZYYZZH':
@@ -970,11 +981,18 @@ class Match():
         return ret_set
 
     def get_pointNum_byAttr(self, coord, attr, val):
+        special_flag = 0
+        special_num = 0
+        if attr == 'ZW' and val == self.Peer_point:
+            special_flag = 1
+
         ret_num = 0
 
         ret_dict = self.may_build_new(coord, val)
         if ret_dict != None and ret_dict.has_key(attr):
             ret_num += ret_dict[attr]
+            if special_flag == 1:
+                special_num += ret_dict[attr]
 
         MP_Attr = (val == self.My_point) and self.M_Attr or self.P_Attr
         if attr == 'ZW':
@@ -991,7 +1009,13 @@ class Match():
         for mp in MP_list:
             if coord in mp.attract_coords:
                 ret_num += 1
-        
+            if special_flag == 1:
+                if hasattr(mp, "special_coords") and isinstance(mp.special_coords, list) and coord in mp.special_coords:
+                    special_num += 1
+                
+        if special_flag == 1:
+            return (ret_num, special_num)
+
         return ret_num
         
 
@@ -2531,6 +2555,7 @@ class Match():
         all_list = []   #成员也为list，list[0] 为分数, list[1]为coord
         for crd in all_set:
             pt = 0  #分数
+            pt_2 = 0
             if crd in zw_will_set:
                 num = self.get_pointNum_byAttr(crd, 'ZW', self.My_point)
                 if num == 0:
@@ -2556,13 +2581,20 @@ class Match():
                     print "crd:" + str(crd) + ", pg_set: +3*" + str(num)
                 pt += num*3
             if crd in pax_set:
-                num = self.get_pointNum_byAttr(crd, 'ZW', self.Peer_point)
+                num_tuple = self.get_pointNum_byAttr(crd, 'ZW', self.Peer_point)
+                num = num_tuple[0]
                 if num == 0:
                     print "num == 0!!!!!!!!! Error! 4"
                     sys.exit()
                 if local_print_debug == 1:
                     print "crd:" + str(crd) + ", pax_set: +4*" + str(num)
                 pt += num*4
+                
+                num_2 = num_tuple[1]
+                if num_2 != 0:
+                    if local_print_debug == 1:
+                        print "crd:" + str(crd) + ", ! pax_set_special: +1*" + str(num_2)
+                    pt_2 += num_2
 
             g_will_num = self.get_num_ByNewAttrAndcoord('G', crd, self.My_point)
             if g_will_num != 0:
@@ -2586,17 +2618,24 @@ class Match():
             # if pzax_num != 0:
             #     pt += pzax_num*1
             
-            all_list.append([pt, crd])
+            all_list.append([pt, crd, pt_2])
 
         #不考虑我方能直接赢的情况，但要考虑我方下子后对方能直接赢的情况
         while True:
             max_pt = 0
+            max_pt_2 = 0
             ret_crd = None
             for crd_pt in all_list:
-                print str(crd_pt[0]) + ": " + str(crd_pt[1]) + "@thinking_G_AX_PG_PAX"
+                print str(crd_pt[0]) + "." + str(crd_pt[2])  + " : " + str(crd_pt[1]) + "@thinking_G_AX_PG_PAX"
                 if crd_pt[0] > max_pt:
                     max_pt = crd_pt[0]
                     ret_crd = crd_pt[1]
+                    max_pt_2 = crd_pt[2]
+                elif crd_pt[0] == max_pt:
+                    if crd_pt[2] > max_pt_2:
+                        max_pt = crd_pt[0]
+                        ret_crd = crd_pt[1]
+                        max_pt_2 = crd_pt[2]
             if ret_crd == None:
                 break
             #我方模拟试探下子
@@ -2607,7 +2646,7 @@ class Match():
             if self.thinking_G_Peer_associate() != None:
                 #说明这么下对方会赢，所以不要这么下,去看看下一个分数最高的
                 self.thinking_withdraw(1)
-                all_list.remove([max_pt, ret_crd])  #删除最高分
+                all_list.remove([max_pt, ret_crd, max_pt_2])  #删除最高分
                 print "Select next pt which is max. discard: " + str(ret_crd)
                 continue
             else:
