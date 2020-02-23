@@ -3781,19 +3781,19 @@ class Match():
         status = "INIT"
         
         if self.last_peer_coord == None:    #由我方下第一个子
-            random_num = random.randint(1,8)
-            if random_num == 1:
-                coord = (7, 7)      #正中间
-            elif random_num == 2:
+            # random_num = random.randint(1,8)
+            # if random_num == 1:
+            #     coord = (7, 7)      #正中间
+            # elif random_num == 2:
                 coord = (4, 4)
-            elif random_num == 3:
-                coord = (4, 10)
-            elif random_num == 4:
-                coord = (10, 4)
-            elif random_num == 5:
-                coord = (10, 10)
-            else:
-                coord = (7, 7)      #正中间
+            # elif random_num == 3:
+            #     coord = (4, 10)
+            # elif random_num == 4:
+            #     coord = (10, 4)
+            # elif random_num == 5:
+            #     coord = (10, 10)
+            # else:
+            #     coord = (7, 7)      #正中间
         elif self.last_my_coord == None:    #由敌方下第一个子，我方下第二个
             x = self.last_peer_coord[0]
             y = self.last_peer_coord[1]
@@ -4009,6 +4009,18 @@ def userstep(request):
     tmp = match.settle(False, True)
     if tmp == "GAME_OVER":
         # time.sleep(1)
+        print "**************************<<< H i s t o r y >>>(Game over! You Win!!) ****************************************"
+    
+        print match.history_track['start'] + " First"
+
+        for cell in  match.history_track['crd_list']:
+            if cell[0] == 'my':
+                print cell[1]
+            else:
+                print "      " + str(cell[1])
+
+        print "****************************************************************************************"
+
         ret = {
             'stat': 'success',
             'youwin': 1

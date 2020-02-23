@@ -1372,6 +1372,7 @@ $(".five_point").click(function(){
                             g_five_point.last_div_peer_point = $(div_obj);
                             g_five_point.wait = 0;
                             $('#fp_status_type').html(obj.status_type);
+                            $('#fp_pos_ret').html("(" + obj.x + ", " + obj.y + ")");
                         }
                     }
                 }
@@ -1488,6 +1489,7 @@ $('#five_point_start').click(function(){
     // $('#five_point_regret').show();
     $('#five_point_giveup').show();
     $('#fp_status_type').html("");
+    $('#fp_pos_ret').html("");
 
     $('.five_point').removeAttr("occupied").css("background-color","white").html("");
     
