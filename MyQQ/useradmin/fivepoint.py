@@ -48,6 +48,9 @@ class Match():
 
     wrong_cnt = 0
 
+    magicsmile_cnt = 0
+    willdie_cnt = 0
+
     # ---^_^---
 
     __SIDELENGTH = 15
@@ -2901,8 +2904,16 @@ class Match():
             ret = self.thinking_G_My_prevent_2PZW_Nest(1)
             self.thinking_withdraw(1)
             if ret != None:
+                self.magicsmile_cnt += 1
                 return ret
-            else:
+            else:       #执行到这里，一般来说我方要输了，要死的有尊严
+                self.willdie_cnt += 1
+                print "==========Game will over, I lose...============"
+                for coord in point_dict:
+                    return coord
+                
+                print "!!!!!!!!!!!!!!!!!!!!!!!!  Wrong!!, May be lose"
+                self.wrong_cnt += 1
                 return None
             
         return None
@@ -2994,6 +3005,7 @@ class Match():
         return ret
 
     def thinking_G_My_Nest(self, tier):     #tier为嵌套的层次，最小为1
+        local_print_debug = 0
         nest = {}
         nest_cont = 0
 
@@ -3006,7 +3018,8 @@ class Match():
             nest[(coord, coord_block)] = True
 
         if len(nest) != 0:
-            print "===> My G associate...tier: " + str(tier)
+            if local_print_debug == 1:
+                print "===> My G associate...tier: " + str(tier)
             for pair in nest:
                 coord = pair[0]
                 coord_block = pair[1]
@@ -3015,27 +3028,31 @@ class Match():
                 # 先进行上一次循环的悔棋操作
                 self.thinking_withdraw(tier)
                 #---
-                print "     My G associate(tier: " + str(tier) + "), set_my_point: " + str(coord)
+                if local_print_debug == 1:
+                    print "     My G associate(tier: " + str(tier) + "), set_my_point: " + str(coord)
                 self.set_my_point(coord)                    #我方下
                 self.associate_point.append((coord, tier))     
                 self.settle(True, False)                #整理
 
-                print "     My G associate(tier: " + str(tier) + "), set_peer_point: " + str(coord_block)
+                if local_print_debug == 1:
+                    print "     My G associate(tier: " + str(tier) + "), set_peer_point: " + str(coord_block)
                 self.set_peer_point(coord_block)            #对方下
                 self.associate_point.append((coord_block, tier))
                 self.settle(False, True)                #整理
                 #查看我方有没有W, 若有直接返回
                 for mp in self.M_Attr['W']:
-                    print "======> My G associate ** Win...tier: " + str(tier) + ", coord: " + str(coord)
-                    print self.associate_point
-                    print "<------------------------->"
-                    print self.M_Attr['W'][0].coords
+                    if local_print_debug == 1:
+                        print "======> My G associate ** Win...tier: " + str(tier) + ", coord: " + str(coord)
+                        print self.associate_point
+                        print "<------------------------->"
+                        print self.M_Attr['W'][0].coords
 
                     return coord
                 #查看对方有没有W!若有，我方可以尝试封堵,且封堵的点在我方G内的
                 for mp in self.P_Attr['W']:
                     if mp.attr == 'WW':
-                        print "     My G associate(tier:"+ str(tier) +"), Find Peer Win...continue"
+                        if local_print_debug == 1:
+                            print "     My G associate(tier:"+ str(tier) +"), Find Peer Win...continue"
                         nest_cont = 1
                     else:
                         crd = mp.attract_coords[0]
@@ -3053,13 +3070,15 @@ class Match():
                                 self.set_peer_point(crd_block)            #对方下
                                 self.associate_point.append((crd_block, tier))
                                 self.settle(False, True)                #整理
-                                print "--->Debug: 2"
+                                if local_print_debug == 1:
+                                    print "--->Debug: 2"
                                 #查看我方有没有W, 若有直接返回
                                 for mp_b in self.M_Attr['W']:
-                                    print "======> My G associate **** Win...tier: " + str(tier) + ", coord: " + str(coord)
-                                    print self.associate_point
-                                    print "<------------------------->"
-                                    print self.M_Attr['W'][0].coords
+                                    if local_print_debug == 1:
+                                        print "======> My G associate **** Win...tier: " + str(tier) + ", coord: " + str(coord)
+                                        print self.associate_point
+                                        print "<------------------------->"
+                                        print self.M_Attr['W'][0].coords
                                     return coord
 
                                 # 这里可能还得考虑对方有没有W的情况
@@ -3070,7 +3089,8 @@ class Match():
                                 tmp_flag = 1
                                 break
                         if tmp_flag == 0:
-                            print "     My G associate(tier:"+ str(tier) +"), Find Peer Win..2..continue"
+                            if local_print_debug == 1:
+                                print "     My G associate(tier:"+ str(tier) +"), Find Peer Win..2..continue"
                             nest_cont = 1
                     break
 
@@ -3078,10 +3098,11 @@ class Match():
                     continue
                 #查看我方有没有ZW，若有直接返回
                 for mp in self.M_Attr['ZW']:
-                    print "======> My G associate ***ZW*** Z Win...tier: " + str(tier) + ", coord: " + str(coord)
-                    print self.associate_point
-                    print "<------------------------->"
-                    print self.M_Attr['ZW'][0].coords
+                    if local_print_debug == 1:
+                        print "======> My G associate ***ZW*** Z Win...tier: " + str(tier) + ", coord: " + str(coord)
+                        print self.associate_point
+                        print "<------------------------->"
+                        print self.M_Attr['ZW'][0].coords
                     return coord
                 #查看我方还有没有G的，若有再次进行嵌套
                 ret = self.thinking_G_My_Nest(tier+1)
@@ -3180,7 +3201,7 @@ class Match():
         # - 我方下子，对方封堵后——对方生成两个ZW的，不能这么下
 
         # 4. 我方有一个或多个G的联想
-        print "===========>thingking: 4 ZW.............................................."
+        print "===========>thingking: 4 G+W/ZW.............................................."
         ret = self.thinking_G_My_associate()
         if ret != None:
             return ('4: G+W/ZW', ret)
@@ -3978,6 +3999,8 @@ def debug_print(request):
     print "****************************************************************************************"
     print "===>No idea: " + str(match.noidea_cnt)
     print "===>Wrong: " + str(match.wrong_cnt)
+    print "===>magicsmile_cnt: " + str(match.magicsmile_cnt)
+    print "===>willdie_cnt: " + str(match.willdie_cnt)
 
     print "****************************************************************************************"
     print match.associate_point
