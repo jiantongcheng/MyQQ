@@ -2402,6 +2402,7 @@ class Match():
                             print "WolfWolf..222..ZW..." + str(crd)
                             return crd 
         #---^_^---
+        print "thinking_G_AX_PG_PAX: step 1"
         cross_dict = {}
         #我方A+X和A+X有交叉的情况，这样我方就能构建两个ZW
         #可是我方下子后，对方有没有可能通过G直接赢？？？？？？？
@@ -2422,7 +2423,7 @@ class Match():
                     if ret_dict.has_key('W') or ret_dict.has_key('ZW'):
                         print "WolfWolf..666....." + str(crd)
                         return crd 
-        print "--------------<>Grade<>--------------"
+        print "thinking_G_AX_PG_PAX: step 2"
         #---^_^---
         cross_dict = {}
         #考虑我方A+X和O(即能构成G)的交叉点,交集
@@ -2490,6 +2491,7 @@ class Match():
         self.thinking_withdraw(1)       #2020.2.22添加，要注意是否有副作用
 
         #对方有两个A+X的情况
+        print "thinking_G_AX_PG_PAX: step 3"
         cross_dict = {}
         for mp in self.P_Attr['A+X']:
             for crd in mp.attract_coords:
@@ -2512,6 +2514,7 @@ class Match():
         #对方有A+X和O的交叉点，将会变成ZW+G的组合，我方不提前封堵就可能会输喔
 
         #接下去进行打分操作吧！！！
+        print "thinking_G_AX_PG_PAX: step 4"
         zw_will_set = self.get_point_setByAttr_all('ZW', self.My_point)
         w_will_set = set()
         for mp in self.M_Attr['G']:
@@ -2523,6 +2526,7 @@ class Match():
             pg_set.add(mp.attract_coords[1])
         pax_set = self.get_point_setByAttr_all('ZW', self.Peer_point)
 
+        local_print_debug = 1
         all_set = zw_will_set | w_will_set | pg_set | pax_set   #取并集
         all_list = []   #成员也为list，list[0] 为分数, list[1]为coord
         for crd in all_set:
@@ -2532,36 +2536,50 @@ class Match():
                 if num == 0:
                     print "num == 0!!!!!!!!! Error! 1"
                     sys.exit()
+                if local_print_debug == 1:
+                    print "crd:" + str(crd) + ", zw_will_set: +5*" + str(num)
                 pt += num*5
             if crd in w_will_set:
                 num = self.get_pointNum_byAttr(crd, 'W', self.My_point)
                 if num == 0:
                     print "num == 0!!!!!!!!! Error! 2"
                     sys.exit()
+                if local_print_debug == 1:
+                    print "crd:" + str(crd) + ", w_will_set: +4*" + str(num)
                 pt += num*4
             if crd in pg_set:
                 num = self.get_pointNum_byAttr(crd, 'W', self.Peer_point)
                 if num == 0:
                     print "num == 0!!!!!!!!! Error! 3"
                     sys.exit()
+                if local_print_debug == 1:
+                    print "crd:" + str(crd) + ", pg_set: +3*" + str(num)
                 pt += num*3
             if crd in pax_set:
                 num = self.get_pointNum_byAttr(crd, 'ZW', self.Peer_point)
                 if num == 0:
                     print "num == 0!!!!!!!!! Error! 4"
                     sys.exit()
+                if local_print_debug == 1:
+                    print "crd:" + str(crd) + ", pax_set: +4*" + str(num)
                 pt += num*4
 
             g_will_num = self.get_num_ByNewAttrAndcoord('G', crd, self.My_point)
             if g_will_num != 0:
+                if local_print_debug == 1:
+                    print "crd:" + str(crd) + ", g_will: +2*" + str(g_will_num)
                 pt += g_will_num*2
 
             ax_will_num = self.get_num_ByNewAttrAndcoord('A+X', crd, self.My_point)
             if ax_will_num != 0:
+                if local_print_debug == 1:
+                    print "crd:" + str(crd) + ", ax_will: +2*" + str(ax_will_num)
                 pt += ax_will_num*2
 
             po_num = self.get_num_ByNewAttrAndcoord('G', crd, self.Peer_point)
             if po_num != 0:
+                if local_print_debug == 1:
+                    print "crd:" + str(crd) + ", po: +1*" + str(po_num)
                 pt += po_num*1
 
             # pzax_num = self.get_num_ByNewAttrAndcoord('A+X', crd, self.Peer_point)
@@ -2599,6 +2617,7 @@ class Match():
         if ret_crd != None:
             return ret_crd
 
+        print "thinking_G_AX_PG_PAX: step 5(None)"
         return None
 
     def thinking_O_ZAX_PO_PZAX(self):
@@ -3214,9 +3233,9 @@ class Match():
             return ('5: PZW', ret)
 
         #我方能构成2个ZW类型的
-
-        print "associate_point:"
-        print self.associate_point
+        if len(self.associate_point) != 0:
+            print "associate_point:"
+            print self.associate_point
 
         # 6. 我方G 或 我方构建ZW 或封堵对方G 或阻止对方构建ZW
         # 6.1 封堵对方G/G有交叉或G/A+X有交叉的情况
@@ -3806,15 +3825,15 @@ class Match():
             # if random_num == 1:
             #     coord = (7, 7)      #正中间
             # elif random_num == 2:
-                coord = (4, 4)
+            #     coord = (5, 5)
             # elif random_num == 3:
-            #     coord = (4, 10)
+            #     coord = (5, 9)
             # elif random_num == 4:
-            #     coord = (10, 4)
+            #     coord = (9, 5)
             # elif random_num == 5:
-            #     coord = (10, 10)
+            #     coord = (9, 9)
             # else:
-            #     coord = (7, 7)      #正中间
+                coord = (7, 7)      #正中间
         elif self.last_my_coord == None:    #由敌方下第一个子，我方下第二个
             x = self.last_peer_coord[0]
             y = self.last_peer_coord[1]
