@@ -983,7 +983,7 @@ class Match():
     def get_pointNum_byAttr(self, coord, attr, val):
         special_flag = 0
         special_num = 0
-        if attr == 'ZW' and val == self.Peer_point:
+        if attr == 'ZW':
             special_flag = 1
 
         ret_num = 0
@@ -2557,13 +2557,21 @@ class Match():
             pt = 0  #分数
             pt_2 = 0
             if crd in zw_will_set:
-                num = self.get_pointNum_byAttr(crd, 'ZW', self.My_point)
+                num_tuple = self.get_pointNum_byAttr(crd, 'ZW', self.My_point)
+                num = num_tuple[0]
                 if num == 0:
                     print "num == 0!!!!!!!!! Error! 1"
                     sys.exit()
                 if local_print_debug == 1:
                     print "crd:" + str(crd) + ", zw_will_set: +5*" + str(num)
                 pt += num*5
+
+                num_2 = num_tuple[1]
+                if num_2 != 0:
+                    if local_print_debug == 1:
+                        print "crd:" + str(crd) + ", ! zw_will_set: +1*" + str(num_2)
+                    pt_2 += num_2
+
             if crd in w_will_set:
                 num = self.get_pointNum_byAttr(crd, 'W', self.My_point)
                 if num == 0:
