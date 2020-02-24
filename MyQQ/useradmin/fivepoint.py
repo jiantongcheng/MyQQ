@@ -47,9 +47,11 @@ class Match():
     noidea_cnt = 0
 
     wrong_cnt = 0
+    wrong2_cnt = 0
 
     magicsmile_cnt = 0
     willdie_cnt = 0
+    willwin_cnt = 0
 
     # ---^_^---
 
@@ -376,6 +378,7 @@ class Match():
             self.history_track['crd_list'].append(("my", coord))
         else:
             print "set_my_point fail:" + str(ret) + " coord: " + str(coord)
+            self.wrong2_cnt += 1
         return ret
 
     def set_peer_point(self, coord):
@@ -384,6 +387,7 @@ class Match():
             self.history_track['crd_list'].append(("PEER", coord))
         else:
             print "set_peer_point fail:" + str(ret) + " coord: " + str(coord)
+            self.wrong2_cnt += 1
         return ret
 
     def update_MP(self, obj):
@@ -2727,6 +2731,8 @@ class Match():
         nest = {}
         nest_cont = 0
 
+        #这里可能也要考虑tier太大的情况，即嵌套太多，花费时间太多
+
         for mp in self.P_Attr['G']:
             coord_peer = mp.attract_coords[0]
             coord_block = mp.attract_coords[1]
@@ -3072,6 +3078,12 @@ class Match():
 
     def thinking_G_My_Nest(self, tier):     #tier为嵌套的层次，最小为1
         local_print_debug = 0
+        
+        if tier > 4:        #嵌套层次太多，计算机可能受不了
+            if local_print_debug == 1:
+                print "===thinking_G_My_Nest===, tier > 4, discard..."
+            return None
+
         nest = {}
         nest_cont = 0
 
@@ -3110,65 +3122,87 @@ class Match():
                     if local_print_debug == 1:
                         print "======> My G associate ** Win...tier: " + str(tier) + ", coord: " + str(coord)
                         print self.associate_point
-                        print "<------------------------->"
                         print self.M_Attr['W'][0].coords
+                    print "==========Game will over, I Win !! @thinking_G_My_Nest@W ============"
+                    self.willwin_cnt += 1
 
                     return coord
+
                 #查看对方有没有W!若有，我方可以尝试封堵,且封堵的点在我方G内的
                 for mp in self.P_Attr['W']:
-                    if mp.attr == 'WW':
+                    if mp.attr == 'WW':     #说明这么下对方稳赢，所以不要这么下
                         if local_print_debug == 1:
                             print "     My G associate(tier:"+ str(tier) +"), Find Peer Win...continue"
                         nest_cont = 1
                     else:
-                        crd = mp.attract_coords[0]
+                        crd = mp.attract_coords[0]      #对方不是WW稳赢的W，应该只有一个封堵点
                         tmp_flag = 0
                         for my_a in self.M_Attr['G']:
-                            if crd in my_a.attract_coords:
+                            if crd in my_a.attract_coords:        #封堵对方的点在我方的G的attract_coords内，执行一次或零次
                                 if my_a.attract_coords[0] == crd:
                                     crd_block = my_a.attract_coords[1]
                                 else:
                                     crd_block = my_a.attract_coords[0]
+
+                                if local_print_debug == 1:
+                                    print "     My G associate(tier: " + str(tier) + "), (special:PW) set_my_point: " + str(crd)
                                 self.set_my_point(crd)                    #我方下
                                 self.associate_point.append((crd, tier))     
                                 self.settle(True, False)                #整理
 
+                                if local_print_debug == 1:
+                                    print "     My G associate(tier: " + str(tier) + "), (special:PW) set_peer_point: " + str(crd_block)
                                 self.set_peer_point(crd_block)            #对方下
                                 self.associate_point.append((crd_block, tier))
                                 self.settle(False, True)                #整理
                                 if local_print_debug == 1:
-                                    print "--->Debug: 2"
+                                    print "--->Debug: 2 asdf"
                                 #查看我方有没有W, 若有直接返回
                                 for mp_b in self.M_Attr['W']:
                                     if local_print_debug == 1:
-                                        print "======> My G associate **** Win...tier: " + str(tier) + ", coord: " + str(coord)
+                                        print "======> My G associate **** Win...tier: " + str(tier) + ", (special:PW) coord: " + str(coord)
                                         print self.associate_point
-                                        print "<------------------------->"
                                         print self.M_Attr['W'][0].coords
+                                    print "==========Game will over, I Win !! @thinking_G_My_Nest@PW 1 ============"
+                                    self.willwin_cnt += 1
                                     return coord
 
-                                # 这里可能还得考虑对方有没有W的情况
+                                # #这里可能还得判断我方有ZW，且对方没有W的情况，这估计我方将要赢
+                                # if len(self.M_Attr['ZW']) > 0 and len(self.P_Attr['W']) == 0:
+                                #     print "==========Game will over, I Win !! @thinking_G_My_Nest@PW 2 ============"
+                                #     self.willwin_cnt += 1
+                                #     return coord
+
+
+                                # 这里可能还得考虑对方有没有W的情况, 头有点大........
                                 for mp_c in self.P_Attr['W']:
+                                    #若真出现这种情况，再研究吧..........头大
                                     print "<----******-----Something need consider!-----*****------>"
                                     self.wrong_cnt += 100
+                                    break
 
                                 tmp_flag = 1
                                 break
-                        if tmp_flag == 0:
+
+                        if tmp_flag == 0:       #说明封堵对方的点不在我方的G...内，也就没有必要再次嵌套
                             if local_print_debug == 1:
-                                print "     My G associate(tier:"+ str(tier) +"), Find Peer Win..2..continue"
+                                print "     My G associate(tier:"+ str(tier) +"), (special:PW) need stop..continue"
                             nest_cont = 1
                     break
 
                 if nest_cont == 1:
                     continue
+                    
                 #查看我方有没有ZW，若有直接返回
                 for mp in self.M_Attr['ZW']:
                     if local_print_debug == 1:
                         print "======> My G associate ***ZW*** Z Win...tier: " + str(tier) + ", coord: " + str(coord)
                         print self.associate_point
-                        print "<------------------------->"
+                        print "==========Game will over, I Win !! @thinking_G_My_Nest@ZW============"
                         print self.M_Attr['ZW'][0].coords
+                        
+                    self.willwin_cnt += 1
+
                     return coord
                 #查看我方还有没有G的，若有再次进行嵌套
                 ret = self.thinking_G_My_Nest(tier+1)
@@ -4050,7 +4084,7 @@ def debug_print(request):
     match_string = rds.get("Match_"+user_name)
     match = pickle.loads(match_string)
 
-    print "****************************************************************************************"
+    print "******************************* debug_print Start *********************************************************"
     # match.print_MP_class('M', 2)
     # match.print_MP_class('M', 3)
     # match.print_MP_class('M', 4)
@@ -4062,14 +4096,17 @@ def debug_print(request):
     # match.print_MP_class('P', 2)
     # match.print_MP_class('P', 3)
     # match.print_MP_class('P', 4)
-    print "****************************************************************************************"
+    print "******************************** debug_print End ********************************************************"
     print "===>No idea: " + str(match.noidea_cnt)
     print "===>Wrong: " + str(match.wrong_cnt)
+    print "===>Wrong_2: " + str(match.wrong2_cnt)
     print "===>magicsmile_cnt: " + str(match.magicsmile_cnt)
     print "===>willdie_cnt: " + str(match.willdie_cnt)
+    print "===>willwin_cnt: " + str(match.willwin_cnt)
 
     print "****************************************************************************************"
-    print match.associate_point
+    if len(match.associate_point) > 0:
+        print match.associate_point
     
     ret = {
         'stat': 'success',
