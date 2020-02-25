@@ -3105,6 +3105,33 @@ class Match():
                 break_flag = 0
                 # 先进行上一次循环的悔棋操作
                 self.thinking_withdraw(tier)
+
+                # ww_flag = 0
+                w_cnt = 0
+                crd_block = 0
+
+                #^_^
+                for mp in self.P_Attr['W']:
+                    if mp.other == 'WW':
+                        return None     #说明这么下会输————换哪个G也没用，返回上一级联想
+                    else:
+                        w_cnt += 1
+                        if crd_block == 0:
+                            crd_block = mp.attract_coords[0]
+                        else:
+                            if cmp(crd_block, mp.attract_coords[0]) == 0:
+                                w_cnt -= 1  #当对方两个W的封堵点是同一个时，视为一个W
+
+                if w_cnt > 1:
+                    return None     #说明这么下会输————换哪个G也没用，返回上一级联想
+                elif w_cnt == 0:
+                    None            #对方没有W的情况，继续往下走
+                else:       # == 1 的情况
+                    if cmp(crd_block, coord) == 0:
+                        None        #封堵对方的点正是我方G内，就继续往下走
+                    else:
+                        continue     #说明这么下没结果————换一个G进行本级联想
+                    
                 #---
                 if local_print_debug == 1:
                     print "     My G associate(tier: " + str(tier) + "), set_my_point: " + str(coord)
@@ -3117,93 +3144,133 @@ class Match():
                 self.set_peer_point(coord_block)            #对方下
                 self.associate_point.append((coord_block, tier))
                 self.settle(False, True)                #整理
+
                 #查看我方有没有W, 若有直接返回
                 for mp in self.M_Attr['W']:
                     if local_print_debug == 1:
                         print "======> My G associate ** Win...tier: " + str(tier) + ", coord: " + str(coord)
-                        print self.associate_point
                         print self.M_Attr['W'][0].coords
-                    print "==========Game will over, I Win !! @thinking_G_My_Nest@W ============"
                     self.willwin_cnt += 1
+                    if self.willwin_cnt == 1:
+                        print "==========Game will over, I Win !! @thinking_G_My_Nest@W ============"
+                        print self.associate_point      #打印联想路径
 
                     return coord
 
-                #查看对方有没有W!若有，我方可以尝试封堵,且封堵的点在我方G内的
+                #^_^
+                w_cnt = 0
+                crd_block = 0
+
                 for mp in self.P_Attr['W']:
-                    if mp.attr == 'WW':     #说明这么下对方稳赢，所以不要这么下
-                        if local_print_debug == 1:
-                            print "     My G associate(tier:"+ str(tier) +"), Find Peer Win...continue"
-                        nest_cont = 1
+                    if mp.other == 'WW':
+                        w_cnt = 2       #相当于两个W
+                        break
                     else:
-                        crd = mp.attract_coords[0]      #对方不是WW稳赢的W，应该只有一个封堵点
-                        tmp_flag = 0
-                        for my_a in self.M_Attr['G']:
-                            if crd in my_a.attract_coords:        #封堵对方的点在我方的G的attract_coords内，执行一次或零次
-                                if my_a.attract_coords[0] == crd:
-                                    crd_block = my_a.attract_coords[1]
-                                else:
-                                    crd_block = my_a.attract_coords[0]
+                        w_cnt += 1
+                        if crd_block == 0:
+                            crd_block = mp.attract_coords[0]
+                        else:
+                            if cmp(crd_block, mp.attract_coords[0]) == 0:
+                                w_cnt -= 1  #当对方两个W的封堵点是同一个时，视为一个W
 
-                                if local_print_debug == 1:
-                                    print "     My G associate(tier: " + str(tier) + "), (special:PW) set_my_point: " + str(crd)
-                                self.set_my_point(crd)                    #我方下
-                                self.associate_point.append((crd, tier))     
-                                self.settle(True, False)                #整理
+                zw_flag = 1
 
-                                if local_print_debug == 1:
-                                    print "     My G associate(tier: " + str(tier) + "), (special:PW) set_peer_point: " + str(crd_block)
-                                self.set_peer_point(crd_block)            #对方下
-                                self.associate_point.append((crd_block, tier))
-                                self.settle(False, True)                #整理
-                                if local_print_debug == 1:
-                                    print "--->Debug: 2 asdf"
-                                #查看我方有没有W, 若有直接返回
-                                for mp_b in self.M_Attr['W']:
-                                    if local_print_debug == 1:
-                                        print "======> My G associate **** Win...tier: " + str(tier) + ", (special:PW) coord: " + str(coord)
-                                        print self.associate_point
-                                        print self.M_Attr['W'][0].coords
-                                    print "==========Game will over, I Win !! @thinking_G_My_Nest@PW 1 ============"
-                                    self.willwin_cnt += 1
-                                    return coord
+                if w_cnt > 1:
+                    continue     #说明这么下会输————换一个G进行本级联想
+                elif w_cnt == 0:
+                    None            #对方没有W的情况，继续往下走
+                else:       # == 1 的情况
+                    coincide = 0
+                    for mp in self.P_Attr['G']:
+                        if cmp(crd_block, mp.attract_coords[0]) == 0 or cmp(crd_block, mp.attract_coords[1]) == 0:
+                            coincide = 1
+                            break
 
-                                # #这里可能还得判断我方有ZW，且对方没有W的情况，这估计我方将要赢
-                                # if len(self.M_Attr['ZW']) > 0 and len(self.P_Attr['W']) == 0:
-                                #     print "==========Game will over, I Win !! @thinking_G_My_Nest@PW 2 ============"
-                                #     self.willwin_cnt += 1
-                                #     return coord
+                    if coincide == 1:
+                        zw_flag = 0        #封堵对方的点正是我方G内，就进行下一级联想，而忽略我方可能存在的ZW判断
+                    else:           #找不到在我方G内且可以封堵对方的点
+                        continue     #说明这么下没结果(否则主动权给了对方)————换一个G进行本级联想
 
 
-                                # 这里可能还得考虑对方有没有W的情况, 头有点大........
-                                for mp_c in self.P_Attr['W']:
-                                    #若真出现这种情况，再研究吧..........头大
-                                    print "<----******-----Something need consider!-----*****------>"
-                                    self.wrong_cnt += 100
-                                    break
+                # #查看对方有没有W!若有，我方可以尝试封堵,且封堵的点在我方G内的
+                # for mp in self.P_Attr['W']:
+                #     if mp.other == 'WW':     #说明这么下对方稳赢，所以不要这么下，换一个G进行本级联想
+                #         if local_print_debug == 1:
+                #             print "     My G associate(tier:"+ str(tier) +"), Find Peer Win...continue"
+                #         nest_cont = 1
+                #     else:
+                #         crd = mp.attract_coords[0]      #对方不是WW稳赢的W，应该只有一个封堵点
+                #         tmp_flag = 0
+                #         for my_a in self.M_Attr['G']:
+                #             if crd in my_a.attract_coords:        #封堵对方的点在我方的G的attract_coords内，执行一次或零次
+                #                 if my_a.attract_coords[0] == crd:
+                #                     crd_block = my_a.attract_coords[1]
+                #                 else:
+                #                     crd_block = my_a.attract_coords[0]
 
-                                tmp_flag = 1
-                                break
+                #                 if local_print_debug == 1:
+                #                     print "     My G associate(tier: " + str(tier) + "), (special:PW) set_my_point: " + str(crd)
+                #                 self.set_my_point(crd)                    #我方下
+                #                 self.associate_point.append((crd, tier))     
+                #                 self.settle(True, False)                #整理
 
-                        if tmp_flag == 0:       #说明封堵对方的点不在我方的G...内，也就没有必要再次嵌套
-                            if local_print_debug == 1:
-                                print "     My G associate(tier:"+ str(tier) +"), (special:PW) need stop..continue"
-                            nest_cont = 1
-                    break
+                #                 if local_print_debug == 1:
+                #                     print "     My G associate(tier: " + str(tier) + "), (special:PW) set_peer_point: " + str(crd_block)
+                #                 self.set_peer_point(crd_block)            #对方下
+                #                 self.associate_point.append((crd_block, tier))
+                #                 self.settle(False, True)                #整理
+                #                 if local_print_debug == 1:
+                #                     print "--->Debug: 2 asdf"
+                #                 #查看我方有没有W, 若有直接返回
+                #                 for mp_b in self.M_Attr['W']:
+                #                     if local_print_debug == 1:
+                #                         print "======> My G associate **** Win...tier: " + str(tier) + ", (special:PW) coord: " + str(coord)
+                #                         print self.associate_point
+                #                         print self.M_Attr['W'][0].coords
+                #                     print "==========Game will over, I Win !! @thinking_G_My_Nest@PW 1 ============"
+                #                     self.willwin_cnt += 1
+                #                     return coord
 
-                if nest_cont == 1:
-                    continue
-                    
-                #查看我方有没有ZW，若有直接返回
-                for mp in self.M_Attr['ZW']:
-                    if local_print_debug == 1:
-                        print "======> My G associate ***ZW*** Z Win...tier: " + str(tier) + ", coord: " + str(coord)
-                        print self.associate_point
-                        print "==========Game will over, I Win !! @thinking_G_My_Nest@ZW============"
-                        print self.M_Attr['ZW'][0].coords
-                        
-                    self.willwin_cnt += 1
+                #                 # #这里可能还得判断我方有ZW，且对方没有W的情况，这估计我方将要赢
+                #                 # if len(self.M_Attr['ZW']) > 0 and len(self.P_Attr['W']) == 0:
+                #                 #     print "==========Game will over, I Win !! @thinking_G_My_Nest@PW 2 ============"
+                #                 #     self.willwin_cnt += 1
+                #                 #     return coord
 
-                    return coord
+
+                #                 # 这里可能还得考虑对方有没有W的情况, 头有点大........
+                #                 for mp_c in self.P_Attr['W']:
+                #                     #若真出现这种情况，再研究吧..........头大
+                #                     print "<----******-----Something need consider!-----*****------>"
+                #                     self.wrong_cnt += 100
+                #                     break
+
+                #                 tmp_flag = 1
+                #                 break
+
+                #         if tmp_flag == 0:       #说明封堵对方的点不在我方的G...内，也就没有必要再次嵌套
+                #             if local_print_debug == 1:
+                #                 print "     My G associate(tier:"+ str(tier) +"), (special:PW) need stop..continue"
+                #             nest_cont = 1
+                #     break
+
+                # if nest_cont == 1:
+                #     continue            #说明这么下没结果，换一个G进行本级联想
+
+                if zw_flag == 1:
+                    #查看我方有没有ZW，若有直接返回
+                    for mp in self.M_Attr['ZW']:
+                        if local_print_debug == 1:
+                            print "======> My G associate ***ZW*** Z Win...tier: " + str(tier) + ", coord: " + str(coord)
+                            print self.M_Attr['ZW'][0].coords
+                            
+                        self.willwin_cnt += 1
+                        if self.willwin_cnt == 1:
+                            print "==========Game will over, I Win !! @thinking_G_My_Nest@ZW============"
+                            print self.associate_point      #打印联想路径
+
+                        return coord
+
                 #查看我方还有没有G的，若有再次进行嵌套
                 ret = self.thinking_G_My_Nest(tier+1)
                 self.thinking_withdraw(tier+1)  #联想撤回
