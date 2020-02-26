@@ -1051,6 +1051,20 @@ class Match():
                     
     #     return ret_set
 
+    def get_point_setByAttr_all_PWW(self):
+        #遍历棋盘上所有的空的坐标
+        ret_set = set()
+
+        for x in range(0, self.__SIDELENGTH):
+            for y in range(0, self.__SIDELENGTH):
+                if self.matrix[y][x] != 0:
+                    continue
+                ret_dict = self.may_build_new((x,y), self.Peer_point)
+                if ret_dict != None and ret_dict.has_key('WW'):
+                    ret_set.add((x,y))
+                
+        return ret_set
+
     def get_point_setByAttr_all(self, attr, val):
         #遍历棋盘上所有的空的坐标
         ret_set = set()
@@ -1165,6 +1179,9 @@ class Match():
                         coord_tuple = tuple(coord_list)
                         obj = self.My3(coord_tuple, 'S', None, None)
                         self.update_MP(obj)
+                        if obj.attr == 'W' and obj.other == 'WW':
+                            ret_dict['WW'] = 1      #特殊处理
+
                         if ret_dict.has_key(obj.attr):
                             ret_dict[obj.attr] += 1
                         else:
@@ -1174,6 +1191,9 @@ class Match():
                     coord_tuple = tuple(coord_list)
                     obj = self.My2(coord_tuple, 'S', None, None)
                     self.update_MP(obj)
+                    if obj.attr == 'W' and obj.other == 'WW':
+                        ret_dict['WW'] = 1      #特殊处理
+
                     if ret_dict.has_key(obj.attr):
                         ret_dict[obj.attr] += 1
                     else:
@@ -1235,6 +1255,10 @@ class Match():
                         coord_tuple = tuple(coord_list)
                         obj = self.My3(coord_tuple, 'SW', None, None)
                         self.update_MP(obj)
+
+                        if obj.attr == 'W' and obj.other == 'WW':
+                            ret_dict['WW'] = 1      #特殊处理
+
                         if ret_dict.has_key(obj.attr):
                             ret_dict[obj.attr] += 1
                         else:
@@ -1244,6 +1268,10 @@ class Match():
                     coord_tuple = tuple(coord_list)
                     obj = self.My2(coord_tuple, 'SW', None, None)
                     self.update_MP(obj)
+
+                    if obj.attr == 'W' and obj.other == 'WW':
+                        ret_dict['WW'] = 1      #特殊处理
+
                     if ret_dict.has_key(obj.attr):
                         ret_dict[obj.attr] += 1
                     else:
@@ -1305,6 +1333,9 @@ class Match():
                         coord_tuple = tuple(coord_list)
                         obj = self.My3(coord_tuple, 'W', None, None)
                         self.update_MP(obj)
+                        if obj.attr == 'W' and obj.other == 'WW':
+                            ret_dict['WW'] = 1      #特殊处理
+
                         if ret_dict.has_key(obj.attr):
                             ret_dict[obj.attr] += 1
                         else:
@@ -1314,6 +1345,9 @@ class Match():
                     coord_tuple = tuple(coord_list)
                     obj = self.My2(coord_tuple, 'W', None, None)
                     self.update_MP(obj)
+                    if obj.attr == 'W' and obj.other == 'WW':
+                        ret_dict['WW'] = 1      #特殊处理
+
                     if ret_dict.has_key(obj.attr):
                         ret_dict[obj.attr] += 1
                     else:
@@ -1375,6 +1409,10 @@ class Match():
                         coord_tuple = tuple(coord_list)
                         obj = self.My3(coord_tuple, 'WN', None, None)
                         self.update_MP(obj)
+
+                        if obj.attr == 'W' and obj.other == 'WW':
+                            ret_dict['WW'] = 1      #特殊处理
+
                         if ret_dict.has_key(obj.attr):
                             ret_dict[obj.attr] += 1
                         else:
@@ -1384,6 +1422,9 @@ class Match():
                     coord_tuple = tuple(coord_list)
                     obj = self.My2(coord_tuple, 'WN', None, None)
                     self.update_MP(obj)
+                    if obj.attr == 'W' and obj.other == 'WW':
+                        ret_dict['WW'] = 1      #特殊处理
+
                     if ret_dict.has_key(obj.attr):
                         ret_dict[obj.attr] += 1
                     else:
@@ -2386,10 +2427,55 @@ class Match():
             return mp.attract_coords[0]
         return None
 
-    #判断对方通过G能否直接赢，因为是我方联想下子后再判断，所以这里嵌套tier从2开始
+    #判断对方通过G能否直接赢，或者没必要经过G也赢了
+    #因为是我方联想下子后再判断，所以这里嵌套tier从2开始
     def thinking_G_Peer_associate(self):
+        #在对方W存在的情况下不应该进行G联想
+        for mp in self.P_Attr['W']:
+            print "Something error @thinking_G_Peer_associate for W"
+            self.wrong_cnt += 20
+            return True
+
+        w_cnt = 0
+        crd_block = 0
+
+        for mp in self.M_Attr['W']:
+            if mp.other == 'WW':
+                return None
+            else:
+                w_cnt += 1
+                if crd_block == 0:
+                    crd_block = mp.attract_coords[0]
+                else:
+                    if cmp(crd_block, mp.attract_coords[0]) == 0:
+                        w_cnt -= 1
+        
+        zw_flag = 1
+        
+        if w_cnt > 1:
+            return None
+        elif w_cnt == 0:
+            None
+        else:
+            coincide = 0
+            for mp in self.P_Attr['G']:
+                if cmp(crd_block, mp.attract_coords[0]) == 0 or cmp(crd_block, mp.attract_coords[1]) == 0:
+                    coincide = 1
+                    break
+            if coincide == 1:
+                zw_flag = 0
+            else:               #不重合也就没有必要进行G联想了
+                return None
+        
+        if zw_flag == 1:
+            for mp in self.P_Attr['ZW']:
+                print "Something error @thinking_G_Peer_associate for ZW"
+                self.wrong_cnt += 10
+                return True
+
         ret = self.thinking_G_Peer_Nest(2)
         self.thinking_withdraw(2)
+
         return ret
 
     def thinking_G_AX_PG_PAX(self):
@@ -2553,13 +2639,18 @@ class Match():
             pg_set.add(mp.attract_coords[0])
             pg_set.add(mp.attract_coords[1])
         pax_set = self.get_point_setByAttr_all('ZW', self.Peer_point)
+        pww_will_set = self.get_point_setByAttr_all_PWW()
 
-        local_print_debug = 1
-        all_set = zw_will_set | w_will_set | pg_set | pax_set   #取并集
+        local_print_debug = 0
+        all_set = zw_will_set | w_will_set | pg_set | pax_set | pww_will_set  #取并集
         all_list = []   #成员也为list，list[0] 为分数, list[1]为coord
         for crd in all_set:
             pt = 0  #分数
             pt_2 = 0
+
+            if crd in pww_will_set:
+                pt += 100       #不封堵的话应该会输
+
             if crd in zw_will_set:
                 num_tuple = self.get_pointNum_byAttr(crd, 'ZW', self.My_point)
                 num = num_tuple[0]
@@ -2836,7 +2927,7 @@ class Match():
 
     # 返回None表示对方没有可以通过G方式直接赢的
     def thinking_G_Peer_Nest(self, tier):
-        local_print_debug = 1
+        local_print_debug = 0
 
         nest = {}
         nest_cont = 0
@@ -2902,9 +2993,9 @@ class Match():
                 #查看对方有没有W，若有直接返回
                 for mp in self.P_Attr['W']:
                     if local_print_debug == 1:
-                        print "*** Find Peer Win...tier: " + str(tier) + ", coord: " + str(coord_peer)
-                        print self.associate_point          #打印联想路径
                         print self.P_Attr['W'][0].coords
+                    print "*** Find Peer Win...tier: " + str(tier) 
+                    print self.associate_point          #打印联想路径
                     return coord_peer
 
                 #^_^
@@ -2991,9 +3082,9 @@ class Match():
                     #查看对方有没有ZW，若有直接返回
                     for mp in self.P_Attr['ZW']:
                         if local_print_debug == 1:
-                            print "*** Find Peer Z Win......tier: " + str(tier) + ", coord: " + str(coord_peer)
-                            print self.associate_point
                             print self.P_Attr['ZW'][0].coords
+                        print "*** Find Peer Win...tier: " + str(tier) 
+                        print self.associate_point          #打印联想路径
                         return coord_peer
                     
                 #查看对方还有没有G的，若有再次进行嵌套
@@ -3024,7 +3115,7 @@ class Match():
                 for attract_coord in mp.attract_coords:
                     point_dict[attract_coord] = 0
 
-        if len(point_dict) == 0:
+        if len(point_dict) == 0:    #没有准赢的情况，也就不需要封堵
             return None
 
         #接下去要给每一个封堵点进行打分，选取分数最高的那个
@@ -3076,36 +3167,61 @@ class Match():
 
             point_dict[coord] -= 5      #把堵对方ZW的那个分数减掉
             point_dict[coord] += 1      #至少给1分，区别于0分的那种
+
             #--- 模拟联想下子
             self.set_my_point(coord)
             self.associate_point.append((coord, 1)) 
             self.settle(True, False)
 
             if self.thinking_G_Peer_associate() != None:    #说明这么下对方会赢，所以不要这么下
+                print str(coord) + " is discard, because peer can win or will win...@prevent_PZW...."
                 point_dict[coord] = 0
                 continue
 
-            #--- 联想下子之后
-            # 查看对方是否还有ZW，若有我方就输咯，所以不能这么下
-            for peer in self.P_Attr['ZW']:
-                cont = 1
-                print str(coord) + " is discard, because peer ZW again."
-                point_dict[coord] = 0   #堵不住所有的ZW，清分，放弃
-                break
+            # #--- 联想下子之后
+            # # 查看对方是否还有ZW，若有我方就输咯，所以不能这么下
+            # for peer in self.P_Attr['ZW']:
+            #     cont = 1
+            #     print str(coord) + " is discard, because peer ZW again."
+            #     point_dict[coord] = 0   #堵不住所有的ZW，清分，放弃
+            #     break
 
-            if cont == 1:
-                continue
-            # 查看我方是否有两个W/ZW，若有，我方可能就赢咯，所以应该这么下
-            wzw_cnt = 0
+            # if cont == 1:
+            #     continue
+
+            #---^_^---
+            # # 查看我方是否有两个W/ZW，若有，我方可能就赢咯，所以应该这么下
+            # wzw_cnt = 0
+            # for mp in self.M_Attr['W']:
+            #     wzw_cnt += 1
+            # for mp in self.M_Attr['ZW']:
+            #     wzw_cnt += 1
+
+            # if wzw_cnt >= 2:
+            #     # 这里直接返回吧
+            #     self.thinking_withdraw(1)
+            #     return coord
+
+            w_cnt = 0
+            crd_block = 0
+
             for mp in self.M_Attr['W']:
-                wzw_cnt += 1
-            for mp in self.M_Attr['ZW']:
-                wzw_cnt += 1
-
-            if wzw_cnt >= 2:
-                # 这里直接返回吧
+                if mp.other == 'WW':
+                    w_cnt = 2
+                    break
+                else:
+                    w_cnt += 1
+                    if crd_block == 0:
+                        crd_block = mp.attract_coords[0]
+                    else:
+                        if cmp(crd_block, mp.attract_coords[0]) == 0:
+                            w_cnt -= 1
+            
+            if w_cnt > 1:
                 self.thinking_withdraw(1)
-                return coord
+                return coord 
+            
+
 
             #---最后一步，查看我方新生成的My2类型
             for my in self.M_index[2]:
@@ -3123,25 +3239,29 @@ class Match():
                             else:
                                 None
                             break
+
         self.thinking_withdraw(1)
 
         ret_coord = None
         max_point = 0
         for coord in point_dict:    
-            print "-->point_dict: " + str(coord) + "--> " +   str(point_dict[coord])     
+            print "prevent_PZW_associate-->point_dict: " + str(coord) + "--> " +   str(point_dict[coord])     
             if point_dict[coord] > max_point:
                 ret_coord = coord
                 max_point = point_dict[coord]
 
         if ret_coord != None:
-            return ret_coord
+            return ret_coord        #返回最高分
         else:       
             #执行到这里说明对方肯定有两个ZW，且我方不能直接封堵
             dbg_cnt = 0
             dbg_cnt = len(self.P_Attr['ZW']) 
             if dbg_cnt < 2:     #不应该发生
-                print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  Wrong!!, May be lose"
-                self.wrong_cnt += 1
+                print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! May be lose, have no idea!"
+                self.willdie_cnt += 1
+                print "==========Game will over, I lose...============"
+                for coord in point_dict:
+                    return coord
 
                 return None
 
@@ -3153,11 +3273,11 @@ class Match():
                 return ret
             else:       #执行到这里，一般来说我方要输了，要死的有尊严
                 self.willdie_cnt += 1
-                print "==========Game will over, I lose...============"
+                print "==========Game will over, I lose.........============"
                 for coord in point_dict:
                     return coord
                 
-                print "!!!!!!!!!!!!!!!!!!!!!!!!  Wrong!!, May be lose"
+                print "!!!!!!!!!!!!!!!!!!!!!!!!  Wrong!!!, May be lose"
                 self.wrong_cnt += 1
                 return None
             
@@ -3574,6 +3694,7 @@ class Match():
 
         print "==>Sorry! I have no idea.............................................."
         self.noidea_cnt += 1
+
         # self.print_MP_class('M', 2)
         # self.print_MP_class('M', 3)
         # self.print_MP_class('M', 4)
@@ -4181,6 +4302,7 @@ class Match():
             coord = ret[1]
             print "Smart coord: " + str(coord)
             print "Smart type: " + status
+            print "Point Cnt: " + str(len(self.history_track))
 
             if status == 'W':
                 youlose = 1
@@ -4206,6 +4328,11 @@ def start(request):
 
     Redis_Pool = redis.ConnectionPool(host='127.0.0.1', port=6379, db=0)
     rds = redis.Redis(connection_pool=Redis_Pool)
+
+    print "====================================================="
+    print "=======================Game Start===================="
+    print "====================================================="
+
 
     if turn == 'user_first':
         match = Match(2)
@@ -4394,8 +4521,8 @@ def userstep(request):
         # rds.delete("Match_6")
         
     else:
-        match.print_MP_Attr('M')
-        match.print_MP_Attr('P')
+        # match.print_MP_Attr('M')
+        # match.print_MP_Attr('P')
 
         tmp = match.smart_point()
         
@@ -4407,8 +4534,8 @@ def userstep(request):
         if youlose == 0:
             match.settle(True, False)
 
-        print "pos_smart_x: " +  str(pos_smart_x)
-        print "pos_smart_y: " +  str(pos_smart_y)
+        # print "pos_smart_x: " +  str(pos_smart_x)
+        # print "pos_smart_y: " +  str(pos_smart_y)
         # 需要把match存储起来喔
         match_string = pickle.dumps(match)
         rds.set("Match_"+user_name, match_string)
