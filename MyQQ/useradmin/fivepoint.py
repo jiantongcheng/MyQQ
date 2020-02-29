@@ -1137,6 +1137,22 @@ class Match():
                 
         return ret_set
 
+    def get_point_setByZW(self, val):
+        #遍历棋盘上所有的空的坐标
+        ret_set = set()
+
+        for x in range(0, self.__SIDELENGTH):
+            for y in range(0, self.__SIDELENGTH):
+                if self.matrix[y][x] != 0:
+                    continue
+
+                ret_block_tuple = self.may_build_ZW((x,y), val)
+                if ret_block_tuple != None:
+                    ret_set.add(((x,y), ret_block_tuple))
+
+        return ret_set
+
+
     def get_point_setByAttr_all(self, attr, val):
         #遍历棋盘上所有的空的坐标
         ret_set = set()
@@ -1186,8 +1202,302 @@ class Match():
 
         return num
 
+    def may_build_ZW(self, coord_arg, val):
+        self.matrix[coord_arg[1]][coord_arg[0]] = val
+        ret_block_tuple = ()
+
+        ret = self.prase_point(coord_arg, val)
+        if ret[0] == 'U':       #只考虑U
+            list_dirs = list(ret[1])
+            N=0; NE=1; E=2; ES=3; S=4; SW=5; W=6; WN=7
+            if list_dirs[N] == 'Y' or list_dirs[S] == 'Y':  # 上下方向 |
+                # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+                coord_list = []
+                cnt_1 = 0; cnt_2 = 0
+                if list_dirs[N] == 'Y':
+                    cnt_1 += 1
+                    pt = self.check_point(coord_arg, 'N', 2)
+                    if pt == 'Y':
+                        cnt_1 += 1
+                        pt = self.check_point(coord_arg, 'N', 3)
+                        if pt == 'Y':
+                            cnt_1 += 1
+                            pt = self.check_point(coord_arg, 'N', 4)
+                            if pt == 'Y':
+                                cnt_1 += 1
+                                coord = self.get_coord(coord_arg, 'N', 4)
+                                coord_list.append(coord)
+                            coord = self.get_coord(coord_arg, 'N', 3)
+                            coord_list.append(coord)
+                        coord = self.get_coord(coord_arg, 'N', 2)
+                        coord_list.append(coord)
+                    coord = self.get_coord(coord_arg, 'N', 1)
+                    coord_list.append(coord)
+
+                coord_list.append(coord_arg)   #别忘了自己
+                # ---^_^---
+                if list_dirs[S] == 'Y':
+                    cnt_2 += 1
+                    coord = self.get_coord(coord_arg, 'S', 1)
+                    coord_list.append(coord)
+                    pt = self.check_point(coord_arg, 'S', 2)
+                    if pt == 'Y':
+                        cnt_2 += 1
+                        coord = self.get_coord(coord_arg, 'S', 2)
+                        coord_list.append(coord)
+                        pt = self.check_point(coord_arg, 'S', 3)
+                        if pt == 'Y':
+                            cnt_2 += 1
+                            coord = self.get_coord(coord_arg, 'S', 3)
+                            coord_list.append(coord)
+                            pt = self.check_point(coord_arg, 'S', 4)
+                            if pt == 'Y':
+                                cnt_2 += 1
+                                coord = self.get_coord(coord_arg, 'S', 4)
+                                coord_list.append(coord)
+                # ---^_^---
+                cnt = cnt_1 + cnt_2 + 1
+                
+                if cnt == 3:
+                    if cnt_1 == 1 and cnt_2 == 1:
+                        # 生成一个My3类型
+                        coord_tuple = tuple(coord_list)
+                        obj = self.My3(coord_tuple, 'S', None, None)
+                        self.update_MP(obj)
+                        if obj.attr == 'ZW':
+                            for crd in obj.attract_coords:
+                                ret_block_tuple += (crd, )
+                elif cnt == 2:  
+                    #生成一个My2类型
+                    coord_tuple = tuple(coord_list)
+                    obj = self.My2(coord_tuple, 'S', None, None)
+                    self.update_MP(obj)
+                    if obj.attr == 'ZW':
+                        for crd in obj.rel_coords:
+                            ret_block_tuple += (crd, )
+                else:       
+                    # 只考虑cnt为2和3的情况, 忽略其他
+                    None
+            if list_dirs[NE] == 'Y' or list_dirs[SW] == 'Y':    # 方向 /
+                # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+                coord_list = []
+                cnt_1 = 0; cnt_2 = 0
+                if list_dirs[NE] == 'Y':
+                    cnt_1 += 1
+                    pt = self.check_point(coord_arg, 'NE', 2)
+                    if pt == 'Y':
+                        cnt_1 += 1
+                        pt = self.check_point(coord_arg, 'NE', 3)
+                        if pt == 'Y':
+                            cnt_1 += 1
+                            pt = self.check_point(coord_arg, 'NE', 4)
+                            if pt == 'Y':
+                                cnt_1 += 1
+                                coord = self.get_coord(coord_arg, 'NE', 4)
+                                coord_list.append(coord)
+                            coord = self.get_coord(coord_arg, 'NE', 3)
+                            coord_list.append(coord)
+                        coord = self.get_coord(coord_arg, 'NE', 2)
+                        coord_list.append(coord)
+                    coord = self.get_coord(coord_arg, 'NE', 1)
+                    coord_list.append(coord)
+
+                coord_list.append(coord_arg)   #别忘了自己
+                # ---^_^---
+                if list_dirs[SW] == 'Y':
+                    cnt_2 += 1
+                    coord = self.get_coord(coord_arg, 'SW', 1)
+                    coord_list.append(coord)
+                    pt = self.check_point(coord_arg, 'SW', 2)
+                    if pt == 'Y':
+                        cnt_2 += 1
+                        coord = self.get_coord(coord_arg, 'SW', 2)
+                        coord_list.append(coord)
+                        pt = self.check_point(coord_arg, 'SW', 3)
+                        if pt == 'Y':
+                            cnt_2 += 1
+                            coord = self.get_coord(coord_arg, 'SW', 3)
+                            coord_list.append(coord)
+                            pt = self.check_point(coord_arg, 'SW', 4)
+                            if pt == 'Y':
+                                cnt_2 += 1
+                                coord = self.get_coord(coord_arg, 'SW', 4)
+                                coord_list.append(coord)
+                # ---^_^---
+                cnt = cnt_1 + cnt_2 + 1
+                
+                if cnt == 3:
+                    if cnt_1 == 1 and cnt_2 == 1:
+                        # 生成一个My3类型
+                        coord_tuple = tuple(coord_list)
+                        obj = self.My3(coord_tuple, 'SW', None, None)
+                        self.update_MP(obj)
+
+                        if obj.attr == 'ZW':
+                            for crd in obj.attract_coords:
+                                ret_block_tuple += (crd, )
+                elif cnt == 2:  
+                    #生成一个My2类型
+                    coord_tuple = tuple(coord_list)
+                    obj = self.My2(coord_tuple, 'SW', None, None)
+                    self.update_MP(obj)
+
+                    if obj.attr == 'ZW':
+                        for crd in obj.rel_coords:
+                            ret_block_tuple += (crd, )
+                else:       
+                    # 只考虑cnt为2和3的情况, 忽略其他
+                    None
+            if list_dirs[E] == 'Y' or list_dirs[W] == 'Y':    # 左右方向 —
+                # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+                coord_list = []
+                cnt_1 = 0; cnt_2 = 0
+                if list_dirs[E] == 'Y':
+                    cnt_1 += 1
+                    pt = self.check_point(coord_arg, 'E', 2)
+                    if pt == 'Y':
+                        cnt_1 += 1
+                        pt = self.check_point(coord_arg, 'E', 3)
+                        if pt == 'Y':
+                            cnt_1 += 1
+                            pt = self.check_point(coord_arg, 'E', 4)
+                            if pt == 'Y':
+                                cnt_1 += 1
+                                coord = self.get_coord(coord_arg, 'E', 4)
+                                coord_list.append(coord)
+                            coord = self.get_coord(coord_arg, 'E', 3)
+                            coord_list.append(coord)
+                        coord = self.get_coord(coord_arg, 'E', 2)
+                        coord_list.append(coord)
+                    coord = self.get_coord(coord_arg, 'E', 1)
+                    coord_list.append(coord)
+
+                coord_list.append(coord_arg)   #别忘了自己
+                # ---^_^---
+                if list_dirs[W] == 'Y':
+                    cnt_2 += 1
+                    coord = self.get_coord(coord_arg, 'W', 1)
+                    coord_list.append(coord)
+                    pt = self.check_point(coord_arg, 'W', 2)
+                    if pt == 'Y':
+                        cnt_2 += 1
+                        coord = self.get_coord(coord_arg, 'W', 2)
+                        coord_list.append(coord)
+                        pt = self.check_point(coord_arg, 'W', 3)
+                        if pt == 'Y':
+                            cnt_2 += 1
+                            coord = self.get_coord(coord_arg, 'W', 3)
+                            coord_list.append(coord)
+                            pt = self.check_point(coord_arg, 'W', 4)
+                            if pt == 'Y':
+                                cnt_2 += 1
+                                coord = self.get_coord(coord_arg, 'W', 4)
+                                coord_list.append(coord)
+                # ---^_^---
+                cnt = cnt_1 + cnt_2 + 1
+                
+                if cnt == 3:
+                    if cnt_1 == 1 and cnt_2 == 1:
+                        # 生成一个My3类型
+                        coord_tuple = tuple(coord_list)
+                        obj = self.My3(coord_tuple, 'W', None, None)
+                        self.update_MP(obj)
+                        if obj.attr == 'ZW':
+                            for crd in obj.attract_coords:
+                                ret_block_tuple += (crd, )
+
+                elif cnt == 2:  
+                    #生成一个My2类型
+                    coord_tuple = tuple(coord_list)
+                    obj = self.My2(coord_tuple, 'W', None, None)
+                    self.update_MP(obj)
+                    if obj.attr == 'ZW':
+                        for crd in obj.rel_coords:
+                            ret_block_tuple += (crd, )
+                else:       
+                    # 只考虑cnt为2和3的情况, 忽略其他
+                    None
+            if list_dirs[ES] == 'Y' or list_dirs[WN] == 'Y':    # 方向 \
+                # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+                coord_list = []
+                cnt_1 = 0; cnt_2 = 0
+                if list_dirs[ES] == 'Y':
+                    cnt_1 += 1
+                    pt = self.check_point(coord_arg, 'ES', 2)
+                    if pt == 'Y':
+                        cnt_1 += 1
+                        pt = self.check_point(coord_arg, 'ES', 3)
+                        if pt == 'Y':
+                            cnt_1 += 1
+                            pt = self.check_point(coord_arg, 'ES', 4)
+                            if pt == 'Y':
+                                cnt_1 += 1
+                                coord = self.get_coord(coord_arg, 'ES', 4)
+                                coord_list.append(coord)
+                            coord = self.get_coord(coord_arg, 'ES', 3)
+                            coord_list.append(coord)
+                        coord = self.get_coord(coord_arg, 'ES', 2)
+                        coord_list.append(coord)
+                    coord = self.get_coord(coord_arg, 'ES', 1)
+                    coord_list.append(coord)
+
+                coord_list.append(coord_arg)   #别忘了自己
+                # ---^_^---
+                if list_dirs[WN] == 'Y':
+                    cnt_2 += 1
+                    coord = self.get_coord(coord_arg, 'WN', 1)
+                    coord_list.append(coord)
+                    pt = self.check_point(coord_arg, 'WN', 2)
+                    if pt == 'Y':
+                        cnt_2 += 1
+                        coord = self.get_coord(coord_arg, 'WN', 2)
+                        coord_list.append(coord)
+                        pt = self.check_point(coord_arg, 'WN', 3)
+                        if pt == 'Y':
+                            cnt_2 += 1
+                            coord = self.get_coord(coord_arg, 'WN', 3)
+                            coord_list.append(coord)
+                            pt = self.check_point(coord_arg, 'WN', 4)
+                            if pt == 'Y':
+                                cnt_2 += 1
+                                coord = self.get_coord(coord_arg, 'WN', 4)
+                                coord_list.append(coord)
+                # ---^_^---
+                cnt = cnt_1 + cnt_2 + 1
+                
+                if cnt == 3:
+                    if cnt_1 == 1 and cnt_2 == 1:
+                        # 生成一个My3类型
+                        coord_tuple = tuple(coord_list)
+                        obj = self.My3(coord_tuple, 'WN', None, None)
+                        self.update_MP(obj)
+
+                        if obj.attr == 'ZW':
+                            for crd in obj.attract_coords:
+                                ret_block_tuple += (crd, )
+                elif cnt == 2:  
+                    #生成一个My2类型
+                    coord_tuple = tuple(coord_list)
+                    obj = self.My2(coord_tuple, 'WN', None, None)
+                    self.update_MP(obj)
+                    if obj.attr == 'ZW':
+                        for crd in obj.rel_coords:
+                            ret_block_tuple += (crd, )
+                else:       
+                    None
 
 
+        else:
+            None
+
+        self.matrix[coord_arg[1]][coord_arg[0]] = 0         #还原
+
+        if len(ret_block_tuple) == 0:
+            return None
+        else:
+            return ret_block_tuple
+        
+        
     #试探函数，返回字典
     def may_build_new(self, coord_arg, val):     
         self.matrix[coord_arg[1]][coord_arg[0]] = val
@@ -3154,6 +3464,8 @@ class Match():
 
         #这里可能也要考虑tier太大的情况，即嵌套太多，花费时间太多
         #或许当tier超过N级的时候认为对方不一定能完全有把握，如tier>10
+        if tier > 10:
+            return None
 
         for mp in self.P_Attr['G']:
             coord_peer = mp.attract_coords[0]
@@ -3185,8 +3497,15 @@ class Match():
                     print "Something error@thinking_G_AX_Peer_Nest, 123, crd: " + str(crd)
 
 
-        # asdf 
-        # 还得考虑1+1+1新生成ZW的情况
+        # # 还得考虑1+1+1新生成ZW的情况, 但貌似消耗计算机资源太多
+        # if tier < 3:
+        #     ret_tmp = self.get_point_setByZW(self.Peer_point)
+        #     if len(ret_tmp) != 0:
+        #         # print "get_point_setByZW: " + str(len(ret_tmp))
+        #         for crd_and_block in ret_tmp:
+        #             coord_peer = crd_and_block[0]
+        #             nest[(coord_peer, crd_and_block[1])] = True
+
 
         if len(nest) != 0:
             if local_print_debug == 1:
