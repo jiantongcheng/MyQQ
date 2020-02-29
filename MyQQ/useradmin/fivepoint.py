@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-投票相关
+wuziqi by chengjiantong 2020.2.29
 """
 
 from __future__ import unicode_literals
@@ -897,6 +897,7 @@ class Match():
                 for remove_class in remove_list:
                     self.P_Attr[remove_class.attr].remove(remove_class)
                     self.P_index[2].remove(remove_class)
+
             # 
             remove_list = []
             for mp in self.P_index[3]:
@@ -905,17 +906,17 @@ class Match():
                     remove_list.append(mp)
                     coord_list = [mp.coords[1], mp.coords[2]]
                     coord_tuple = tuple(coord_list)
-                    my2 = self.My2(coord_tuple, mp.direction, None, None)
+                    my2 = self.Peer2(coord_tuple, mp.direction, None, None)
                     self.P_index[2].append(my2)
                     self.update_MP(my2)
                     self.P_Attr[my2.attr].append(my2)
-                elif mp.coords[1] == coord:     #在中间断开，则不用生成My2类型
+                elif mp.coords[1] == coord:     #在中间断开，则不用生成Peer2类型
                     remove_list.append(mp)
                 elif mp.coords[2] == coord:
                     remove_list.append(mp)
                     coord_list = [mp.coords[0], mp.coords[1]]
                     coord_tuple = tuple(coord_list)
-                    my2 = self.My2(coord_tuple, mp.direction, None, None)
+                    my2 = self.Peer2(coord_tuple, mp.direction, None, None)
                     self.P_index[2].append(my2)
                     self.update_MP(my2)
                     self.P_Attr[my2.attr].append(my2)
@@ -933,7 +934,7 @@ class Match():
                     remove_list.append(mp)
                     coord_list = [mp.coords[1], mp.coords[2],  mp.coords[3]]
                     coord_tuple = tuple(coord_list)
-                    my3 = self.My3(coord_tuple, mp.direction, None, None)
+                    my3 = self.Peer3(coord_tuple, mp.direction, None, None)
                     self.P_index[3].append(my3)
                     self.update_MP(my3)
                     self.P_Attr[my3.attr].append(my3)
@@ -941,7 +942,7 @@ class Match():
                     remove_list.append(mp)
                     coord_list = [mp.coords[2], mp.coords[3]]
                     coord_tuple = tuple(coord_list)
-                    my2 = self.My2(coord_tuple, mp.direction, None, None)
+                    my2 = self.Peer2(coord_tuple, mp.direction, None, None)
                     self.P_index[2].append(my2)
                     self.update_MP(my2)
                     self.P_Attr[my2.attr].append(my2)
@@ -949,7 +950,7 @@ class Match():
                     remove_list.append(mp)
                     coord_list = [mp.coords[0], mp.coords[1]]
                     coord_tuple = tuple(coord_list)
-                    my2 = self.My2(coord_tuple, mp.direction, None, None)
+                    my2 = self.Peer2(coord_tuple, mp.direction, None, None)
                     self.P_index[2].append(my2)
                     self.update_MP(my2)
                     self.P_Attr[my2.attr].append(my2)
@@ -957,7 +958,7 @@ class Match():
                     remove_list.append(mp)
                     coord_list = [mp.coords[0], mp.coords[1], mp.coords[2]]
                     coord_tuple = tuple(coord_list)
-                    my3 = self.My3(coord_tuple, mp.direction, None, None)
+                    my3 = self.Peer3(coord_tuple, mp.direction, None, None)
                     self.P_index[3].append(my3)
                     self.update_MP(my3)
                     self.P_Attr[my3.attr].append(my3)
@@ -967,6 +968,77 @@ class Match():
                 for remove_class in remove_list:
                     self.P_Attr[remove_class.attr].remove(remove_class)
                     self.P_index[4].remove(remove_class)
+
+            # # 
+            # remove_list = []
+            # for mp in self.P_index[3]:
+            #     coord_list = []
+            #     if mp.coords[0] == coord:
+            #         remove_list.append(mp)
+            #         coord_list = [mp.coords[1], mp.coords[2]]
+            #         coord_tuple = tuple(coord_list)
+            #         my2 = self.My2(coord_tuple, mp.direction, None, None)
+            #         self.P_index[2].append(my2)
+            #         self.update_MP(my2)
+            #         self.P_Attr[my2.attr].append(my2)
+            #     elif mp.coords[1] == coord:     #在中间断开，则不用生成My2类型
+            #         remove_list.append(mp)
+            #     elif mp.coords[2] == coord:
+            #         remove_list.append(mp)
+            #         coord_list = [mp.coords[0], mp.coords[1]]
+            #         coord_tuple = tuple(coord_list)
+            #         my2 = self.My2(coord_tuple, mp.direction, None, None)
+            #         self.P_index[2].append(my2)
+            #         self.update_MP(my2)
+            #         self.P_Attr[my2.attr].append(my2)
+            #     else:
+            #         None
+            # if len(remove_list) != 0:
+            #     for remove_class in remove_list:
+            #         self.P_Attr[remove_class.attr].remove(remove_class)
+            #         self.P_index[3].remove(remove_class)
+            # # 
+            # remove_list = []
+            # for mp in self.P_index[4]:
+            #     coord_list = []
+            #     if mp.coords[0] == coord:
+            #         remove_list.append(mp)
+            #         coord_list = [mp.coords[1], mp.coords[2],  mp.coords[3]]
+            #         coord_tuple = tuple(coord_list)
+            #         my3 = self.My3(coord_tuple, mp.direction, None, None)
+            #         self.P_index[3].append(my3)
+            #         self.update_MP(my3)
+            #         self.P_Attr[my3.attr].append(my3)
+            #     elif mp.coords[1] == coord:     
+            #         remove_list.append(mp)
+            #         coord_list = [mp.coords[2], mp.coords[3]]
+            #         coord_tuple = tuple(coord_list)
+            #         my2 = self.My2(coord_tuple, mp.direction, None, None)
+            #         self.P_index[2].append(my2)
+            #         self.update_MP(my2)
+            #         self.P_Attr[my2.attr].append(my2)
+            #     elif mp.coords[2] == coord:
+            #         remove_list.append(mp)
+            #         coord_list = [mp.coords[0], mp.coords[1]]
+            #         coord_tuple = tuple(coord_list)
+            #         my2 = self.My2(coord_tuple, mp.direction, None, None)
+            #         self.P_index[2].append(my2)
+            #         self.update_MP(my2)
+            #         self.P_Attr[my2.attr].append(my2)
+            #     elif mp.coords[3] == coord:
+            #         remove_list.append(mp)
+            #         coord_list = [mp.coords[0], mp.coords[1], mp.coords[2]]
+            #         coord_tuple = tuple(coord_list)
+            #         my3 = self.My3(coord_tuple, mp.direction, None, None)
+            #         self.P_index[3].append(my3)
+            #         self.update_MP(my3)
+            #         self.P_Attr[my3.attr].append(my3)
+            #     else:
+            #         None
+            # if len(remove_list) != 0:
+            #     for remove_class in remove_list:
+            #         self.P_Attr[remove_class.attr].remove(remove_class)
+            #         self.P_index[4].remove(remove_class)
 
         return 0
 
@@ -2427,12 +2499,77 @@ class Match():
             return mp.attract_coords[0]
         return None
 
-    #判断对方通过G能否直接赢，或者没必要经过G也赢了
-    #因为是我方联想下子后再判断，所以这里嵌套tier从2开始
-    def thinking_G_Peer_associate(self):
+    # #判断对方通过G能否直接赢，或者没必要经过G也赢了
+    # #因为是我方联想下子后再判断，所以这里嵌套tier从2开始
+    # def thinking_G_Peer_associate(self):
+    #     #在对方W存在的情况下不应该进行G联想
+    #     for mp in self.P_Attr['W']:
+    #         print "Something error @thinking_G_Peer_associate for W"
+    #         self.wrong_cnt += 20
+    #         return True
+
+    #     w_cnt = 0
+    #     crd_block = 0
+
+    #     for mp in self.M_Attr['W']:
+    #         if mp.other == 'WW':
+    #             return None
+    #         else:
+    #             w_cnt += 1
+    #             if crd_block == 0:
+    #                 crd_block = mp.attract_coords[0]
+    #             else:
+    #                 if cmp(crd_block, mp.attract_coords[0]) == 0:
+    #                     w_cnt -= 1
+        
+    #     zw_flag = 1
+        
+    #     if w_cnt > 1:
+    #         return None
+    #     elif w_cnt == 0:
+    #         None
+    #     else:       #我方一个W，看看对方能不能封堵且掌握主动权
+    #         coincide = 0
+    #         for mp in self.P_Attr['G']:
+    #             if cmp(crd_block, mp.attract_coords[0]) == 0 or cmp(crd_block, mp.attract_coords[1]) == 0:
+    #                 coincide = 1
+    #                 break
+
+    #         if coincide == 0:   #在G里面没找到的话，继续去A+X里面找
+    #             for mp in self.P_Attr['A+X']:
+    #                 for crd in mp.attract_coords:
+    #                     if cmp(crd_block, crd) == 0:
+    #                         coincide = 1
+    #                         break
+    #                 if coincide == 1:
+    #                     break
+
+    #         if coincide == 0:     #还应该看这个点能否构成新的三子为ZW的情形
+    #             ret_dict = self.may_build_new(crd_block, self.Peer_point) 
+    #             if ret_dict != None and ret_dict.has_key('ZW'):
+    #                 print "======>Something 11 @thinking_G_Peer_associate"
+    #                 coincide = 1
+                    
+    #         if coincide == 1:
+    #             zw_flag = 0
+    #         else:               #不重合也就没有必要进行G联想了
+    #             return None
+        
+    #     if zw_flag == 1:
+    #         for mp in self.P_Attr['ZW']:
+    #             print "Something error @thinking_G_Peer_associate for ZW"
+    #             self.wrong_cnt += 10
+    #             return True
+
+    #     ret = self.thinking_G_Peer_Nest(2)
+    #     self.thinking_withdraw(2)
+
+    #     return ret
+
+    def thinking_G_AX_Peer_associate(self, ax_flag=False):
         #在对方W存在的情况下不应该进行G联想
         for mp in self.P_Attr['W']:
-            print "Something error @thinking_G_Peer_associate for W"
+            print "Something error @thinking_G_AX_Peer__associate for W"
             self.wrong_cnt += 20
             return True
 
@@ -2456,12 +2593,28 @@ class Match():
             return None
         elif w_cnt == 0:
             None
-        else:
+        else:       #我方一个W，看看对方能不能封堵且掌握主动权
             coincide = 0
             for mp in self.P_Attr['G']:
                 if cmp(crd_block, mp.attract_coords[0]) == 0 or cmp(crd_block, mp.attract_coords[1]) == 0:
                     coincide = 1
                     break
+            if ax_flag == True:
+                if coincide == 0:   #在G里面没找到的话，继续去A+X里面找
+                    for mp in self.P_Attr['A+X']:
+                        for crd in mp.attract_coords:
+                            if cmp(crd_block, crd) == 0:
+                                coincide = 1
+                                break
+                        if coincide == 1:
+                            break
+
+                if coincide == 0:     #还应该看这个点能否构成新的三子为ZW的情形
+                    ret_dict = self.may_build_new(crd_block, self.Peer_point) 
+                    if ret_dict != None and ret_dict.has_key('ZW'):
+                        print "======>Something 11 @thinking_G_AX_Peer__associate"
+                        coincide = 1
+                    
             if coincide == 1:
                 zw_flag = 0
             else:               #不重合也就没有必要进行G联想了
@@ -2469,14 +2622,19 @@ class Match():
         
         if zw_flag == 1:
             for mp in self.P_Attr['ZW']:
-                print "Something error @thinking_G_Peer_associate for ZW"
+                print "Something error @thinking_G_AX_Peer__associate for ZW"
                 self.wrong_cnt += 10
                 return True
 
-        ret = self.thinking_G_Peer_Nest(2)
+        if ax_flag == True:
+            ret = self.thinking_G_AX_Peer_Nest(2)
+        else:
+            ret = self.thinking_G_Peer_Nest(2)
+
         self.thinking_withdraw(2)
 
         return ret
+
 
     def thinking_G_AX_PG_PAX(self):
         cross_dict = {}
@@ -2554,7 +2712,7 @@ class Match():
             self.settle(True, False)
 
             #先看对方能否通过G直接赢， 如果可以就不要这么下
-            if self.thinking_G_Peer_associate() != None:    #说明这么下对方会赢，所以不要这么下
+            if self.thinking_G_AX_Peer_associate() != None:    #说明这么下对方会赢，所以不要这么下
                 self.thinking_withdraw(1)
                 continue
 
@@ -2641,7 +2799,7 @@ class Match():
         pax_set = self.get_point_setByAttr_all('ZW', self.Peer_point)
         pww_will_set = self.get_point_setByAttr_all_PWW()
 
-        local_print_debug = 0
+        local_print_debug = 1
         all_set = zw_will_set | w_will_set | pg_set | pax_set | pww_will_set  #取并集
         all_list = []   #成员也为list，list[0] 为分数, list[1]为coord
         for crd in all_set:
@@ -2746,7 +2904,7 @@ class Match():
             self.associate_point.append((ret_crd, 1)) 
             self.settle(True, False)
 
-            if self.thinking_G_Peer_associate() != None:
+            if self.thinking_G_AX_Peer_associate(True) != None:
                 #说明这么下对方会赢，所以不要这么下,去看看下一个分数最高的
                 self.thinking_withdraw(1)
                 all_list.remove([max_pt, ret_crd, max_pt_2])  #删除最高分
@@ -2801,7 +2959,7 @@ class Match():
             self.associate_point.append((ret_crd, 1)) 
             self.settle(True, False)
 
-            if self.thinking_G_Peer_associate() != None:
+            if self.thinking_G_AX_Peer_associate() != None:
                 #说明这么下对方会赢，所以不要这么下,去看看下一个分数最高的
                 self.thinking_withdraw(1)
                 all_list.remove([max_pt, ret_crd])  #删除最高分
@@ -2816,115 +2974,6 @@ class Match():
 
         return None
         
-
-    # # 返回None表示对方没有可以通过G方式直接赢的
-    # def thinking_G_Peer_Nest(self, tier):
-    #     nest = {}
-    #     nest_cont = 0
-
-    #     #这里可能也要考虑tier太大的情况，即嵌套太多，花费时间太多
-
-    #     for mp in self.P_Attr['G']:
-    #         coord_peer = mp.attract_coords[0]
-    #         coord_block = mp.attract_coords[1]
-    #         nest[(coord_peer, coord_block)] = True
-    #         coord_peer = mp.attract_coords[1]
-    #         coord_block = mp.attract_coords[0]
-    #         nest[(coord_peer, coord_block)] = True
-
-    #     if len(nest) != 0:
-    #         # print "===> Peer nest..." + str(tier)
-    #         for pair in nest:
-    #             coord_peer = pair[0]
-    #             coord_block = pair[1]
-    #             nest_cont = 0
-    #             # print "===> Peer...for..." + str(tier)
-    #             # 先进行上一次循环的悔棋操作
-    #             self.thinking_withdraw(tier)
-    #             #---
-    #             self.set_peer_point(coord_peer)          #对方下
-    #             self.associate_point.append((coord_peer, tier))
-    #             self.settle(False, True)        #整理
-    #             #查看我方有没有W，若有,则对方需要continue一颗棋子来封堵且在对方G内的
-    #             for mp in self.M_Attr['W']:
-    #                 nest_cont = 1
-    #                 # print "Find My Win...continue"
-    #                 break
-    #             if nest_cont == 1:
-    #                 continue
-                
-    #             self.set_my_point(coord_block)           #我方下
-    #             self.associate_point.append((coord_block, tier))
-    #             self.settle(True, False)        #整理
-    #             #查看对方有没有W，若有直接返回
-    #             for mp in self.P_Attr['W']:
-    #                 print "*** Find Peer Win...tier: " + str(tier) + ", coord: " + str(coord_peer)
-    #                 print self.associate_point
-    #                 print self.P_Attr['W'][0].coords
-    #                 return coord_peer
-    #             #查看我方有没有W，若有则对方可以尝试封堵,且封堵的点在对方的G内
-    #             nest_cont = 0
-    #             break_flag = 0
-    #             for mp in self.M_Attr['W']:
-    #                 if mp.other == 'WW':
-    #                     # print "Find My Win...continue"
-    #                     nest_cont = 1
-    #                     break
-    #                 else:
-    #                     # print "--->Debug: 11"
-    #                     crd = mp.attract_coords[0]
-    #                     break_flag = 0
-    #                     for my_a in self.P_Attr['G']:
-    #                         if my_a.attract_coords[0] == crd or my_a.attract_coords[1] == crd:
-    #                             if my_a.attract_coords[0] == crd:
-    #                                 crd_block = my_a.attract_coords[1]
-    #                             else:
-    #                                 crd_block = my_a.attract_coords[0]
-    #                             self.set_peer_point(crd)            #对方下
-    #                             self.associate_point.append((crd, tier))
-    #                             self.settle(False, True)                #整理
-    #                             #查看我方有没有W，若有,则对方需要continue一颗棋子
-    #                             for mp_b in self.M_Attr['W']:
-    #                                 # print "Find My Win...continue"
-    #                                 nest_cont = 1
-    #                                 break
-
-    #                             if nest_cont == 0:
-    #                                 self.set_my_point(crd_block)                    #我方下
-    #                                 self.associate_point.append((crd_block, tier))     
-    #                                 self.settle(True, False)                #整理
-                                
-    #                             break_flag = 1
-    #                             break
-
-
-    #                     if break_flag == 0:
-    #                         # print "Find My Win.2..continue"
-    #                         nest_cont = 1
-    #                         break
-    #                     else:
-    #                         break
-                
-    #             if nest_cont == 1:
-    #                 continue
-    #             #查看对方有没有ZW，若有直接返回
-    #             for mp in self.P_Attr['ZW']:
-    #                 print "*** Find Peer Z Win......tier: " + str(tier) + ", coord: " + str(coord_peer)
-    #                 print self.associate_point
-    #                 print self.P_Attr['ZW'][0].coords
-    #                 return coord_peer
-    #             #查看对方还有没有G的，若有再次进行嵌套
-    #             ret = self.thinking_G_Peer_Nest(tier+1)
-    #             self.thinking_withdraw(tier+1)  #联想撤回
-    #             if ret != None:
-    #                 return coord_peer    #注意这里的返回值不是ret
-    #             else:
-    #                 continue
-    #     else:
-    #         return None
-        
-    #     return None
-
     # 返回None表示对方没有可以通过G方式直接赢的
     def thinking_G_Peer_Nest(self, tier):
         local_print_debug = 0
@@ -3032,52 +3081,6 @@ class Match():
                     else:           #找不到在对方G内且可以封堵我方的点
                         continue     #说明这么下没结果(否则主动权给了我方)————换一个G进行本级联想
 
-                # #查看我方有没有W，若有则对方可以尝试封堵,且封堵的点在对方的G内
-                # nest_cont = 0
-                # break_flag = 0
-                # for mp in self.M_Attr['W']:
-                #     if mp.other == 'WW':
-                #         # print "Find My Win...continue"
-                #         nest_cont = 1
-                #         break
-                #     else:
-                #         # print "--->Debug: 11"
-                #         crd = mp.attract_coords[0]
-                #         break_flag = 0
-                #         for my_a in self.P_Attr['G']:
-                #             if my_a.attract_coords[0] == crd or my_a.attract_coords[1] == crd:
-                #                 if my_a.attract_coords[0] == crd:
-                #                     crd_block = my_a.attract_coords[1]
-                #                 else:
-                #                     crd_block = my_a.attract_coords[0]
-                #                 self.set_peer_point(crd)            #对方下
-                #                 self.associate_point.append((crd, tier))
-                #                 self.settle(False, True)                #整理
-                #                 #查看我方有没有W，若有,则对方需要continue一颗棋子
-                #                 for mp_b in self.M_Attr['W']:
-                #                     # print "Find My Win...continue"
-                #                     nest_cont = 1
-                #                     break
-
-                #                 if nest_cont == 0:
-                #                     self.set_my_point(crd_block)                    #我方下
-                #                     self.associate_point.append((crd_block, tier))     
-                #                     self.settle(True, False)                #整理
-                                
-                #                 break_flag = 1
-                #                 break
-
-
-                #         if break_flag == 0:
-                #             # print "Find My Win.2..continue"
-                #             nest_cont = 1
-                #             break
-                #         else:
-                #             break
-                
-                # if nest_cont == 1:
-                #     continue
-
                 if zw_flag == 1:
                     #查看对方有没有ZW，若有直接返回
                     for mp in self.P_Attr['ZW']:
@@ -3099,6 +3102,204 @@ class Match():
         
         return None
 
+    #对方可以由A+X变为ZW，找到形成ZW之后的封堵点
+    def AX2ZW_Block(self, coord_peer, tier):
+        self.set_peer_point(coord_peer)          #对方下
+        self.associate_point.append((coord_peer, tier))
+        self.settle(False, True)        #整理
+
+        # print "=======asdasdfasdf========"
+
+        #这时应该生成新的ZW，且包含coord_peer
+        zw_cnt = 0
+        crd_block_tuple = ()
+        for mp in self.P_Attr['ZW']:
+            # print "==>mp: " + str(mp.coords)
+            # print "back_coords: " + str(mp.back_coords)
+            if coord_peer in mp.coords:
+                zw_cnt += 1
+                for crd_block in mp.attract_coords:
+                    if crd_block not in crd_block_tuple:    #防止重复
+                        crd_block_tuple += (crd_block, )
+                continue
+            
+            if coord_peer in mp.back_coords:
+                zw_cnt += 1
+                for crd_block in mp.attract_coords:
+                    if crd_block not in crd_block_tuple:    #防止重复
+                        crd_block_tuple += (crd_block, )
+                continue
+
+        self.thinking_withdraw(tier)        #还原
+
+        ret1 = ""
+        ret2 = None
+        if zw_cnt > 1:
+            ret1 = "ZWZW"       #表示多个ZW
+        elif zw_cnt == 0:         #不应该出现
+            ret1 = "Error"
+        else:
+            ret1 = "OK"
+            ret2 = crd_block_tuple
+
+        return (ret1, ret2)
+
+    # 返回None表示对方没有可以通过G方式直接赢的
+    # 后来发现不只是G，若对方有ZW，则也能掌握主动权
+    def thinking_G_AX_Peer_Nest(self, tier):
+        local_print_debug = 0
+
+        nest = {}
+        nest_cont = 0
+
+        #这里可能也要考虑tier太大的情况，即嵌套太多，花费时间太多
+        #或许当tier超过N级的时候认为对方不一定能完全有把握，如tier>10
+
+        for mp in self.P_Attr['G']:
+            coord_peer = mp.attract_coords[0]
+            coord_block = mp.attract_coords[1]
+            coord_block_tuple = (coord_block, )
+            nest[(coord_peer, coord_block_tuple)] = True
+
+            coord_peer = mp.attract_coords[1]
+            coord_block = mp.attract_coords[0]
+            coord_block_tuple = (coord_block, )
+            nest[(coord_peer, coord_block_tuple)] = True
+
+        for mp in self.P_Attr['A+X']:
+            # print "peer a+x(coords): " + str(mp.coords)
+            # print "peer a+x(attract_coords): " + str(mp.attract_coords)
+            for crd in mp.attract_coords:
+                coord_peer = crd
+                ret_tmp = self.AX2ZW_Block(crd, tier+1)
+                if ret_tmp[0] == "OK":
+                    # print "===>thinking_G_AX_Peer_Nest, coord_peer: " + str(coord_peer) 
+                    # print "===>block_list: " + str(ret_tmp[1])
+                    nest[(coord_peer, ret_tmp[1])] = True
+                elif ret_tmp[0] == "ZWZW":
+                    #对方能形成两个ZW，暂时算我方囧，但也不一定，后续再研究研究
+                    print "*** Find Peer ZWZW @thinking_G_AX_Peer_Nest, 456, tier: " + str(tier) 
+                    print self.associate_point
+                    return True
+                else:
+                    print "Something error@thinking_G_AX_Peer_Nest, 123, crd: " + str(crd)
+
+
+        # asdf 
+        # 还得考虑1+1+1新生成ZW的情况
+
+        if len(nest) != 0:
+            if local_print_debug == 1:
+                print "===> Peer G_AX nest...tier: " + str(tier)
+            for pair in nest:
+                coord_peer = pair[0]
+                # coord_block = pair[1]
+                for coord_block in pair[1]:
+                    nest_cont = 0
+                    # 先进行上一次循环的悔棋操作
+                    self.thinking_withdraw(tier)
+
+                    #^_^
+                    w_cnt = 0
+                    crd_block = 0
+
+                    for mp in self.M_Attr['W']:
+                        if mp.other == 'WW':
+                            return None         #对方怎么下都没用
+                        else:
+                            w_cnt += 1
+                            if crd_block == 0:
+                                crd_block = mp.attract_coords[0]
+                            else:
+                                if cmp(crd_block, mp.attract_coords[0]) == 0:
+                                    w_cnt -= 1  #当我方两个W的封堵点是同一个时，视为一个W
+
+                    if w_cnt > 1:
+                        return None     #对方怎么下都没用
+                    elif w_cnt == 0:
+                        None          #我方没有W，对方可以继续G联想, 往下走
+                    else:       # == 1 的情况
+                        if cmp(crd_block, coord_peer) == 0:
+                            None        #封堵我方的点正是对方G内，就继续往下走
+                        else:
+                            continue    #换一个G进行本级联想
+
+                    #---
+                    if local_print_debug == 1:
+                        print "     Peer G_AX Nest(tier: " + str(tier) + "), set_peer_point: " + str(coord_peer)
+                    self.set_peer_point(coord_peer)          #对方下
+                    self.associate_point.append((coord_peer, tier))
+                    self.settle(False, True)        #整理
+
+                    if local_print_debug == 1:
+                        print "     Peer G_AX Nest(tier: " + str(tier) + "), set_my_point: " + str(coord_block)
+                    self.set_my_point(coord_block)           #我方下
+                    self.associate_point.append((coord_block, tier))
+                    self.settle(True, False)        #整理
+
+                    #查看对方有没有W，若有直接返回
+                    for mp in self.P_Attr['W']:
+                        if local_print_debug == 1:
+                            print self.P_Attr['W'][0].coords
+                        print "*** Find Peer Win...tier: " + str(tier) 
+                        print self.associate_point          #打印联想路径
+                        return coord_peer
+
+                    #^_^
+                    w_cnt = 0
+                    crd_block = 0
+
+                    for mp in self.M_Attr['W']:
+                        if mp.other == 'WW':
+                            w_cnt = 2
+                            break
+                        else:
+                            w_cnt += 1
+                            if crd_block == 0:
+                                crd_block = mp.attract_coords[0]
+                            else:
+                                if cmp(crd_block, mp.attract_coords[0]) == 0:
+                                    w_cnt -= 1  #当两个W的封堵点是同一个时，视为一个W
+                    
+                    zw_flag = 1
+
+                    if w_cnt > 1:
+                        continue        #换一个G进行本级联想
+                    elif w_cnt == 0:
+                        None            #我方没有W的情况，继续往下走
+                    else:       # == 1 的情况
+                        coincide = 0
+                        for mp in self.P_Attr['G']:
+                            if cmp(crd_block, mp.attract_coords[0]) == 0 or cmp(crd_block, mp.attract_coords[1]) == 0:
+                                coincide = 1
+                                break
+
+                        if coincide == 1:
+                            zw_flag = 0        #封堵我方的点正是对方G内，就进行下一级联想，而忽略对方可能存在的ZW判断
+                        else:           #找不到在对方G内且可以封堵我方的点
+                            continue     #说明这么下没结果(否则主动权给了我方)————换一个G进行本级联想
+
+                    if zw_flag == 1:
+                        #查看对方有没有ZW，若有直接返回
+                        for mp in self.P_Attr['ZW']:
+                            if local_print_debug == 1:
+                                print self.P_Attr['ZW'][0].coords
+                            print "*** Find Peer Win...tier: " + str(tier) 
+                            print self.associate_point          #打印联想路径
+                            return coord_peer
+                        
+                    #查看对方还有没有G的，若有再次进行嵌套
+                    ret = self.thinking_G_AX_Peer_Nest(tier+1)
+                    self.thinking_withdraw(tier+1)  #联想撤回
+                    if ret != None:
+                        return coord_peer       #注意这里的返回值不是ret
+                    else:
+                        continue
+        else:
+            return None
+        
+        return None
+
     def thinking_prevent_PZW_associate(self):
         point_dict = {}         #用字典，防止重复
         pzw_cnt = 0
@@ -3107,6 +3308,9 @@ class Match():
         for mp in self.P_Attr['ZW']:
             pzw_cnt += 1
             class_name = mp.__class__.__name__
+            print "--->class_name: " + class_name
+            print "--->mp.attract_coords: " + str(mp.attract_coords)
+            print "--->mp.rel_coords: " + str(mp.rel_coords)
             if class_name == 'Peer2':
                 #注意这里用rel_coords而不是attract_coords, 封堵的点多一些
                 for rel in mp.rel_coords:
@@ -3117,6 +3321,8 @@ class Match():
 
         if len(point_dict) == 0:    #没有准赢的情况，也就不需要封堵
             return None
+
+        print "===>PZW_Point: " + str(point_dict)
 
         #接下去要给每一个封堵点进行打分，选取分数最高的那个
             #封堵后我方有1个W和1个ZW的，直接返回.....但是貌似不应该发生
@@ -3173,8 +3379,9 @@ class Match():
             self.associate_point.append((coord, 1)) 
             self.settle(True, False)
 
-            if self.thinking_G_Peer_associate() != None:    #说明这么下对方会赢，所以不要这么下
+            if self.thinking_G_AX_Peer_associate(True) != None:    #说明这么下对方会赢，所以不要这么下
                 print str(coord) + " is discard, because peer can win or will win...@prevent_PZW...."
+                print " "
                 point_dict[coord] = 0
                 continue
 
@@ -3260,6 +3467,7 @@ class Match():
                 print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! May be lose, have no idea!"
                 self.willdie_cnt += 1
                 print "==========Game will over, I lose...============"
+                #这时可以考虑选一个嵌套层数最多的点，这样也许对方会出现失误 asdf
                 for coord in point_dict:
                     return coord
 
@@ -4302,7 +4510,7 @@ class Match():
             coord = ret[1]
             print "Smart coord: " + str(coord)
             print "Smart type: " + status
-            print "Point Cnt: " + str(len(self.history_track))
+            print "Point Cnt: " + str(len(self.history_track['crd_list']))
 
             if status == 'W':
                 youlose = 1
@@ -4454,15 +4662,15 @@ def debug_print(request):
     # match.print_MP_class('M', 2)
     # match.print_MP_class('M', 3)
     # match.print_MP_class('M', 4)
-    match.print_MP_Attr('M')
+    # match.print_MP_Attr('M')
     print "  "
-    print "\-----------------------M***P-----------------------/"
+    # print "\-----------------------M***P-----------------------/"
     print "  "
-    match.print_MP_Attr('P')
+    # match.print_MP_Attr('P')
     # match.print_MP_class('P', 2)
     # match.print_MP_class('P', 3)
     # match.print_MP_class('P', 4)
-    print "******************************** debug_print End ********************************************************"
+    # print "******************************** debug_print End ********************************************************"
     print "===>No idea: " + str(match.noidea_cnt)
     print "===>Wrong: " + str(match.wrong_cnt)
     print "===>Wrong_2: " + str(match.wrong2_cnt)
