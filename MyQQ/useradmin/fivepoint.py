@@ -545,10 +545,12 @@ class Match():
                 if ret_str[0:6] == "ZZYYYH":
                     coord1 = self.get_coord(coord, direction, -2)
                     coord2 = self.get_coord(coord, direction, -1)
+                    special_coords.append(coord2)
                     back_coords = self.get_coord_pack(coord, direction, (3, ))
                 elif ret_str[1:7] == 'HYYYZZ':
                     coord1 = self.get_coord(coord, direction, 3)
                     coord2 = self.get_coord(coord, direction, 4)
+                    special_coords.append(coord2)
                     back_coords = self.get_coord_pack(coord, direction, (-1, ))
                 elif ret_str[0:7] == 'HZYYYZH':
                     coord1 = self.get_coord(coord, direction, -1)
@@ -562,6 +564,7 @@ class Match():
                 obj.attract_coords = attract_coords[:] 
                 obj.rel_coords = rel_coords[:]
                 obj.back_coords = back_coords[:]
+                obj.special_coords = special_coords[:]
             else:
                 if class_name == "My3":
                     print "Something error(My3): " + ret_str
@@ -1102,6 +1105,9 @@ class Match():
         special_flag = 0
         special_num = 0
         if attr == 'ZW':
+            special_flag = 1
+
+        if attr == 'W' and val == self.My_point:
             special_flag = 1
 
         ret_num = 0
@@ -3136,13 +3142,21 @@ class Match():
                     pt_2 += num_2
 
             if crd in w_will_set:
-                num = self.get_pointNum_byAttr(crd, 'W', self.My_point)
+                num_tuple = self.get_pointNum_byAttr(crd, 'W', self.My_point)
+                num = num_tuple[0]
                 if num == 0:
                     print "num == 0!!!!!!!!! Error! 2"
                     sys.exit()
                 if local_print_debug == 1:
                     print "crd:" + str(crd) + ", w_will_set: +4*" + str(num)
                 pt += num*4
+
+                num_2 = num_tuple[1]
+                if num_2 != 0:
+                    if local_print_debug == 1:
+                        print "crd:" + str(crd) + ", ! w_will_set: +1*" + str(num_2)
+                    pt_2 += num_2
+
             if crd in pg_set:
                 num = self.get_pointNum_byAttr(crd, 'W', self.Peer_point)
                 if num == 0:
@@ -3151,6 +3165,7 @@ class Match():
                 if local_print_debug == 1:
                     print "crd:" + str(crd) + ", pg_set: +3*" + str(num)
                 pt += num*3
+                
             if crd in pax_set:
                 num_tuple = self.get_pointNum_byAttr(crd, 'ZW', self.Peer_point)
                 num = num_tuple[0]
@@ -3207,7 +3222,9 @@ class Match():
 
             if while_cnt > while_max:       #试了N次也没用，从花费时间角度考虑就不继续了，返回一个最高分即可
                 print "=====>I am 6, have no idea, but not 7..."
-                return score_max_crd
+                self.thinking_withdraw(1)
+                # return score_max_crd
+                return None
 
             for crd_pt in all_list:
                 
@@ -5210,13 +5227,13 @@ class Match():
                 coord = (7, 7)      #对方在不正经得下棋，不予理会
             elif x == 7 and y == 7:
                 random_num = random.randint(1,13)
-                random_num = 2
+                random_num = 5
 
-                if random_num == 1:
+                if random_num == 1:     #平
                     coord = (6, 6)
-                elif random_num == 2:
+                elif random_num == 2:   #输
                     coord = (6, 7)
-                elif random_num == 3:
+                elif random_num == 3:   #输
                     coord = (6, 8)
                 elif random_num == 4:
                     coord = (7, 8)
