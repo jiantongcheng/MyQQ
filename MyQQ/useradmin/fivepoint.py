@@ -3197,16 +3197,26 @@ class Match():
             max_pt_2 = 0
             ret_crd = None
             for crd_pt in all_list:
+                # if len(self.history_track['crd_list']) < 8:
+                    # 如果上下左右有三颗对方棋子，则不要填这里，相当于填坑
+
                 print str(crd_pt[0]) + "." + str(crd_pt[2])  + " : " + str(crd_pt[1]) + "@thinking_G_AX_PG_PAX"
                 if crd_pt[0] > max_pt:
                     max_pt = crd_pt[0]
                     ret_crd = crd_pt[1]
                     max_pt_2 = crd_pt[2]
                 elif crd_pt[0] == max_pt:
-                    if crd_pt[2] > max_pt_2:
-                        max_pt = crd_pt[0]
-                        ret_crd = crd_pt[1]
-                        max_pt_2 = crd_pt[2]
+                    random_num = random.randint(1,3)
+                    if random_num == 1:
+                        if crd_pt[2] > max_pt_2:
+                            max_pt = crd_pt[0]
+                            ret_crd = crd_pt[1]
+                            max_pt_2 = crd_pt[2]
+                    else:
+                        if crd_pt[2] >= max_pt_2:
+                            max_pt = crd_pt[0]
+                            ret_crd = crd_pt[1]
+                            max_pt_2 = crd_pt[2]
             if ret_crd == None:
                 break
             #我方模拟试探下子
@@ -3464,7 +3474,7 @@ class Match():
 
         #这里可能也要考虑tier太大的情况，即嵌套太多，花费时间太多
         #或许当tier超过N级的时候认为对方不一定能完全有把握，如tier>10
-        if tier > 10:
+        if tier > 7:
             return None
 
         for mp in self.P_Attr['G']:
@@ -3498,13 +3508,13 @@ class Match():
 
 
         # # 还得考虑1+1+1新生成ZW的情况, 但貌似消耗计算机资源太多
-        # if tier < 3:
-        #     ret_tmp = self.get_point_setByZW(self.Peer_point)
-        #     if len(ret_tmp) != 0:
-        #         # print "get_point_setByZW: " + str(len(ret_tmp))
-        #         for crd_and_block in ret_tmp:
-        #             coord_peer = crd_and_block[0]
-        #             nest[(coord_peer, crd_and_block[1])] = True
+        if tier < 3 and len(self.history_track['crd_list']) < 20 :
+            ret_tmp = self.get_point_setByZW(self.Peer_point)
+            if len(ret_tmp) != 0:
+                # print "get_point_setByZW: " + str(len(ret_tmp))
+                for crd_and_block in ret_tmp:
+                    coord_peer = crd_and_block[0]
+                    nest[(coord_peer, crd_and_block[1])] = True
 
 
         if len(nest) != 0:
@@ -3627,9 +3637,9 @@ class Match():
         for mp in self.P_Attr['ZW']:
             pzw_cnt += 1
             class_name = mp.__class__.__name__
-            print "--->class_name: " + class_name
-            print "--->mp.attract_coords: " + str(mp.attract_coords)
-            print "--->mp.rel_coords: " + str(mp.rel_coords)
+            # print "--->class_name: " + class_name
+            # print "--->mp.attract_coords: " + str(mp.attract_coords)
+            # print "--->mp.rel_coords: " + str(mp.rel_coords)
             if class_name == 'Peer2':
                 #注意这里用rel_coords而不是attract_coords, 封堵的点多一些
                 for rel in mp.rel_coords:
@@ -3699,7 +3709,7 @@ class Match():
             self.settle(True, False)
 
             if self.thinking_G_AX_Peer_associate(True) != None:    #说明这么下对方会赢，所以不要这么下
-                print str(coord) + " is discard, because peer can win or will win...@prevent_PZW...."
+                print str(coord) + " is discard, Peer can win or will win...@prevent_PZW...."
                 print " "
                 point_dict[coord] = 0
                 continue
@@ -3772,9 +3782,15 @@ class Match():
         max_point = 0
         for coord in point_dict:    
             print "prevent_PZW_associate-->point_dict: " + str(coord) + "--> " +   str(point_dict[coord])     
-            if point_dict[coord] > max_point:
-                ret_coord = coord
-                max_point = point_dict[coord]
+            random_num = random.randint(1,3)
+            if random_num == 1:
+                if point_dict[coord] > max_point:
+                    ret_coord = coord
+                    max_point = point_dict[coord]
+            else:
+                if point_dict[coord] >= max_point:
+                    ret_coord = coord
+                    max_point = point_dict[coord]
 
         if ret_coord != None:
             return ret_coord        #返回最高分
@@ -4789,28 +4805,55 @@ class Match():
         status = "INIT"
         
         if self.last_peer_coord == None:    #由我方下第一个子
-            # random_num = random.randint(1,8)
-            # if random_num == 1:
-            #     coord = (7, 7)      #正中间
-            # elif random_num == 2:
-            #     coord = (5, 5)
-            # elif random_num == 3:
-            #     coord = (5, 9)
-            # elif random_num == 4:
-            #     coord = (9, 5)
-            # elif random_num == 5:
-            #     coord = (9, 9)
-            # else:
+            random_num = random.randint(1,8)
+            if random_num == 1:
+                coord = (7, 7)      #正中间
+            elif random_num == 2:
+                coord = (5, 5)
+            elif random_num == 3:
+                coord = (5, 9)
+            elif random_num == 4:
+                coord = (9, 5)
+            elif random_num == 5:
+                coord = (9, 9)
+            else:
                 coord = (7, 7)      #正中间
         elif self.last_my_coord == None:    #由敌方下第一个子，我方下第二个
             x = self.last_peer_coord[0]
             y = self.last_peer_coord[1]
             if x == 0 or x == limit or y == 0 or y == limit:
                 coord = (7, 7)      #对方在不正经得下棋，不予理会
-            # elif x == 7 and y == 7:
-            #     coord = (7, 8)
-            # elif x == 7 and y == 7:
-            #     coord = (7, 8)
+            elif x == 7 and y == 7:
+                random_num = random.randint(1,13)
+                if random_num == 1:
+                    coord = (6, 6)
+                elif random_num == 2:
+                    coord = (6, 7)
+                elif random_num == 3:
+                    coord = (6, 8)
+                elif random_num == 4:
+                    coord = (7, 8)
+                elif random_num == 5:
+                    coord = (8, 8)
+                elif random_num == 6:
+                    coord = (8, 7)
+                elif random_num == 7:
+                    coord = (8, 6)
+                elif random_num == 8:
+                    coord = (7, 6)
+                elif random_num == 9:
+                    coord = (7, 5)
+                elif random_num == 10:
+                    coord = (7, 9)
+                elif random_num == 11:
+                    coord = (5, 7)
+                elif random_num == 12:
+                    coord = (9, 7)
+                else:
+                    coord = (6, 6)
+
+                # coord = (7, 6)
+
             else:               #封堵对方的第一子，尽量下在棋盘中间
                 if x < 7:
                     my_x = x+1
