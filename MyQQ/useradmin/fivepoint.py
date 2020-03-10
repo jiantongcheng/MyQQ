@@ -547,6 +547,7 @@ class Match():
                     rel_coords.append(coord2)
                     rel_coords.append(coord3)
                     rel_coords.append(coord4)
+                    self.other = 1
                 elif ret_str[0:6] == 'ZZYYYZ':
                     coord1 = self.get_coord(coord, direction, -2)
                     coord2 = self.get_coord(coord, direction, -1)
@@ -557,6 +558,7 @@ class Match():
                     rel_coords.append(coord3)
                     back_coords = self.get_coord_pack(coord, direction, (4, ))
                     obj.back_coords = back_coords[:]
+                    self.other = 0
                 else:
                     coord1 = self.get_coord(coord, direction, -1)
                     coord2 = self.get_coord(coord, direction, 3)
@@ -567,6 +569,7 @@ class Match():
                     rel_coords.append(coord3)
                     back_coords = self.get_coord_pack(coord, direction, (-2, ))
                     obj.back_coords = back_coords[:]
+                    self.other = 0
                 obj.attract_coords = attract_coords[:] 
                 obj.rel_coords = rel_coords[:]
             elif ret_str[0:6] == "ZZYYYH" or ret_str[1:7] == 'HYYYZZ' or ret_str[0:7] == 'HZYYYZH':
@@ -1671,7 +1674,8 @@ class Match():
                         obj = self.My3(coord_tuple, 'S', None, None)
                         self.update_MP(obj)
                         if obj.attr == 'ZW':
-                            for crd in obj.attract_coords:
+                            # for crd in obj.attract_coords:
+                            for crd in obj.rel_coords:          #这里是要封堵，所以用rel_coords,2020.3.11
                                 ret_block_tuple += (crd, )
                 elif cnt == 2:  
                     #生成一个My2类型
@@ -1740,7 +1744,7 @@ class Match():
                         self.update_MP(obj)
 
                         if obj.attr == 'ZW':
-                            for crd in obj.attract_coords:
+                            for crd in obj.rel_coords:
                                 ret_block_tuple += (crd, )
                 elif cnt == 2:  
                     #生成一个My2类型
@@ -1809,7 +1813,7 @@ class Match():
                         obj = self.My3(coord_tuple, 'W', None, None)
                         self.update_MP(obj)
                         if obj.attr == 'ZW':
-                            for crd in obj.attract_coords:
+                            for crd in obj.rel_coords:
                                 ret_block_tuple += (crd, )
 
                 elif cnt == 2:  
@@ -1879,7 +1883,7 @@ class Match():
                         self.update_MP(obj)
 
                         if obj.attr == 'ZW':
-                            for crd in obj.attract_coords:
+                            for crd in obj.rel_coords:
                                 ret_block_tuple += (crd, )
                 elif cnt == 2:  
                     #生成一个My2类型
@@ -4541,6 +4545,7 @@ class Match():
             self.Peer_LX_crd_tier[tier] = coord_peer
                 
 
+    '''
     def My_AX_To_ZW_Block(self, coord, tier):
         self.My_LX_Set(coord, tier)             #我方下
 
@@ -4556,11 +4561,6 @@ class Match():
 
             if hasattr(mp, "back_coords") and isinstance(mp.back_coords, list) and coord in mp.back_coords:
                 zw_cnt += 1
-                '''
-                for crd_block in mp.attract_coords:
-                    if crd_block not in crd_block_tuple:    #防止重复
-                        crd_block_tuple += (crd_block, )
-                '''
                 class_name = mp.__class__.__name__
                 if class_name == 'My3':
                     for crd_block in mp.attract_coords:
@@ -4584,8 +4584,51 @@ class Match():
             ret1 = "Error"
 
         return (ret1, ret2)
+    '''
 
-    #对方可以由A+X变为ZW，找到形成ZW之后的封堵点
+    # 2020.3.11 修改
+    def My_AX_To_ZW_Block(self, coord, tier):
+        self.My_LX_Set(coord, tier)             #我方下
+
+        zw_cnt = 0
+        crd_block_tuple = ()
+        for mp in self.M_Attr['ZW']:        
+            if coord in mp.coords:          
+                zw_cnt += 1
+                class_name = mp.__class__.__name__
+                if class_name == 'My3' and mp.other == 1:
+                    for crd_block in mp.attract_coords:
+                        if crd_block not in crd_block_tuple:    #防止重复
+                            crd_block_tuple += (crd_block, )
+                    
+                else:
+                    for crd_block in mp.rel_coords:
+                        if crd_block not in crd_block_tuple:    #防止重复
+                            crd_block_tuple += (crd_block, )
+
+                continue
+
+            if hasattr(mp, "back_coords") and isinstance(mp.back_coords, list) and coord in mp.back_coords:
+                zw_cnt += 1
+                for crd_block in mp.rel_coords:
+                    if crd_block not in crd_block_tuple:    #防止重复
+                        crd_block_tuple += (crd_block, )
+
+                continue
+
+        self.thinking_withdraw(tier)        #还原
+
+        ret1 = ""
+        ret2 = None
+        if zw_cnt >= 1:
+            ret1 = "OK"
+            ret2 = crd_block_tuple
+        else:
+            ret1 = "Error"
+
+        return (ret1, ret2)
+
+    #对方可以由A+X变为ZW，找到形成ZW之后的封堵点 # 2020.3.11 修改
     def Peer_AX_To_ZW_Block(self, coord_peer, tier):
         self.Peer_LX_Set(coord_peer, tier)      #对方下
 
@@ -4595,20 +4638,8 @@ class Match():
         for mp in self.P_Attr['ZW']:
             if coord_peer in mp.coords:
                 zw_cnt += 1
-                for crd_block in mp.attract_coords:
-                    if crd_block not in crd_block_tuple:    #防止重复
-                        crd_block_tuple += (crd_block, )
-                continue
-            
-            if hasattr(mp, "back_coords") and isinstance(mp.back_coords, list) and coord_peer in mp.back_coords:
-                zw_cnt += 1
-                '''
-                for crd_block in mp.attract_coords:
-                        if crd_block not in crd_block_tuple:    #防止重复
-                            crd_block_tuple += (crd_block, )
-                '''
                 class_name = mp.__class__.__name__
-                if class_name == 'Peer3':
+                if class_name == 'Peer3' and mp.other == 1:
                     for crd_block in mp.attract_coords:
                         if crd_block not in crd_block_tuple:    #防止重复
                             crd_block_tuple += (crd_block, )
@@ -4616,6 +4647,14 @@ class Match():
                     for crd_block in mp.rel_coords:
                         if crd_block not in crd_block_tuple:    #防止重复
                             crd_block_tuple += (crd_block, )
+                continue
+            
+            if hasattr(mp, "back_coords") and isinstance(mp.back_coords, list) and coord_peer in mp.back_coords:
+                zw_cnt += 1
+                for crd_block in mp.rel_coords:
+                    if crd_block not in crd_block_tuple:    #防止重复
+                        crd_block_tuple += (crd_block, )
+
                 continue
 
         self.thinking_withdraw(tier)        #还原
@@ -4669,25 +4708,29 @@ class Match():
                 crd_tmp_set.add(coord_peer)
 
 
+        # if len(self.M_Attr['ZW']) == 0:
+        # if len(self.M_Attr['ZW']) == 0 and len(self.M_Attr['G']) == 0:
         if len(self.M_Attr['ZW']) == 0:
-            for mp in self.P_Attr['A+X']:
-                for coord_peer in mp.attract_coords:
-                    ret_tmp = self.Peer_AX_To_ZW_Block(coord_peer, tier+1)
-                    if ret_tmp[0] == "OK":
-                        if coord_peer not in crd_tmp_set:
-                            nest[(coord_peer, ret_tmp[1])] = True
-                            crd_tmp_set.add(coord_peer)
-                    else:
-                        print "Something error@thinking__G_AX_Peer_Nest, 123, crd: " + str(crd)
+            w_will_set = self.get_point_setByAttr_all('W', self.My_point)
+            if len(w_will_set) == 0:
+                for mp in self.P_Attr['A+X']:
+                    for coord_peer in mp.attract_coords:
+                        ret_tmp = self.Peer_AX_To_ZW_Block(coord_peer, tier+1)
+                        if ret_tmp[0] == "OK":
+                            if coord_peer not in crd_tmp_set:
+                                nest[(coord_peer, ret_tmp[1])] = True
+                                crd_tmp_set.add(coord_peer)
+                        else:
+                            print "Something error@thinking__G_AX_Peer_Nest, 123, crd: " + str(crd)
 
-            # 还得考虑1+1+1新生成ZW的情况, 但貌似消耗计算机资源太多
-            ret_tmp = self.get_point_setByZW(self.Peer_point)
-            if len(ret_tmp) != 0:
-                for crd_and_block in ret_tmp:
-                    coord_peer = crd_and_block[0]
-                    if coord_peer not in crd_tmp_set:
-                        nest[(coord_peer, crd_and_block[1])] = True
-                        crd_tmp_set.add(coord_peer)
+                # 还得考虑1+1+1新生成ZW的情况, 但貌似消耗计算机资源太多
+                ret_tmp = self.get_point_setByZW(self.Peer_point)
+                if len(ret_tmp) != 0:
+                    for crd_and_block in ret_tmp:
+                        coord_peer = crd_and_block[0]
+                        if coord_peer not in crd_tmp_set:
+                            nest[(coord_peer, crd_and_block[1])] = True
+                            crd_tmp_set.add(coord_peer)
 
         if self.something_print == 1:
             if tier == 2:
@@ -5340,25 +5383,29 @@ class Match():
                 crd_tmp_set.add(coord)
 
         #对方没有ZW，才能用A+X联想, 但是对方若有G，我方似乎联想也有难度啊
+        # if len(self.P_Attr['ZW']) == 0:
+        # if len(self.P_Attr['ZW']) == 0 and len(self.P_Attr['G']) == 0:
         if len(self.P_Attr['ZW']) == 0:
-            #如果不考虑计算机算力的话，理论上应该把我方可以形成ZW的情况加进去(包括A+X形成ZW，和新生成ZW的情况)
-            for mp in self.M_Attr['A+X']:
-                for coord in mp.attract_coords:
-                    ret_tmp = self.My_AX_To_ZW_Block(coord, tier+1)
-                    if ret_tmp[0] == "OK":
-                        if coord not in crd_tmp_set:            #避免重复添加
-                            nest[(coord, ret_tmp[1])] = True
-                            crd_tmp_set.add(coord)
-                    else:
-                        print "Something error@thinking__G_AX_My_Nest, 123, crd: " + str(crd)
+            peer_w_will_set = self.get_point_setByAttr_all('W', self.Peer_point)
+            if len(peer_w_will_set) == 0:
+                #如果不考虑计算机算力的话，理论上应该把我方可以形成ZW的情况加进去(包括A+X形成ZW，和新生成ZW的情况)
+                for mp in self.M_Attr['A+X']:
+                    for coord in mp.attract_coords:
+                        ret_tmp = self.My_AX_To_ZW_Block(coord, tier+1)
+                        if ret_tmp[0] == "OK":
+                            if coord not in crd_tmp_set:            #避免重复添加
+                                nest[(coord, ret_tmp[1])] = True
+                                crd_tmp_set.add(coord)
+                        else:
+                            print "Something error@thinking__G_AX_My_Nest, 123, crd: " + str(crd)
 
-            ret_tmp = self.get_point_setByZW(self.My_point)
-            if len(ret_tmp) != 0:
-                for crd_and_block in ret_tmp:
-                    coord = crd_and_block[0]
-                    if coord not in crd_tmp_set:            #避免重复添加
-                        nest[(coord, crd_and_block[1])] = True
-                        crd_tmp_set.add(coord)
+                ret_tmp = self.get_point_setByZW(self.My_point)
+                if len(ret_tmp) != 0:
+                    for crd_and_block in ret_tmp:
+                        coord = crd_and_block[0]
+                        if coord not in crd_tmp_set:            #避免重复添加
+                            nest[(coord, crd_and_block[1])] = True
+                            crd_tmp_set.add(coord)
 
         # Step 2: 上面收集封堵点，下面开始联想，要注意一级中联想的次数，G为1次，ZW为多次,ZW需要满足全部, 且要考虑对方G的情况
 
@@ -5378,7 +5425,7 @@ class Match():
                     if self.check_distance_long(coord, crd_last) == True:
                         continue            #太远了，略过
 
-                if tier == 1 and cmp(coord, (5, 4)) == 0:
+                if tier == 1 and cmp(coord, (8, 5)) == 0:
                     self.something_print = 1
 
                 out_for_cnt += 1
@@ -5414,6 +5461,7 @@ class Match():
                         
                     #---
                     self.My_LX_Set(coord, tier, 1)         #我方下
+                    #因为我方加入了ZW的联想，或许也得加入对方G的强行插入联想...但貌似复杂了...2020.3.10
                     self.Peer_LX_Set(coord_block, tier, 2) #对方下
                     self.associate_cnt += 1
 
@@ -6191,7 +6239,7 @@ class Match():
         
         if self.last_peer_coord == None:    #由我方下第一个子
             random_num = random.randint(1,8)
-            random_num = 4
+            # random_num = 4
 
             if random_num == 1:
                 coord = (7, 7)      #正中间
@@ -6212,7 +6260,7 @@ class Match():
                 coord = (7, 7)      #对方在不正经得下棋，不予理会
             elif x == 7 and y == 7:
                 random_num = random.randint(1,13)
-                random_num = 5
+                random_num = 11
 
                 if random_num == 1:     #平
                     coord = (6, 6)
