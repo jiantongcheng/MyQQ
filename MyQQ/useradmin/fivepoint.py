@@ -582,7 +582,7 @@ class Match():
                 elif ret_str[1:7] == 'HYYYZZ':
                     coord1 = self.get_coord(coord, direction, 3)
                     coord2 = self.get_coord(coord, direction, 4)
-                    special_coords.append(coord2)
+                    special_coords.append(coord1)
                     back_coords = self.get_coord_pack(coord, direction, (-1, ))
                 elif ret_str[0:7] == 'HZYYYZH':
                     coord1 = self.get_coord(coord, direction, -1)
@@ -1139,7 +1139,8 @@ class Match():
         if attr == 'ZW':
             special_flag = 1
 
-        if attr == 'W' and val == self.My_point:
+        # if attr == 'W' and val == self.My_point:
+        if attr == 'W':
             special_flag = 1
 
         ret_num = 0
@@ -4956,9 +4957,13 @@ class Match():
                     pt_2 += num_2
 
             # 对方能构建W
-            num = self.get_pointNum_byAttr(crd, 'W', self.Peer_point)
+            num_tuple = self.get_pointNum_byAttr(crd, 'W', self.Peer_point)
+            num = num_tuple[0]
             if num != 0:
                 pt += num*3
+                num_2 = num_tuple[1]
+                if num_2 != 0:
+                    pt_2 += num_2
 
             # 对方能构建ZW
             num_tuple = self.get_pointNum_byAttr(crd, 'ZW', self.Peer_point)
